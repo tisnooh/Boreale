@@ -167,18 +167,6 @@ body {
   @apply scale-x-0;
 }
 
-/* Ticker de marque */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 36s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
-}
-
 /* Wordmark géant footer */
 .footer-wordmark {
   font-family: var(--font-display);
@@ -321,7 +309,6 @@ body {
 /* Reduced-motion : on coupe uniquement les motions continues / déplacantes,
    on conserve des fondus courts (lisibles sur PC avec effets visuels désactivés). */
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track,
   .kenburns,
   .scroll-cue { animation: none !important; }
   .cursor-preview { display: none !important; }

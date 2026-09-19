@@ -158,3 +158,9 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
   à droite paragraphe long à **lettrine** braise + principes en **registre ligné** (numéros, titres serif,
   textes en colonne marginale, hairlines white/10, hover translate) + note d'honnêteté en pied.
   Plus aucune carte-colonne. Contenu toujours admin-piloté (settings.benefits).
+
+## D037 — Ticker marquee remplacé par un folio de journal statique
+- Contexte : bandeau défilant type « promesses DTC » jugé générique (retour utilisateur).
+- Décision : suppression du marquee (composant + CSS) ; remplacement par un folio hairline statique :
+  « Maison BORÉALE — édition hiver · 14 pièces, 4 univers, 0 superflu · Expédition France — retours 30 j ».
+  Aucune animation sur ce bloc : repos visuel volontaire après la cover animée.

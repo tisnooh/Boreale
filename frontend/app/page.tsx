@@ -4,7 +4,7 @@ import { buildMetadata, organizationJsonLd } from '@/lib/seo';
 import { BRAND } from '@/lib/constants';
 import type { ProductDTO } from '@/lib/types';
 import { Cover } from '@/components/home/Cover';
-import { Marquee } from '@/components/home/Marquee';
+import { Folio } from '@/components/home/Folio';
 import { UniversIndex } from '@/components/home/UniversIndex';
 import { SelectionRail } from '@/components/home/SelectionRail';
 import { ParallaxQuote } from '@/components/home/ParallaxQuote';
@@ -39,7 +39,7 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
 
       <Cover hero={settings.hero} />
-      <Marquee />
+      <Folio />
       <UniversIndex categories={categories} />
       <SelectionRail products={featured} />
       <ParallaxQuote image="/images/hero-hiver.jpg" />
