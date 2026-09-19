@@ -151,3 +151,10 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
   4 polaroids légendés (Pièce N°07 Foyer, N°11 Sentinelle, N°13 Nid, N°01 Nuage) dispersés et flottants
   (animation 7 s alternate, délais échelonnés) sur desktop, rangée scrollable snap sur mobile ;
   sommaire et méta conservés en pied de cover. Reduced-motion : flottement coupé, tilt conservé.
+
+## D036 — Manifeste en page de journal (anti « trust badges »)
+- Contexte : la rangée 4 colonnes de bénéfices du manifeste lisait « e-commerce basique ».
+- Décision : section reconstruite en spread éditorial : statement à gauche + signature « La maison BORÉALE »,
+  à droite paragraphe long à **lettrine** braise + principes en **registre ligné** (numéros, titres serif,
+  textes en colonne marginale, hairlines white/10, hover translate) + note d'honnêteté en pied.
+  Plus aucune carte-colonne. Contenu toujours admin-piloté (settings.benefits).

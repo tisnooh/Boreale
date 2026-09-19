@@ -349,3 +349,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .polaroid { animation: none !important; transform: rotate(var(--tilt, 0deg)); }
 }
+
+/* Lettrine éditoriale */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-weight: 600;
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.82;
+  padding-right: 0.12em;
+  color: var(--color-ember);
+}
