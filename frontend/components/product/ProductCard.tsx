@@ -1,47 +1,56 @@
-
-import { SafeImage } from '@/components/ui/SafeImage';
 import Link from 'next/link';
+import { SafeImage } from '@/components/ui/SafeImage';
 import { formatCents } from '@/lib/format';
 import type { ProductDTO } from '@/lib/types';
 
+/**
+ * Carte produit éditoriale : ratio 4/5, voile au survol avec appel « Voir le produit »,
+ * nom en serif, catégorie en surtitre, prix avec mention « dès » si variantes multiples.
+ */
 export function ProductCard({ product, priority = false }: { product: ProductDTO; priority?: boolean }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group card flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/5"
+      className="group flex flex-col"
+      aria-label={`${product.name} — ${formatCents(product.priceCents)}`}
     >
-      <div className="relative aspect-square overflow-hidden bg-ice">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-ice">
         <SafeImage
           src={product.imageUrl ?? '/products/placeholder.svg'}
           alt={product.name}
           width={480}
-          height={480}
+          height={600}
           priority={priority}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
         />
         {product.badge && (
-          <span className="badge absolute top-3 left-3 bg-ember text-white shadow">{product.badge}</span>
-        )}
-        {product.type === 'bundle' && !product.badge && (
-          <span className="badge absolute top-3 left-3 bg-ink text-white">Pack</span>
+          <span className="absolute top-3 left-3 rounded-full border border-white/40 bg-ink/70 px-3 py-1 text-[10px] font-semibold tracking-[0.18em] text-white uppercase backdrop-blur">
+            {product.badge}
+          </span>
         )}
         {!product.inStock && (
-          <span className="absolute inset-x-0 bottom-0 bg-ink/80 py-1.5 text-center text-xs font-semibold text-white">
+          <span className="absolute inset-x-0 bottom-0 bg-ink/85 py-2 text-center text-[11px] font-semibold tracking-wide text-white uppercase">
             Rupture de stock
           </span>
         )}
+        <span
+          className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-2 rounded-lg bg-white/95 py-2.5 text-center text-xs font-semibold text-ink opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+          aria-hidden
+        >
+          Voir le produit →
+        </span>
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <p className="text-[11px] font-semibold tracking-wider text-glacier uppercase">
+      <div className="flex flex-1 flex-col gap-1 pt-4">
+        <p className="text-[10px] font-semibold tracking-[0.22em] text-muted uppercase">
           {product.categories[0]?.name ?? 'Boréale'}
         </p>
-        <h3 className="font-display text-[15px] leading-snug font-semibold text-ink group-hover:text-ember-dark">
+        <h3 className="font-display text-[17px] leading-snug font-semibold text-ink transition-colors group-hover:text-ember-dark">
           {product.name}
         </h3>
-        {product.subtitle && <p className="line-clamp-2 text-xs text-muted">{product.subtitle}</p>}
-        <p className="mt-auto pt-2 text-sm font-bold tabular-nums">
-          {formatCents(product.priceCents)}
-          {product.variantCount > 1 && <span className="ml-1 text-[11px] font-medium text-muted">et plus</span>}
+        <p className="mt-auto pt-2 text-sm tabular-nums">
+          {product.variantCount > 1 && <span className="mr-1 text-xs text-muted">dès</span>}
+          <span className="font-semibold">{formatCents(product.priceCents)}</span>
         </p>
       </div>
     </Link>

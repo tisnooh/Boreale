@@ -114,4 +114,3 @@ Voir **`docs/DEPLOYMENT.md`** : 2 projets Vercel (Root Directory `frontend` et `
 ## Sécurité
 Aucun secret dans Git. Clé Stripe privée et `SUPABASE_SERVICE_ROLE_KEY` uniquement côté backend. Détails : `docs/SECURITY.md`.
 
-"# Charbon" 

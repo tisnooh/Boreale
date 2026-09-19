@@ -6,6 +6,7 @@ import { getCatalogSource, filterProducts, sortProducts, type CatalogSort } from
 import { ProductCard } from '@/components/product/ProductCard';
 import { CatalogControls } from '@/components/CatalogControls';
 import { EmptyState } from '@/components/ui';
+import { Reveal } from '@/components/ui/Reveal';
 
 export const metadata: Metadata = buildMetadata({
   title: 'La collection hiver — tous les produits',
@@ -60,8 +61,10 @@ export default async function CollectionsPage({
         <div className="mt-8">
           {products.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {products.map((p) => (
-                <ProductCard key={p.slug} product={p} />
+              {products.map((p, i) => (
+                <Reveal key={p.slug} delay={(i % 4) * 80}>
+                  <ProductCard product={p} />
+                </Reveal>
               ))}
             </div>
           ) : (

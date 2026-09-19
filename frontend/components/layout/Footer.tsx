@@ -5,6 +5,10 @@ import { Logo } from './Logo';
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-line bg-ink text-ice">
+      <div className="container-x pt-14" aria-hidden>
+        <p className="footer-wordmark select-none text-center">BORÉALE</p>
+        <p className="mt-4 text-center text-[10px] tracking-[0.35em] text-ice/50 uppercase">L’hiver, du bon côté</p>
+      </div>
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Logo light withBaseline />

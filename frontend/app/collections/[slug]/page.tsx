@@ -7,6 +7,7 @@ import { BRAND, SITE_URL } from '@/lib/constants';
 import { ProductCard } from '@/components/product/ProductCard';
 import { CatalogControls } from '@/components/CatalogControls';
 import { EmptyState } from '@/components/ui';
+import { Reveal } from '@/components/ui/Reveal';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -83,8 +84,10 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         <div className="mt-8">
           {products.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {products.map((p) => (
-                <ProductCard key={p.slug} product={p} />
+              {products.map((p, i) => (
+                <Reveal key={p.slug} delay={(i % 4) * 80}>
+                  <ProductCard product={p} />
+                </Reveal>
               ))}
             </div>
           ) : (

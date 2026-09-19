@@ -113,3 +113,21 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
 ## D031 — Cron paniers abandonnés : fréquence daily (compatible Vercel Hobby)
 - Contexte : le plan Vercel Hobby limite Vercel Cron (intervalle minimal ~1 jour) ; un schedule hourly pouvait bloquer ou être throttlé au déploiement.
 - Décision : `schedule: "0 9 * * *"` (1 passage/jour à 09:00 UTC) dans `backend/vercel.json`. La logique du endpoint reste identique (paniers ouverts ≥ 3 h, 1 rappel max). Si besoin de plus fréquent : plan Pro ou appel manuel authentifié (`Authorization: Bearer CRON_SECRET`).
+
+## D032 — Passe éditoriale premium homepage & cartes (retour utilisateur « trop template »)
+- Contexte : après premier déploiement, le rendu paraissait « boutique basique » (grilles de cartes standard).
+- Décision : montée en gamme éditoriale SANS refonte d'identité (palette, Fraunces/Inter, composants conservés) :
+  héro asymétrique typographié (N°01) + méta-chiffres ; ticker de marque (marquee, coupé si prefers-reduced-motion) ;
+  univers en index numéroté hairline (N°02) ; sélection N°03 ; manifeste sombre numéroté remplaçant la grille
+  « bénéfices » (N°04, contenu toujours piloté admin) ; packs en rédaction sticky (N°05) ; FAQ N°06 ; newsletter N°07 ;
+  footer wordmark géant outline ; cartes produit 4/5 avec voile « Voir le produit » et prix « dès » ; fiche produit galerie sticky 4/5.
+- Aucune donnée inventée ajoutée : les méta-chiffres du héro (48 h / 30 j / 14 produits) reprennent des engagements déjà documentés (livraison, retours, taille du catalogue seed).
+
+## D033 — Animations éditoriales + packshots IA partiels
+- Animations (toutes coupées si `prefers-reduced-motion`, fallback `<noscript>`) : reveal au scroll
+  (IntersectionObserver, stagger 80-100 ms), line-mask sur le titre héro, ken burns 16 s sur le visuel héro,
+  filets d'overline animés, card-lift au hover. Aucune librairie d'animation ajoutée (CSS + IO natif).
+- Packshots IA provisoires : 7 produits photographiés (foyer, sentinelle, nuage, nid, bise, contact, braise)
+  sur fond nuit polaire cohérent DA ; les 6 autres gardent le SVG marque en attendant la fin du quota
+  d'images — **à remplacer par photos réelles avant lancement** (D016). Les packs utilisent un collage 2×2
+  des visuels de leurs composants (résolution par SKU), jamais de visuel pack inventé.

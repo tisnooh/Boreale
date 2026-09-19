@@ -62,6 +62,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="fr" className={`${fraunces.variable} ${inter.variable} h-full`}>
       <body className="flex min-h-full flex-col">
+        <noscript>
+          <style>{'.reveal{opacity:1;transform:none}.line-mask>span{animation:none}'}</style>
+        </noscript>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[110] focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-white"

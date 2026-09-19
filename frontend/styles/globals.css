@@ -114,3 +114,138 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   Utilitaires éditoriaux (passe premium 2026-09)
+   ============================================================ */
+
+/* Surtitre de section : N° + label + filet */
+.overline {
+  @apply flex items-center gap-3 text-[11px] font-semibold tracking-[0.28em] uppercase text-muted;
+}
+.overline::after {
+  content: "";
+  @apply h-px flex-1 bg-line;
+}
+.overline-dark {
+  @apply text-ice/60;
+}
+.overline-dark::after {
+  @apply bg-white/15;
+}
+
+/* Titres display éditoriaux */
+.display-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 7.2vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.display-section {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+.display-hero em,
+.display-section em {
+  font-style: italic;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
+}
+
+/* Lien souligné animé */
+.link-editorial {
+  @apply relative inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-ember-dark;
+}
+.link-editorial::after {
+  content: "";
+  @apply absolute left-0 -bottom-1 h-px w-full origin-left scale-x-100 bg-ink transition-transform duration-300;
+}
+.link-editorial:hover::after {
+  @apply scale-x-0;
+}
+
+/* Ticker de marque */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 36s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* Wordmark géant footer */
+.footer-wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 13vw, 11rem);
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  @apply font-semibold text-transparent;
+  -webkit-text-stroke: 1px rgba(233, 241, 247, 0.28);
+}
+
+/* ============================================================
+   Animations éditoriales (passe 2 — 2026-09)
+   Toutes coupées si prefers-reduced-motion (bloc global plus haut).
+   ============================================================ */
+
+/* Reveal au scroll (IntersectionObserver → .is-visible) */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal-left { transform: translateX(-26px); }
+.reveal-scale { transform: scale(0.96); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Héro : montée des lignes masquées */
+@keyframes line-rise {
+  from { transform: translateY(110%); }
+  to { transform: translateY(0); }
+}
+.line-mask {
+  display: block;
+  overflow: hidden;
+}
+.line-mask > span {
+  display: block;
+  animation: line-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+/* Ken Burns très lent sur le visuel héro */
+@keyframes kenburns {
+  from { transform: scale(1.1); }
+  to { transform: scale(1); }
+}
+.kenburns {
+  animation: kenburns 16s ease-out both;
+}
+
+/* Filet qui se déploie sous les overlines */
+@keyframes rule-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.is-visible .overline::after,
+.overline.is-visible::after {
+  transform-origin: left;
+  animation: rule-grow 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+/* Hover image carte : légère translation verticale du cadre */
+@media (hover: hover) {
+  .card-lift { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease; }
+  .card-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -24px rgba(11, 27, 43, 0.25); }
+}

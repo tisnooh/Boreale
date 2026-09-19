@@ -7,6 +7,8 @@ import { isPreview } from '@/lib/config';
 import { buildMetadata, breadcrumbJsonLd, productJsonLd } from '@/lib/seo';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import type { ProductDTO } from '@/lib/types';
+import { Overline } from '@/components/ui/Overline';
+import { Reveal } from '@/components/ui/Reveal';
 import { ProductPurchase } from '@/components/product/ProductPurchase';
 import { BundleContents } from '@/components/product/BundleContents';
 import { ProductCard } from '@/components/product/ProductCard';
@@ -84,8 +86,8 @@ export default async function ProductPage({ params }: Props) {
 
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Galerie */}
-          <div className="flex flex-col gap-3">
-            <div className="relative aspect-square overflow-hidden rounded-card border border-line bg-ice">
+          <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-ice">
               <SafeImage
                 src={product.imageUrl ?? '/products/placeholder.svg'}
                 alt={product.name}
@@ -108,10 +110,9 @@ export default async function ProductPage({ params }: Props) {
           </div>
 
           {/* Achat */}
+          <Reveal delay={120}>
           <div>
-            <p className="text-xs font-semibold tracking-[0.18em] text-glacier uppercase">
-              {product.categories.map((c) => c.name).join(' · ') || BRAND.name}
-            </p>
+            <Overline label={product.categories.map((c) => c.name).join(' · ') || BRAND.name} />
             <h1 className="font-display mt-2 text-3xl leading-tight font-semibold sm:text-4xl">{product.name}</h1>
             {product.subtitle && <p className="mt-2 text-base text-muted italic">{product.subtitle}</p>}
             <p className="mt-5 text-sm leading-relaxed text-ink-500">{product.description}</p>
@@ -136,16 +137,17 @@ export default async function ProductPage({ params }: Props) {
               ))}
             </div>
           </div>
+          </Reveal>
         </div>
 
         {/* Description longue */}
         {product.longDescription && (
-          <section aria-label="Détails du produit" className="mx-auto mt-16 max-w-3xl">
+          <Reveal as="section" aria-label="Détails du produit" className="mx-auto mt-16 max-w-3xl">
             <h2 className="font-display mb-4 text-2xl font-semibold">Détails & conseils d’utilisation</h2>
             <div className="space-y-4 text-sm leading-relaxed whitespace-pre-line text-ink-500">
               {product.longDescription}
             </div>
-          </section>
+          </Reveal>
         )}
 
         {/* Points clés tags */}
@@ -159,14 +161,16 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Produits liés */}
         {product.related && product.related.length > 0 && (
-          <section aria-label="Produits liés" className="mt-16">
+          <Reveal as="section" aria-label="Produits liés" className="mt-16">
             <h2 className="font-display mb-6 text-2xl font-semibold sm:text-3xl">Complétez votre hiver</h2>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {product.related.map((p) => (
-                <ProductCard key={p.slug} product={p} />
+              {product.related.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 80}>
+                  <ProductCard product={p} />
+                </Reveal>
               ))}
             </div>
-          </section>
+          </Reveal>
         )}
 
         {/* Transparence */}

@@ -33,7 +33,7 @@ describe('ProductCard', () => {
     expect(screen.getByText('Plaid sherpa « Nid »')).toBeInTheDocument();
     expect(screen.getByText('Maison / Cocooning')).toBeInTheDocument();
     expect(screen.getByText(/59,90/)).toBeInTheDocument();
-    expect(screen.getByText('et plus')).toBeInTheDocument(); // 2 variantes
+    expect(screen.getByText('dès')).toBeInTheDocument(); // variantes multiples
   });
 
   it('affiche la rupture quand inStock=false', () => {
@@ -41,10 +41,10 @@ describe('ProductCard', () => {
     expect(screen.getByText('Rupture de stock')).toBeInTheDocument();
   });
 
-  it('badge affiché quand présent ; badge Pack pour un bundle sans badge', () => {
+  it('badge affiché quand présent ; bundle sans badge rendu proprement', () => {
     render(<ProductCard product={{ ...product, badge: 'Coup de cœur' }} />);
     expect(screen.getByText('Coup de cœur')).toBeInTheDocument();
-    render(<ProductCard product={{ ...product, type: 'bundle', badge: null }} />);
-    expect(screen.getAllByText('Pack').length).toBeGreaterThan(0);
+    render(<ProductCard product={{ ...product, type: 'bundle', badge: null, slug: 'pack-cocooning', name: 'Pack Cocooning' }} />);
+    expect(screen.getByText('Pack Cocooning')).toBeInTheDocument();
   });
 });

@@ -4,15 +4,16 @@ import { buildMetadata, organizationJsonLd } from '@/lib/seo';
 import { BRAND } from '@/lib/constants';
 import type { ProductDTO } from '@/lib/types';
 import { Hero } from '@/components/home/Hero';
+import { Marquee } from '@/components/home/Marquee';
 import { CategoryGrid } from '@/components/home/CategoryGrid';
-import { Benefits, ReassuranceBar } from '@/components/home/Benefits';
+import { Manifesto } from '@/components/home/Manifesto';
+import { Packs } from '@/components/home/Packs';
 import { FaqSection } from '@/components/home/FaqSection';
 import { NewsletterForm } from '@/components/home/NewsletterForm';
 import { ProductCard } from '@/components/product/ProductCard';
-import { ArrowRightIcon, SnowflakeIcon } from '@/components/Icons';
-
-// Fallbacks locaux = copies exactes des valeurs par défaut du backend (services/settings.ts).
-// Utilisés UNIQUEMENT si l'API est injoignable (build/dev) — jamais de fausses données produit.
+import { Overline } from '@/components/ui/Overline';
+import { Reveal } from '@/components/ui/Reveal';
+import { ArrowRightIcon } from '@/components/Icons';
 
 export const metadata = buildMetadata({
   title: `${BRAND.name} — ${BRAND.slogan}`,
@@ -32,87 +33,86 @@ export default async function HomePage() {
 
   const bySlug = (slug: string) => allProducts.find((p) => p.slug === slug);
   const featured = settings.featuredProductSlugs.map(bySlug).filter((p): p is ProductDTO => Boolean(p));
-  const featuredBundles = settings.bundleSlugs.map((s) => bundles.find((b) => b.slug === s)).filter((b): b is ProductDTO => Boolean(b));
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
-      <Hero hero={settings.hero} />
 
-      {!source.isPreview && allProducts.length === 0 && (
-        <p className="bg-cream px-4 py-2 text-center text-xs text-ink-500">
-          Catalogue temporairement indisponible (API backend hors ligne) — les sections produits réapparaîtront dès
-          reconnexion.
-        </p>
-      )}
+      <Hero hero={settings.hero} />
+      <Marquee />
 
       <CategoryGrid categories={categories} />
 
+      {/* N°03 — La sélection */}
       {featured.length > 0 && (
-        <section aria-label="Produits vedettes" className="container-x py-8">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Les indispensables de la saison</h2>
-            <Link href="/collections" className="btn-outline btn-sm hidden sm:inline-flex">
-              Tout voir <ArrowRightIcon width={14} height={14} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {featured.map((p, i) => (
-              <ProductCard key={p.slug} product={p} priority={i < 2} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      <Benefits benefits={settings.benefits} />
-
-      {featuredBundles.length > 0 && (
-        <section id="packs" aria-label="Packs et bundles" className="bg-ink py-16 text-white">
-          <div className="container-x">
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="mb-2 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-glacier uppercase">
-                  <SnowflakeIcon width={14} height={14} /> Prêts à offrir
-                </p>
-                <h2 className="font-display text-3xl font-semibold sm:text-4xl">Nos packs hiver</h2>
-                <p className="mt-2 max-w-xl text-sm text-ice/70">
-                  Des ensembles cohérents, moins chers que les articles achetés séparément — l’économie affichée est
-                  réelle.
-                </p>
+        <section aria-label="Produits vedettes" className="border-t border-line bg-snow">
+          <div className="container-x py-16 lg:py-24">
+            <Reveal className="mb-10 flex items-end justify-between gap-6">
+              <div className="max-w-xl">
+                <Overline index="N°03" label="La sélection" />
+                <h2 className="display-section mt-5">
+                  Les pièces
+                  <br />
+                  <em>qui réchauffent vraiment.</em>
+                </h2>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {featuredBundles.map((b) => (
-                <ProductCard key={b.slug} product={b} />
+              <Link href="/collections" className="link-editorial hidden shrink-0 sm:inline-flex">
+                Toute la collection <ArrowRightIcon width={14} height={14} />
+              </Link>
+            </Reveal>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+              {featured.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 90}>
+                  <ProductCard product={p} priority={i < 2} />
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      <ReassuranceBar />
+      <Manifesto benefits={settings.benefits} />
+      <Packs bundles={bundles} allProducts={allProducts} />
 
-      <section aria-label="Questions fréquentes" className="container-x py-16">
-        <h2 className="mb-6 text-center font-display text-3xl font-semibold sm:text-4xl">Questions fréquentes</h2>
-        <FaqSection faq={settings.faq} />
-        <p className="mt-6 text-center text-sm text-muted">
-          Une autre question ?{' '}
-          <Link href="/contact" className="font-semibold text-ember-dark underline-offset-2 hover:underline">
-            Écrivez-nous
-          </Link>
-        </p>
+      {/* N°06 — FAQ */}
+      <section aria-label="Questions fréquentes" className="border-t border-line bg-snow">
+        <div className="container-x py-16 lg:py-24">
+          <Reveal className="mx-auto max-w-3xl">
+            <Overline index="N°06" label="Questions fréquentes" />
+            <h2 className="display-section mt-5 text-center">
+              Tout ce qu’on nous demande, <em>avant d’acheter.</em>
+            </h2>
+            <div className="mt-10">
+              <FaqSection faq={settings.faq} />
+            </div>
+            <p className="mt-8 text-center text-sm text-muted">
+              Une autre question ?{' '}
+              <Link href="/contact" className="font-semibold text-ember-dark underline underline-offset-2">
+                Écrivez-nous
+              </Link>
+            </p>
+          </Reveal>
+        </div>
       </section>
 
-      <section aria-label="Newsletter" className="container-x pb-4">
-        <div className="card bg-gradient-to-br from-ice to-snow p-8 text-center sm:p-12">
-          <h2 className="font-display text-2xl font-semibold sm:text-3xl">Ne ratez pas le premier grand froid</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            Conseils chaleur, sorties de produits et ventes privées — un email par mois maximum, désinscription en un
-            clic.
-          </p>
-          <div className="mx-auto mt-6 max-w-md">
-            <NewsletterForm />
-          </div>
+      {/* N°07 — Newsletter */}
+      <section aria-label="Newsletter" className="border-t border-line">
+        <div className="container-x py-16 lg:py-24">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <Overline index="N°07" label="Le courrier d’hiver" />
+            <h2 className="display-section mt-5">
+              Une lettre par mois,
+              <br />
+              <em>pas une de plus.</em>
+            </h2>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-muted">
+              Conseils chaleur, sorties de produits et ventes privées réservées aux abonnés.
+              Désinscription en un clic, évidemment.
+            </p>
+            <div className="mx-auto mt-8 max-w-md">
+              <NewsletterForm />
+            </div>
+          </Reveal>
         </div>
       </section>
     </>

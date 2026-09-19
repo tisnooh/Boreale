@@ -73,6 +73,12 @@ Légende : ✅ fait (par l'agent) · 🧑 à faire par le propriétaire · ➖ V
 - 🧑 Exécuter la recette manuelle QA_TEST_PLAN sur l'environnement réel (Supabase + Stripe TEST) avant lancement
 - ➖ Tests E2E Playwright (V2, une fois URLs réelles)
 
+## Animations & packshots
+- ✅ Animations éditoriales (reveal scroll, stagger, line-mask héro, ken burns, overlines animées) + 7 packshots IA provisoires + collage packs (D033) ; 6 visuels restants = SVG marque en attendant quota/photos réelles
+
+## Passe design premium (post-déploiement V1)
+- ✅ Homepage éditoriale (héro asymétrique, marquee, index univers, manifeste, packs sticky, wordmark footer) + cartes produit 4/5 + fiche produit sticky — identité conservée (D032) ; 51 tests verts, build ✓, smoke ✓
+
 ## Phase finale frontend (conception terminée)
 - ✅ Checkpoint git `checkpoint/boreale-before-final-frontend` + audit complet (0 href="#", 0 TODO/lorem, 0 console.log, 0 `any`)
 - ✅ Mode preview/live (`NEXT_PUBLIC_SITE_MODE`) + abstraction catalogue `lib/catalog/` + données démo isolées
