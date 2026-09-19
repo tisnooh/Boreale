@@ -1,0 +1,97 @@
+FOURNISSEUR DESTINATAIRE : Hangzhou Hanxiang Imp. & Exp. Co., Ltd. — Zhejiang, Chine
+CANAL D'ENVOI : inquiry plateforme (Alibaba/Made-in-China) OU email/site — envoi par BORÉALE (compte propriétaire).
+CONTEXTE : Votre fiche Made-in-China (blanket parmi main products, ISO 9000, OEM/ODM) — spécification sherpa double face 150x200 à confirmer.
+
+OBJET : Demande de devis (RFQ) — plaid-sherpa-nid / BOR-NID-EC + BOR-NID-BN — marque française BORÉALE
+
+Bonjour,
+
+Je représente BORÉALE, marque e-commerce française spécialisée dans les essentiels d'hiver
+(textile chaud, chaleur sans électricité, accessoires auto, maison). Nous préparons notre
+catalogue de lancement et souhaitons recevoir un devis complet pour le produit décrit
+ci-dessous. Merci de répondre point par point ; toute case non renseignée sera considérée
+comme non proposée.
+
+IMPORTANT — CONFORMITÉ : ne déclarez AUCUNE certification ou rapport que vous ne pouvez pas
+fournir en copie (laboratoire, numéro, date). Nous ne présumons aucune certification :
+seules les preuves écrites sont prises en compte.
+
+=== 0. PRODUIT CONCERNÉ ===
+Référence BORÉALE : BOR-NID-EC + BOR-NID-BN
+Description attendue : Plaid sherpa double face 150x200 cm (face sherpa + face polaire lisse), ourlets double piqûre, 2 coloris.
+Spécificités exigées (voir annexe produit) : [copier le bloc R37 de la fiche produit correspondante dans docs/RFQ_SUPPLIERS.md]
+
+=== 1. IDENTIFICATION ===
+R1  Référence fournisseur du produit + correspondance avec notre référence
+R25 Pays d'origine + adresse de l'usine de production
+
+=== 2. MATIÈRES & MESURES ===
+R2  Composition / matières détaillées (% par matériau, grammage g/m² si textile)
+R3  Dimensions produit (cm), par taille/variante
+R4  Poids net unitaire (g)
+R5  Poids emballé unitaire (g, avec packaging individuel)
+R6  Dimensions du packaging individuel (cm)
+
+=== 3. COMMERCIAL ===
+R7  MOQ (par variante ET par commande)
+R8  Prix EXW pour 100 unités (€/unité)
+R9  Prix EXW pour 300 unités (€/unité)
+R10 Prix EXW pour 500 unités (€/unité)
+R11 Prix EXW pour 1 000 unités (€/unité)
+R12 Prix FOB (port nommé) aux mêmes paliers, si disponible
+R33 Conditions de paiement (acompte %, solde, moyens acceptés)
+
+=== 4. PERSONNALISATION & PACKAGING ===
+R13 Personnalisation logo : procédé, position, coût/unité, MOQ
+R14 Packaging personnalisé : types possibles (polybag imprimé, boîte, sleeve…)
+R15 Coût du packaging par type et par unité (+ outillage éventuel : montant, amortissement)
+
+=== 5. ÉCHANTILLONS & PRODUCTION ===
+R16 Délai d'échantillon (jours ouvrés)
+R17 Prix de l'échantillon (€/unité + frais de port réel vers la France)
+R18 Délai de production après approbation d'échantillon (jours ouvrés)
+R19 Capacité mensuelle (unités/mois)
+
+=== 6. LOGISTIQUE ===
+R20 Incoterms disponibles (EXW, FOB, CIF, DAP, DDP…)
+R21 Carton master : type et référence
+R22 Unités par carton
+R23 Poids brut du carton (kg)
+R24 Dimensions carton (cm) + CBM par carton
+R34 DDP France possible : oui / non
+R35 Si oui : coût DDP estimatif vers 69001 Lyon, au palier 500 unités
+
+=== 7. CONFORMITÉ & QUALITÉ (copies exigées) ===
+R26 Rapports de tests disponibles : liste + laboratoire + numéro + date (joindre copies)
+R27 Certifications détenues applicables au produit : liste + copies datées
+R28 REACH : rapports Annex XVII (azo, phtalates, PAH, nickel) ou justification écrite de non-applicabilité
+R29 OEKO-TEX Standard 100 (si textile) : classe, numéro, validité — ou « none »
+R30 Conformité européenne applicable identifiée par vos soins (règlements/directives) + preuves
+R31 Politique défauts/qualité : taux de défauts constaté, remplacements, avoirs, délais
+R32 AQL proposé : niveau d'inspection (ex. ISO 2859-1 niveau II) + limites majeurs/mineurs
+
+=== 8. PRODUITS TAILLÉS (si applicable) ===
+R36 Mesures à plat exactes en cm par taille ; tolérances de fabrication (± cm) ;
+    tableau de tailles fournisseur ; correspondance taille EU ;
+    échantillons fournis en 3 tailles minimum (min / médian / max).
+
+=== 9. ANNEXE PRODUIT (R37) ===
+ANNEXE PRODUIT R37 — PLAID SHERPA « NID » 150x200 cm (réfs BOR-NID-EC / BOR-NID-BN)
+- Dimensions finies 150x200 cm ± tolérance ; grammages DES DEUX FACES (sherpa ~380 g/m²
+  annoncé) avec preuve pesée au m² ; longueur poil sherpa (mm).
+- Test boulochage chiffré (200 frottements ou équivalent) ; solidité coutures (traction N),
+  double piqûre oui/non ; dimensions après 3 lavages 30 °C.
+- COMPRESSION EXPORT : sac compressé ? dims carton master, unités/carton, poids, CBM
+  (poste fret dominant — donnée décisive pour notre landed cost).
+- Coloris lancement : écru + bleu nuit (Pantone TCX fournis) ; solidité couleurs.
+- OEKO-TEX Standard 100 si détenu (classe, n°, validité) sinon « none » ; REACH rapport.
+- Étiquette composition UE en français + entretien ; packaging personnalisé (sleeve/boîte).
+
+=== FORMAT DE RÉPONSE ATTENDU ===
+Devis PDF ou tableau dans cet email, devise EUR (ou USD + taux), validité ≥ 30 jours,
+réponse sous 5 jours ouvrés. Merci d'indiquer également votre meilleur contact commercial
+et vos fuseaux horaires de disponibilité.
+
+Cordialement,
+[VOTRE NOM] — Sourcing BORÉALE
+[VOTRE EMAIL] · [VOTRE TÉLÉPHONE]

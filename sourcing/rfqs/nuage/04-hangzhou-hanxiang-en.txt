@@ -1,0 +1,97 @@
+TARGET SUPPLIER: Hangzhou Hanxiang Imp. & Exp. Co., Ltd. — Zhejiang, Chine
+SENDING CHANNEL: platform inquiry (Alibaba/Made-in-China) OR email/site — sent by BORÉALE (owner account).
+CONTEXT: Votre fiche Made-in-China (socks/blanket/gloves, ISO 9000, OEM/ODM, FOB/CIF) — ligne coral fleece à confirmer.
+
+SUBJECT: Request for Quotation (RFQ) — chaussettes-polaires-nuage / BOR-NUA-SM-* + BOR-NUA-LX-* — French brand BORÉALE
+
+Dear Sales Team,
+
+I represent BORÉALE, a French e-commerce brand specialised in winter essentials (warm
+textiles, electricity-free heat, car winter accessories, home cocooning). We are preparing
+our launch catalogue and request a complete quotation for the product described below.
+Please answer point by point; any unanswered field will be considered as not offered.
+
+IMPORTANT — COMPLIANCE: do NOT claim any certification or test report you cannot provide
+in copy (lab name, report number, date). We do not assume any certification exists:
+only documented evidence is taken into account.
+
+=== 0. PRODUCT CONCERNED ===
+BORÉALE reference: BOR-NUA-SM-* + BOR-NUA-LX-*
+Expected description: Chaussettes polaires épaisses doublées, semelle antidérapante, bord-côte non serrant, 2 tailles x 2 coloris.
+Product-specific requirements (see product annex): [paste the R37 block of the matching
+product sheet in docs/RFQ_SUPPLIERS.md]
+
+=== 1. IDENTIFICATION ===
+R1  Your product reference + mapping to our reference
+R25 Country of origin + production factory address
+
+=== 2. MATERIALS & MEASUREMENTS ===
+R2  Detailed composition/materials (% per material, g/m² if textile)
+R3  Product dimensions (cm), per size/variant
+R4  Net unit weight (g)
+R5  Packed unit weight (g, incl. individual packaging)
+R6  Individual packaging dimensions (cm)
+
+=== 3. COMMERCIAL ===
+R7  MOQ (per variant AND per order)
+R8  EXW price for 100 units (€/unit)
+R9  EXW price for 300 units (€/unit)
+R10 EXW price for 500 units (€/unit)
+R11 EXW price for 1,000 units (€/unit)
+R12 FOB price (named port) at same tiers, if available
+R33 Payment terms (deposit %, balance, accepted methods)
+
+=== 4. BRANDING & PACKAGING ===
+R13 Logo customisation: process, position, cost/unit, MOQ
+R14 Custom packaging: available types (printed polybag, box, sleeve…)
+R15 Packaging cost per type and per unit (+ tooling if any: amount, amortisation)
+
+=== 5. SAMPLES & PRODUCTION ===
+R16 Sample lead time (working days)
+R17 Sample price (€/unit + actual shipping cost to France)
+R18 Production lead time after sample approval (working days)
+R19 Monthly capacity (units/month)
+
+=== 6. LOGISTICS ===
+R20 Available Incoterms (EXW, FOB, CIF, DAP, DDP…)
+R21 Master carton: type and reference
+R22 Units per carton
+R23 Gross carton weight (kg)
+R24 Carton dimensions (cm) + CBM per carton
+R34 DDP France available: yes / no
+R35 If yes: estimated DDP cost to 69001 Lyon, France, at the 500-unit tier
+
+=== 7. COMPLIANCE & QUALITY (copies required) ===
+R26 Available test reports: list + lab + report number + date (attach copies)
+R27 Certifications held and applicable to this product: list + dated copies
+R28 REACH: Annex XVII reports (azo dyes, phthalates, PAH, nickel) or written justification of non-applicability
+R29 OEKO-TEX Standard 100 (if textile): class, certificate number, validity — or "none"
+R30 Applicable European compliance identified by you (regulations/directives) + evidence
+R31 Defect/quality policy: observed defect rate, replacements, credit notes, handling time
+R32 Proposed AQL: inspection level (e.g. ISO 2859-1 level II) + major/minor limits
+
+=== 8. SIZED PRODUCTS (if applicable) ===
+R36 Exact flat measurements in cm per size; manufacturing tolerances (± cm);
+    your size chart; EU size correspondence;
+    samples provided in at least 3 sizes (min / middle / max).
+
+=== 9. PRODUCT ANNEX (R37) ===
+PRODUCT ANNEX R37 — CORAL FLEECE SOCKS "NUAGE" (refs BOR-NUA-SM/LX x 2 colours)
+- Exact composition % + fleece weight inner/outer (g/m², weighed proof).
+- Pilling test ≥ 10 washes 30 °C (Martindale or equivalent, value); shrinkage after 5 washes.
+- Anti-slip sole: material + slip test dry/wet (value + protocol).
+- Cuff: retention after 10 fittings (measure before/after); inner seam comfort.
+- SIZES: S/M (EU 36-41) and L/XL (EU 42-46): foot length, leg height, cuff circumference
+  in cm (relaxed/stretched) + tolerances ± cm; samples in both sizes.
+- Launch colours: navy blue + ecru (Pantone TCX provided); colour fastness (ISO 105 grade).
+- Needle detection: yes/no + proof; EU composition labelling in French.
+- REACH Annex XVII (azo, phthalates): lab report or written justification.
+
+=== EXPECTED ANSWER FORMAT ===
+PDF quotation or table in this email, currency EUR (or USD + exchange rate),
+validity ≥ 30 days, reply within 5 working days. Please also provide your best sales
+contact and available time zones.
+
+Best regards,
+[YOUR NAME] — Sourcing, BORÉALE
+[YOUR EMAIL] · [YOUR PHONE]

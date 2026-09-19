@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3D2317"/><stop offset="1" stop-color="#160C06"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.55" r="0.5">
+      <stop offset="0" stop-color="#E8622C" stop-opacity=".55"/><stop offset="1" stop-color="#E8622C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#bg)"/>
+  <circle cx="200" cy="270" r="190" fill="url(#glow)"/>
+  <!-- flamme -->
+  <path d="M200 120 c 42 55 70 83 70 126 a70 70 0 0 1 -140 0 c0 -28 15 -50 33 -70 c5 18 15 28 25 30 c-8 -33 -5 -58 12 -86z" fill="#E8622C"/>
+  <path d="M200 195 c 20 28 33 42 33 63 a33 33 0 0 1 -66 0 c0 -14 8 -25 17 -35 c2 9 7 14 12 15 c-4 -17 -2 -29 4 -43z" fill="#F6A15C"/>
+  <!-- vapeur -->
+  <g stroke="#F7FAFC" stroke-width="5" fill="none" stroke-linecap="round" opacity=".5">
+    <path d="M95 130 q10 -20 0 -40 q-8 -16 0 -30"/>
+    <path d="M305 130 q10 -20 0 -40 q-8 -16 0 -30"/>
+  </g>
+</svg>

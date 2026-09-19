@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* ============================================================
+   BORÉALE — Design system (docs/BRANDING.md)
+   Palette : Nuit polaire / Glace / Braise
+   Typo : Fraunces (display) + Inter (texte) via next/font
+   ============================================================ */
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+
+  --color-ink: #0b1b2b;
+  --color-ink-700: #16324a;
+  --color-ink-500: #33506b;
+  --color-muted: #5b7083;
+  --color-glacier: #3d7ea6;
+  --color-glacier-dark: #2b5f7e;
+  --color-ice: #e9f1f7;
+  --color-snow: #f7fafc;
+  --color-line: #d9e4ec;
+  --color-ember: #e8622c;
+  --color-ember-dark: #c24e1f;
+  --color-cream: #f6efe6;
+  --color-success: #2f7d4f;
+  --color-danger: #b3402f;
+
+  --radius-card: 1rem;
+
+  --animate-fade-up: fade-up 0.6s ease-out both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-snow text-ink font-sans antialiased;
+}
+
+/* Titre display */
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Conteneur standard */
+.container-x {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Boutons (styles complets — pas d'@apply de classe custom, requis Tailwind v4) */
+.btn,
+.btn-primary,
+.btn-dark,
+.btn-outline,
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-glacier disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-primary {
+  @apply bg-ember text-white hover:bg-ember-dark active:scale-[0.98];
+}
+.btn-dark {
+  @apply bg-ink text-white hover:bg-ink-700 active:scale-[0.98];
+}
+.btn-outline {
+  @apply border border-line bg-white text-ink hover:border-glacier hover:text-glacier-dark;
+}
+.btn-ghost {
+  @apply text-ink hover:bg-ice;
+}
+.btn-sm {
+  @apply px-3.5 py-2 text-xs;
+}
+
+/* Champs de formulaire */
+.field {
+  @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink placeholder:text-muted/60 focus:border-glacier focus:outline-none focus:ring-2 focus:ring-glacier/30;
+}
+.field-label {
+  @apply mb-1.5 block text-xs font-semibold tracking-wide text-ink-500 uppercase;
+}
+
+/* Cartes */
+.card {
+  @apply rounded-card border border-line bg-white;
+}
+
+/* Badges */
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase;
+}
+
+/* Accessibilité : mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

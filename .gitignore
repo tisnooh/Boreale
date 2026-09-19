@@ -1,0 +1,25 @@
+# Fichiers système / éditeurs
+.DS_Store
+Thumbs.db
+*.swp
+
+# Environnements — JAMAIS de secrets commités
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Dépendances & builds (rappel au niveau racine)
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Vercel
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*

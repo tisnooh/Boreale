@@ -1,0 +1,22 @@
+# deps / builds
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+
+# env — jamais de secrets commités
+.env
+.env.local
+.env.*.local
+
+# misc
+*.log
+.DS_Store
+*.pem
+next-env.d.ts.bak
+.vercel/
+
+# types générés
+*.tsbuildinfo

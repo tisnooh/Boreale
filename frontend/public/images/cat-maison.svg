@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#33445C"/><stop offset="1" stop-color="#182636"/>
+    </linearGradient>
+    <radialGradient id="candle" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#E8622C" stop-opacity=".4"/><stop offset="1" stop-color="#E8622C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#bg)"/>
+  <circle cx="320" cy="120" r="120" fill="url(#candle)"/>
+  <!-- plaid sherpa : vagues moelleuses -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M40 200 q60 -34 120 0 t120 0 t120 0" stroke="#F6EFE6" stroke-width="26" opacity=".95"/>
+    <path d="M40 255 q60 -34 120 0 t120 0 t120 0" stroke="#EADFD0" stroke-width="26" opacity=".8"/>
+    <path d="M40 310 q60 -34 120 0 t120 0 t120 0" stroke="#F6EFE6" stroke-width="26" opacity=".65"/>
+    <path d="M40 365 q60 -34 120 0 t120 0 t120 0" stroke="#E8622C" stroke-width="20" opacity=".55"/>
+  </g>
+  <!-- bougie -->
+  <g>
+    <rect x="300" y="90" width="34" height="60" rx="8" fill="#F6EFE6"/>
+    <path d="M317 62 q10 16 0 26 q-10 -10 0 -26z" fill="#E8622C"/>
+  </g>
+</svg>
