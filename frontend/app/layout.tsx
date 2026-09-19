@@ -12,6 +12,7 @@ import { CartDrawer } from '@/components/layout/CartDrawer';
 import { Footer } from '@/components/layout/Footer';
 import { PreviewBanner } from '@/components/layout/PreviewBanner';
 import { OfflineNotice } from '@/components/layout/OfflineNotice';
+import { ScrollProgress } from '@/components/layout/ScrollProgress';
 import type { HomepageSettings } from '@/lib/types';
 
 const fraunces = Fraunces({
@@ -71,6 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           Aller au contenu
         </a>
+        <ScrollProgress />
         <ToastProvider>
           <AuthProvider>
             <CartProvider>

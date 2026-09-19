@@ -249,3 +249,85 @@ body {
   .card-lift { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease; }
   .card-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -24px rgba(11, 27, 43, 0.25); }
 }
+
+/* ============================================================
+   Passe magazine (2026-09) — cover, rail, parallaxe, curseur
+   ============================================================ */
+
+.display-cover {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 9.5vw, 8rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+.display-cover em {
+  font-style: italic;
+  font-variation-settings: "SOFT" 60, "WONK" 1;
+}
+
+/* Rail horizontal : scrollbar masquée, snap */
+.rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+/* Aperçu flottant qui suit le curseur (index des univers) */
+.cursor-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  width: 17rem;
+  height: 22rem;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(0.92) rotate(3deg);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.cursor-preview.is-on {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1) rotate(3deg);
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-preview { display: none; }
+}
+
+/* Barre de progression de lecture */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--color-ember), var(--color-glacier));
+}
+
+/* Indication de scroll (cover) */
+@keyframes scroll-cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.scroll-cue { animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+
+/* Reduced-motion : on coupe uniquement les motions continues / déplacantes,
+   on conserve des fondus courts (lisibles sur PC avec effets visuels désactivés). */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .kenburns,
+  .scroll-cue { animation: none !important; }
+  .cursor-preview { display: none !important; }
+  .reveal {
+    transform: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+  .rail { scroll-behavior: auto; }
+}

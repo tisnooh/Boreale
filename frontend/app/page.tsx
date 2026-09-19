@@ -3,17 +3,17 @@ import { getCatalogSource } from '@/lib/catalog/source';
 import { buildMetadata, organizationJsonLd } from '@/lib/seo';
 import { BRAND } from '@/lib/constants';
 import type { ProductDTO } from '@/lib/types';
-import { Hero } from '@/components/home/Hero';
+import { Cover } from '@/components/home/Cover';
 import { Marquee } from '@/components/home/Marquee';
-import { CategoryGrid } from '@/components/home/CategoryGrid';
+import { UniversIndex } from '@/components/home/UniversIndex';
+import { SelectionRail } from '@/components/home/SelectionRail';
+import { ParallaxQuote } from '@/components/home/ParallaxQuote';
 import { Manifesto } from '@/components/home/Manifesto';
 import { Packs } from '@/components/home/Packs';
 import { FaqSection } from '@/components/home/FaqSection';
 import { NewsletterForm } from '@/components/home/NewsletterForm';
-import { ProductCard } from '@/components/product/ProductCard';
 import { Overline } from '@/components/ui/Overline';
 import { Reveal } from '@/components/ui/Reveal';
-import { ArrowRightIcon } from '@/components/Icons';
 
 export const metadata = buildMetadata({
   title: `${BRAND.name} — ${BRAND.slogan}`,
@@ -38,47 +38,19 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
 
-      <Hero hero={settings.hero} />
+      <Cover hero={settings.hero} />
       <Marquee />
-
-      <CategoryGrid categories={categories} />
-
-      {/* N°03 — La sélection */}
-      {featured.length > 0 && (
-        <section aria-label="Produits vedettes" className="border-t border-line bg-snow">
-          <div className="container-x py-16 lg:py-24">
-            <Reveal className="mb-10 flex items-end justify-between gap-6">
-              <div className="max-w-xl">
-                <Overline index="N°03" label="La sélection" />
-                <h2 className="display-section mt-5">
-                  Les pièces
-                  <br />
-                  <em>qui réchauffent vraiment.</em>
-                </h2>
-              </div>
-              <Link href="/collections" className="link-editorial hidden shrink-0 sm:inline-flex">
-                Toute la collection <ArrowRightIcon width={14} height={14} />
-              </Link>
-            </Reveal>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
-              {featured.map((p, i) => (
-                <Reveal key={p.slug} delay={i * 90}>
-                  <ProductCard product={p} priority={i < 2} />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
+      <UniversIndex categories={categories} />
+      <SelectionRail products={featured} />
+      <ParallaxQuote image="/images/hero-hiver.jpg" />
       <Manifesto benefits={settings.benefits} />
       <Packs bundles={bundles} allProducts={allProducts} />
 
-      {/* N°06 — FAQ */}
+      {/* N°05 — FAQ */}
       <section aria-label="Questions fréquentes" className="border-t border-line bg-snow">
-        <div className="container-x py-16 lg:py-24">
+        <div className="container-x py-20 lg:py-28">
           <Reveal className="mx-auto max-w-3xl">
-            <Overline index="N°06" label="Questions fréquentes" />
+            <Overline index="N°05" label="Questions fréquentes" />
             <h2 className="display-section mt-5 text-center">
               Tout ce qu’on nous demande, <em>avant d’acheter.</em>
             </h2>
@@ -95,11 +67,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* N°07 — Newsletter */}
+      {/* N°06 — Newsletter */}
       <section aria-label="Newsletter" className="border-t border-line">
-        <div className="container-x py-16 lg:py-24">
+        <div className="container-x py-20 lg:py-28">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <Overline index="N°07" label="Le courrier d’hiver" />
+            <Overline index="N°06" label="Le courrier d’hiver" />
             <h2 className="display-section mt-5">
               Une lettre par mois,
               <br />

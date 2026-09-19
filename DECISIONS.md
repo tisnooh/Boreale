@@ -131,3 +131,15 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
   sur fond nuit polaire cohérent DA ; les 6 autres gardent le SVG marque en attendant la fin du quota
   d'images — **à remplacer par photos réelles avant lancement** (D016). Les packs utilisent un collage 2×2
   des visuels de leurs composants (résolution par SKU), jamais de visuel pack inventé.
+
+## D034 — Passe magazine anti-template + animations tous navigateurs
+- Contexte : retour utilisateur « encore une boutique e-com comme partout » + animations invisibles sur certains PC.
+- Décision design : home reconstruite en expérience magazine — cover plein écran (typo géante line-mask,
+  collage décalé avec légende « Pièce N°07 », sommaire cliquable 01-04), ticker, index des univers avec
+  **aperçu image suivant le curseur** (desktop pointeur fin uniquement), sélection en **rail horizontal snap**
+  (boutons prev/next, drag, clavier), **break parallaxe** pleine largeur avec citation, manifeste/packs/FAQ/newsletter
+  renumérotés 03-06. Anciennes grilles hero/catégories supprimées (Hero.tsx, CategoryGrid.tsx).
+- Décision animations : `prefers-reduced-motion` ne coupe plus TOUT : seuls marquee/kenburns/scroll-cue/parallaxe/
+  cursor-preview sont stoppés ; les reveals deviennent des fondus opacité 300 ms (lisibles même avec effets
+  Windows désactivés). Fallback `IntersectionObserver` absent → contenu visible. Barre de progression de lecture
+  fixe en haut (gradient braise→glacier). Cursor-preview masqué sur tactile via `(hover: none)`.

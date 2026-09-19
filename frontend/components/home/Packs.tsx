@@ -19,7 +19,7 @@ export function Packs({ bundles, allProducts }: { bundles: ProductDTO[]; allProd
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
           <Reveal className="lg:sticky lg:top-28">
-            <Overline index="N°05" label="Packs & bundles" />
+            <Overline index="N°04" label="Packs & bundles" />
             <h2 className="display-section mt-5">
               Des ensembles
               <br />

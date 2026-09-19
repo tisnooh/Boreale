@@ -11,7 +11,7 @@ export function Manifesto({ benefits }: { benefits: HomepageSettings['benefits']
   return (
     <section aria-label="Manifeste" className="bg-ink py-20 text-white lg:py-28">
       <div className="container-x">
-        <Overline index="N°04" label="Manifeste" dark />
+        <Overline index="N°03" label="Manifeste" dark />
         <Reveal as="p" className="display-section mt-8 max-w-3xl">
           Nous ne vendons pas de l’hiver.
           <br />

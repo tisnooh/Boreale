@@ -73,6 +73,9 @@ Légende : ✅ fait (par l'agent) · 🧑 à faire par le propriétaire · ➖ V
 - 🧑 Exécuter la recette manuelle QA_TEST_PLAN sur l'environnement réel (Supabase + Stripe TEST) avant lancement
 - ➖ Tests E2E Playwright (V2, une fois URLs réelles)
 
+## Passe magazine + animations robustes
+- ✅ Home magazine : cover plein écran, sommaire, index univers + aperçu curseur, rail horizontal, break parallaxe ; reduced-motion rescopé ; scroll-progress ; 51 tests verts, build ✓ (D034)
+
 ## Animations & packshots
 - ✅ Animations éditoriales (reveal scroll, stagger, line-mask héro, ken burns, overlines animées) + 7 packshots IA provisoires + collage packs (D033) ; 6 visuels restants = SVG marque en attendant quota/photos réelles
 
