@@ -143,3 +143,11 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
   cursor-preview sont stoppés ; les reveals deviennent des fondus opacité 300 ms (lisibles même avec effets
   Windows désactivés). Fallback `IntersectionObserver` absent → contenu visible. Barre de progression de lecture
   fixe en haut (gradient braise→glacier). Cursor-preview masqué sur tactile via `(hover: none)`.
+
+## D035 — Cover plein écran + polaroids flottants (retour utilisateur)
+- Contexte : fond bleu plat jugé fade ; demande explicite : image plein écran + multiplier les cartes
+  « Pièce N°07 — Foyer » appréciées.
+- Décision : cover = photo immersive 100svh (ken burns) + double dégradé d'encre pour la lisibilité ;
+  4 polaroids légendés (Pièce N°07 Foyer, N°11 Sentinelle, N°13 Nid, N°01 Nuage) dispersés et flottants
+  (animation 7 s alternate, délais échelonnés) sur desktop, rangée scrollable snap sur mobile ;
+  sommaire et méta conservés en pied de cover. Reduced-motion : flottement coupé, tilt conservé.

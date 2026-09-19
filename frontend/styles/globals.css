@@ -331,3 +331,21 @@ body {
   }
   .rail { scroll-behavior: auto; }
 }
+
+/* ============================================================
+   Cover plein écran + polaroids flottants (2026-09)
+   ============================================================ */
+
+@keyframes polaroid-float {
+  from { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  to { transform: translateY(-10px) rotate(var(--tilt, 0deg)); }
+}
+.polaroid {
+  transform: rotate(var(--tilt, 0deg));
+  animation: polaroid-float 7s ease-in-out infinite alternate;
+  animation-delay: var(--float-delay, 0s);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .polaroid { animation: none !important; transform: rotate(var(--tilt, 0deg)); }
+}
