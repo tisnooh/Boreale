@@ -347,3 +347,34 @@ body {
   padding-right: 0.12em;
   color: var(--color-ember);
 }
+
+/* ============================================================
+   THÈME ÉTÉ — scope [data-season="summer"]
+   Même design system, mêmes composants : seules les variables
+   de tokens changent (Tailwind v4 compile vers var(--color-*)).
+   Direction : lagune profonde, sable coquillage, terracotta,
+   soleil discret — lumineux, frais, premium. Pas « l'hiver en jaune ».
+   ============================================================ */
+
+[data-season='summer'] {
+  --color-ink: #0c3b40;
+  --color-ink-700: #14555c;
+  --color-ink-500: #3e6b6e;
+  --color-muted: #69797a;
+  --color-glacier: #1f7a8c;
+  --color-glacier-dark: #16606e;
+  --color-ice: #efe7d8;
+  --color-snow: #fbf8f1;
+  --color-line: #e4dac8;
+  --color-ember: #c4553b;
+  --color-ember-dark: #a63f2a;
+  --color-cream: #f3e9d7;
+}
+
+/* Le hero été pose son texte sur image claire : encre par défaut déjà OK. */
+[data-season='summer'] .overline-dark {
+  @apply text-ink/60;
+}
+[data-season='summer'] .overline-dark::after {
+  @apply bg-ink/20;
+}

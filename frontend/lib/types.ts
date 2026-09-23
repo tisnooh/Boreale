@@ -1,6 +1,7 @@
 /** DTO partagés frontend — miroir de l'API backend (apps indépendantes, duplication assumée). */
 
 export type ProductType = 'product' | 'bundle';
+export type Season = 'winter' | 'summer' | 'all-season';
 export type OrderStatus =
   | 'pending'
   | 'paid'
@@ -38,6 +39,7 @@ export interface ProductDTO {
   description: string;
   longDescription: string | null;
   type: ProductType;
+  season: Season;
   isFeatured: boolean;
   imageUrl: string | null;
   images: string[];
@@ -61,6 +63,7 @@ export interface CategoryDTO {
   tagline: string | null;
   description: string | null;
   imageUrl: string | null;
+  season: Season;
   productCount?: number;
 }
 

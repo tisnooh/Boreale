@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { buildMetadata, breadcrumbJsonLd } from '@/lib/seo';
 import { getCatalogSource, filterProducts, sortProducts, type CatalogSort } from '@/lib/catalog/source';
+import { matchesShopSeason } from '@/lib/season/types';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import { ProductCard } from '@/components/product/ProductCard';
 import { CatalogControls } from '@/components/CatalogControls';
@@ -22,8 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<ReturnType<ty
   if (!cat) {
     return buildMetadata({ title: 'Collection introuvable', description: 'Cette collection n’existe pas.', path: `/collections/${slug}`, noIndex: true });
   }
+  const seasonLabel = cat.season === 'summer' ? 'Été — ' : '';
   return buildMetadata({
-    title: `${cat.name} — ${cat.tagline ?? BRAND.name}`,
+    title: `${seasonLabel}${cat.name} — ${cat.tagline ?? BRAND.name}`,
     description:
       cat.description ??
       `Découvrez la collection ${cat.name} ${BRAND.name} : produits chauds et durables sélectionnés pour l'hiver. Livraison offerte dès 69 €.`,
@@ -49,7 +51,10 @@ export default async function CollectionPage({ params, searchParams }: Props) {
     sort
   );
 
+  const shopSeason = matchesShopSeason(cat.season ?? 'winter', 'summer') && cat.season !== 'all-season' ? 'summer' : 'winter';
+
   return (
+    <div data-season={shopSeason}>
     <>
       <script
         type="application/ld+json"
@@ -103,5 +108,6 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         </p>
       </div>
     </>
+    </div>
   );
 }

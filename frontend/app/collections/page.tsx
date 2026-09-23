@@ -6,6 +6,7 @@ import { getCatalogSource, filterProducts, sortProducts, type CatalogSort } from
 import { ProductCard } from '@/components/product/ProductCard';
 import { CatalogControls } from '@/components/CatalogControls';
 import { EmptyState } from '@/components/ui';
+import { ArrowRightIcon } from '@/components/Icons';
 import { Reveal } from '@/components/ui/Reveal';
 
 export const metadata: Metadata = buildMetadata({
@@ -25,7 +26,11 @@ export default async function CollectionsPage({
   const sort = (sp.sort ?? 'featured') as CatalogSort;
   const source = getCatalogSource();
 
-  const [all, bundles] = await Promise.all([source.products(), source.bundles()]);
+  const [all, bundles, summerCategories] = await Promise.all([
+    source.products(),
+    source.bundles(),
+    source.categories('summer'),
+  ]);
   const products = sortProducts(
     filterProducts(all, { q: q || undefined, type: 'product' }),
     sort
@@ -79,6 +84,41 @@ export default async function CollectionsPage({
             />
           )}
         </div>
+
+        {summerCategories.length > 0 && (
+          <section aria-label="Univers été" className="mt-20 rounded-card bg-snow p-8 sm:p-12">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="overline">
+                  <span className="text-ember-dark">Univers été</span>
+                  <span>Saison claire</span>
+                </p>
+                <h2 className="display-section mt-4">
+                  L’été prépare <em>ses territoires.</em>
+                </h2>
+              </div>
+              <Link href="/ete" className="link-editorial hidden sm:inline-flex">
+                Visiter l’univers été <ArrowRightIcon width={14} height={14} />
+              </Link>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {summerCategories.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/collections/${c.slug}`}
+                    className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-white px-5 py-4 transition hover:border-glacier"
+                  >
+                    <span>
+                      <span className="font-display block font-semibold">{c.name}</span>
+                      <span className="mt-0.5 block text-xs text-muted">{c.tagline}</span>
+                    </span>
+                    <ArrowRightIcon width={16} height={16} className="shrink-0 text-muted transition group-hover:translate-x-1 group-hover:text-ember-dark" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {bundles.length > 0 && (
           <section id="packs" aria-label="Packs et bundles" className="mt-16 rounded-card bg-ink p-8 text-white sm:p-12">

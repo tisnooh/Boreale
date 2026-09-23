@@ -8,6 +8,7 @@ export const productListQuerySchema = z.object({
     .transform((v) => v === 'true')
     .optional(),
   q: z.string().trim().max(120).optional(),
+  season: z.enum(['winter', 'summer', 'all-season']).optional(),
   sort: z.enum(['featured', 'price_asc', 'price_desc', 'newest']).default('featured'),
   page: z.coerce.number().int().min(1).max(500).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),

@@ -104,6 +104,7 @@ export function buildRouter(): Router {
   r.get('/api/admin/settings/homepage', requireAdmin, adminController.getHomepageSettings);
   r.put('/api/admin/settings/homepage', requireAdmin, validateBody(settingsSchema), adminController.setHomepageSettings);
   r.get('/api/admin/settings/:key', requireAdmin, adminController.getSetting);
+  r.put('/api/admin/settings/:key', requireAdmin, validateBody(settingsSchema), adminController.setSetting);
 
   r.get('/api/admin/stats', requireAdmin, adminController.stats);
 

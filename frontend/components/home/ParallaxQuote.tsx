@@ -7,7 +7,9 @@ import { useEffect, useRef } from 'react';
  * Break pleine largeur avec parallaxe légère (transform, rAF) et citation serif.
  * Désactivé si prefers-reduced-motion (image fixe).
  */
-export function ParallaxQuote({ image }: { image: string }) {
+const WINTER_QUOTE = ['« Le froid n’est pas l’ennemi.', 'C’est une saison à habiter. »'];
+
+export function ParallaxQuote({ image, text = WINTER_QUOTE }: { image: string; text?: readonly string[] }) {
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,9 +44,9 @@ export function ParallaxQuote({ image }: { image: string }) {
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/60" aria-hidden />
       <div className="relative flex h-full items-center justify-center px-6">
         <p className="display-section max-w-3xl text-center text-white">
-          « Le froid n’est pas l’ennemi.
+          {text[0]}
           <br />
-          <em className="text-ember">C’est une saison à habiter.</em> »
+          <em className="text-ember">{text[1]}</em>
         </p>
       </div>
     </section>

@@ -3,6 +3,7 @@
 export type UUID = string;
 
 export type ProductType = 'product' | 'bundle';
+export type Season = 'winter' | 'summer' | 'all-season';
 export type OrderStatus =
   | 'pending'
   | 'paid'
@@ -25,6 +26,7 @@ export interface DbProduct {
   description: string;
   long_description: string | null;
   type: ProductType;
+  season: Season;
   is_active: boolean;
   is_featured: boolean;
   image_url: string | null;
@@ -72,6 +74,7 @@ export interface DbCategory {
   description: string | null;
   image_url: string | null;
   position: number;
+  season: Season;
   is_active: boolean;
 }
 
@@ -160,6 +163,7 @@ export interface CategoryDTO {
   tagline: string | null;
   description: string | null;
   imageUrl: string | null;
+  season: Season;
   productCount?: number;
 }
 
@@ -183,6 +187,7 @@ export interface ProductDTO {
   description: string;
   longDescription: string | null;
   type: ProductType;
+  season: Season;
   isFeatured: boolean;
   imageUrl: string | null;
   images: string[];

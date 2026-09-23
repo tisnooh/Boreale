@@ -11,6 +11,7 @@ const product: ProductDTO = {
   description: 'Le plaid XL double face.',
   longDescription: null,
   type: 'product',
+  season: 'winter',
   isFeatured: true,
   imageUrl: '/products/plaid-sherpa-nid.svg',
   images: [],

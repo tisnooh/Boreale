@@ -32,8 +32,9 @@ export const catalogController = {
     res.json({ data: product });
   }),
 
-  listCategories: asyncHandler(async (_req: Request, res: Response) => {
-    res.json({ data: await catalogService.listCategories() });
+  listCategories: asyncHandler(async (req: Request, res: Response) => {
+    const season = req.query.season as 'winter' | 'summer' | 'all-season' | undefined;
+    res.json({ data: await catalogService.listCategories(season) });
   }),
 
   getCategory: asyncHandler(async (req: Request, res: Response) => {

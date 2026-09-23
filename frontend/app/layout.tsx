@@ -4,6 +4,8 @@ import '@/styles/globals.css';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import { apiGetServer } from '@/lib/api-server';
 import { isPreview } from '@/lib/config';
+import { headers } from 'next/headers';
+import { getSeasonFromPath } from '@/lib/season/config';
 import { CartProvider } from '@/hooks/use-cart';
 import { AuthProvider } from '@/hooks/use-auth';
 import { ToastProvider } from '@/hooks/use-toast';
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
     siteName: BRAND.name,
     title: `${BRAND.name} — ${BRAND.slogan}`,
     description: 'Des essentiels chauds, beaux et durables pour affronter l’hiver. Expédié depuis la France.',
-    images: [{ url: '/og/og-default.png', width: 1200, height: 630, alt: BRAND.name }],
+    images: [{ url: '/og/og-default.jpg', width: 1200, height: 630, alt: BRAND.name }],
   },
   robots: { index: true, follow: true },
 };
@@ -56,13 +58,18 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Barre d'annonce : contenu admin en mode live ; masquée en preview (aucune promo simulée)
-  const settings = isPreview() ? null : await apiGetServer<{ data: HomepageSettings }>('/api/settings/homepage');
+  // Saison courante (SSR via middleware x-pathname) → scope de tokens thème
+  const pathname = (await headers()).get('x-pathname') ?? '/';
+  const season = getSeasonFromPath(pathname);
+  // Barre d'annonce : contenu admin de la saison en mode live ; masquée en preview
+  const settings = isPreview()
+    ? null
+    : await apiGetServer<{ data: HomepageSettings }>(`/api/settings/homepage${season === 'summer' ? '-summer' : ''}`);
   const announcement = settings?.data?.announcementBar ?? null;
 
   return (
     <html lang="fr" className={`${fraunces.variable} ${inter.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
+      <body data-season={season} className="flex min-h-full flex-col">
         <noscript>
           <style>{'.reveal{opacity:1;transform:none}.line-mask>span{animation:none}'}</style>
         </noscript>

@@ -164,3 +164,28 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
 - Décision : suppression du marquee (composant + CSS) ; remplacement par un folio hairline statique :
   « Maison BORÉALE — édition hiver · 14 pièces, 4 univers, 0 superflu · Expédition France — retours 30 j ».
   Aucune animation sur ce bloc : repos visuel volontaire après la cover animée.
+
+## D038 — Architecture saisonnière mutualisée (hiver + été, UNE seule application)
+- Contexte : évolution vers deux univers commerciaux sans dupliquer la boutique ni casser l'hiver déployé.
+- Décision : noyau saison central `lib/season/` (types `Season = winter|summer|all-season`, `DEFAULT_SEASON`,
+  `getSeasonFromPath`, `homepageSettingsKey`) ; thème été = **scope de tokens CSS** `[data-season="summer"]`
+  (Tailwind v4 compile vers var(--color-*) : tous les composants partagés se retokénisent sans duplication) ;
+  `data-season` posé sur <body> dès le SSR via middleware (header x-pathname) → aucun flash.
+- Routes : `/` = hiver (inchangé, SEO conservé) ; `/hiver` = alias canonical → `/` ; `/ete` = home été ;
+  `/collections` et `/collections/[slug]` restent saison-agnostiques (la page de collection scope son thème
+  selon `category.season`, l'index présente les deux univers) ; `/products/[slug]` scope selon `product.season`.
+- Switch Hiver/Été dans le header (desktop + mobile) : deux liens pilule, aria-current, clavier/souris/tactile.
+- Panier / checkout / compte / commandes / admin / Stripe / emails : **communs et uniques** (aucune duplication).
+
+## D039 — Été sans données inventées
+- Taxonomie été (6 univers) + narration + hero + FAQ + concepts de packs créés SANS produit, prix, stock,
+  fournisseur, avis ni certification inventés. Sélection été = état éditorial honnête « en préparation » ;
+  packs été = cartes pointillées « Composition en cours — sourcing été ». Le sourcing été = phase séparée.
+- Base : migration `0003_season.sql` (colonnes `season` + index + seed taxonomie été + clé settings
+  `homepage-summer`) ; API : filtre `?season=` sur products/categories ; admin : PUT `/api/admin/settings/:key`
+  whitelisté (homepage, homepage-summer) + onglets Hiver/Été dans Contenu + filtre saison dans Produits.
+
+## D040 — Comportement de "/" et bascule future
+- `/` rend l'hiver tant que `NEXT_PUBLIC_DEFAULT_SEASON` ≠ 'summer' (défaut). Le jour de la bascule estivale :
+  setter la variable → `/` redirige vers `/ete` ; aucune autre modification nécessaire.
+- Pas d'automatisation par date : l'utilisateur garde accès aux deux univers en permanence (switch + URLs).

@@ -23,7 +23,7 @@ export function buildMetadata(opts: {
       locale: 'fr_FR',
       title: `${opts.title} — ${BRAND.name}`,
       description: opts.description,
-      images: [{ url: opts.image ?? `${SITE_URL}/og/og-default.png`, width: 1200, height: 630, alt: BRAND.name }],
+      images: [{ url: opts.image ?? `${SITE_URL}/og/og-default.jpg`, width: 1200, height: 630, alt: BRAND.name }],
     },
     twitter: {
       card: 'summary_large_image',

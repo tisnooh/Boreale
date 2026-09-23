@@ -10,14 +10,17 @@ import type { HomepageSettings } from '@/lib/types';
 export default function AdminContentPage() {
   const [settings, setSettings] = useState<HomepageSettings | null>(null);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<'hiver' | 'ete'>('hiver');
   const { toast } = useToast();
+  const settingsKey = tab === 'ete' ? 'homepage-summer' : 'homepage';
 
   useEffect(() => {
+    setSettings(null);
     api
-      .get<{ data: HomepageSettings }>('/api/admin/settings/homepage')
+      .get<{ data: HomepageSettings }>(`/api/admin/settings/${settingsKey}`)
       .then((r) => setSettings(r.data))
       .catch((e) => toast(e instanceof ApiError ? e.message : 'Chargement impossible.', 'error'));
-  }, [toast]);
+  }, [toast, settingsKey]);
 
   if (!settings) return <Spinner label="Chargement du contenu…" />;
 
@@ -33,9 +36,9 @@ export default function AdminContentPage() {
     if (!settings) return;
     setSaving(true);
     try {
-      const res = await api.put<{ data: HomepageSettings }>('/api/admin/settings/homepage', { value: settings });
+      const res = await api.put<{ data: HomepageSettings }>(`/api/admin/settings/${settingsKey}`, { value: settings });
       setSettings(res.data);
-      toast('Contenu enregistré. La homepage est à jour.', 'success');
+      toast(`Contenu enregistré. La homepage ${tab === 'ete' ? 'été' : 'hiver'} est à jour.`, 'success');
     } catch (err) {
       toast(err instanceof ApiError ? err.message : 'Erreur.', 'error');
     } finally {
@@ -45,8 +48,24 @@ export default function AdminContentPage() {
 
   return (
     <div>
+      <div className="mb-4 inline-flex rounded-full border border-line bg-white p-1" role="tablist" aria-label="Saison éditée">
+        {(['hiver', 'ete'] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={tab === t}
+            onClick={() => setTab(t)}
+            className={`rounded-full px-4 py-1.5 text-[11px] font-bold tracking-[0.14em] uppercase transition ${
+              tab === t ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+            }`}
+          >
+            {t === 'hiver' ? 'Hiver' : 'Été'}
+          </button>
+        ))}
+      </div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-semibold">Contenu de la homepage</h1>
+        <h1 className="font-display text-2xl font-semibold">Contenu de la homepage {tab === 'ete' ? 'été' : 'hiver'}</h1>
         <button type="button" className="btn-primary btn-sm" disabled={saving} onClick={() => void save()}>
           {saving ? 'Enregistrement…' : 'Enregistrer'}
         </button>

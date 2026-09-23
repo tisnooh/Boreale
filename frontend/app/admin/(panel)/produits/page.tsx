@@ -21,6 +21,7 @@ interface AdminProduct {
   slug: string;
   name: string;
   type: 'product' | 'bundle';
+  season?: 'winter' | 'summer' | 'all-season';
   is_active: boolean;
   is_featured: boolean;
   product_variants?: AdminVariant[];
@@ -32,8 +33,16 @@ function stockOf(v: AdminVariant): number {
   return Array.isArray(inv) ? inv[0]?.quantity ?? 0 : inv.quantity ?? 0;
 }
 
+const SEASON_FILTERS = [
+  { id: 'all', label: 'Tous' },
+  { id: 'winter', label: 'Hiver' },
+  { id: 'summer', label: 'Été' },
+  { id: 'all-season', label: 'All-season' },
+] as const;
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProduct[] | null>(null);
+  const [seasonFilter, setSeasonFilter] = useState<(typeof SEASON_FILTERS)[number]['id']>('all');
   const { toast } = useToast();
 
   const load = async () => {
@@ -48,6 +57,10 @@ export default function AdminProductsPage() {
   useEffect(() => {
     void load();
   }, []);
+
+  const visible = (products ?? []).filter((p) =>
+    seasonFilter === 'all' ? true : (p.season ?? 'winter') === seasonFilter
+  );
 
   async function remove(p: AdminProduct) {
     if (!window.confirm(`Désactiver « ${p.name} » ? Il disparaîtra de la boutique (réactivable depuis sa page d'édition).`)) return;
@@ -65,8 +78,25 @@ export default function AdminProductsPage() {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-semibold">Produits ({products.length})</h1>
-        <Link href="/admin/produits/nouveau" className="btn-primary btn-sm">+ Nouveau produit</Link>
+        <h1 className="font-display text-2xl font-semibold">Produits ({visible.length})</h1>
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded-full border border-line bg-white p-1" role="group" aria-label="Filtrer par saison">
+            {SEASON_FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                aria-pressed={seasonFilter === f.id}
+                onClick={() => setSeasonFilter(f.id)}
+                className={`rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.12em] uppercase transition ${
+                  seasonFilter === f.id ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <Link href="/admin/produits/nouveau" className="btn-primary btn-sm">+ Nouveau produit</Link>
+        </div>
       </div>
 
       {products.length === 0 ? (
@@ -80,6 +110,7 @@ export default function AdminProductsPage() {
               <tr className="border-b border-line text-[11px] tracking-wide text-muted uppercase">
                 <th className="px-4 py-3">Produit</th>
                 <th className="px-4 py-3">Type</th>
+                <th className="px-4 py-3">Saison</th>
                 <th className="px-4 py-3">Variantes</th>
                 <th className="px-4 py-3">Prix min</th>
                 <th className="px-4 py-3">Stock total</th>
@@ -88,7 +119,7 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
-              {products.map((p) => {
+              {visible.map((p) => {
                 const variants = p.product_variants ?? [];
                 const minPrice = variants.length > 0 ? Math.min(...variants.map((v) => v.price_cents)) : 0;
                 const totalStock = variants.reduce((s, v) => s + stockOf(v), 0);
@@ -99,6 +130,11 @@ export default function AdminProductsPage() {
                       <span className="block text-xs text-muted">/{p.slug}{p.is_featured && ' · ★ vedette'}</span>
                     </td>
                     <td className="px-4 py-3"><span className="badge bg-ice text-ink-500">{p.type === 'bundle' ? 'Pack' : 'Produit'}</span></td>
+                    <td className="px-4 py-3">
+                      <span className={`badge ${(p.season ?? 'winter') === 'summer' ? 'bg-cream text-ember-dark' : 'bg-ice text-ink-500'}`}>
+                        {(p.season ?? 'winter') === 'summer' ? 'Été' : (p.season ?? 'winter') === 'all-season' ? 'All-season' : 'Hiver'}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 tabular-nums">{variants.length}</td>
                     <td className="px-4 py-3 tabular-nums">{formatCents(minPrice)}</td>
                     <td className="px-4 py-3">

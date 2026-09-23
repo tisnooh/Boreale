@@ -288,6 +288,17 @@ export const adminController = {
     res.json({ data: await settingsRepo.get(req.params.key!) });
   }),
 
+  /** Écriture settings par clé — whitelist explicite (homepages saisonnières comprises). */
+  setSetting: asyncHandler(async (req: AuthedRequest, res: Response) => {
+    const ALLOWED = ['homepage', 'homepage-summer'];
+    const key = req.params.key!;
+    if (!ALLOWED.includes(key)) {
+      throw AppError.badRequest('settings_key_not_allowed', `Clé de réglage non autorisée : ${key}.`);
+    }
+    await settingsRepo.set(key, (req.body as { value: unknown }).value);
+    res.json({ data: await settingsRepo.get(key) });
+  }),
+
   stats: asyncHandler(async (_req: AuthedRequest, res: Response) => {
     res.json({ data: await getStatsOverview() });
   }),

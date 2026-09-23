@@ -54,6 +54,7 @@ export function toProductDTO(p: ProductWithRelations): ProductDTO {
     description: p.description,
     longDescription: p.long_description,
     type: p.type,
+    season: p.season ?? 'winter',
     isFeatured: p.is_featured,
     imageUrl: p.image_url,
     images: p.images ?? [],
@@ -83,6 +84,7 @@ export function toCategoryDTO(c: DbCategory, productCount?: number): CategoryDTO
     tagline: c.tagline,
     description: c.description,
     imageUrl: c.image_url,
+    season: c.season ?? 'winter',
     ...(productCount !== undefined ? { productCount } : {}),
   };
 }
@@ -98,6 +100,10 @@ export interface Paginated<T> {
 
 export function matchesQuery(p: ProductWithRelations, q: ProductListQuery): boolean {
   if (q.type && p.type !== q.type) return false;
+  if (q.season) {
+    const s = p.season ?? 'winter';
+    if (s !== q.season && s !== 'all-season') return false;
+  }
   if (q.featured !== undefined && p.is_featured !== q.featured) return false;
   if (q.category) {
     const cats = extractCategories(p).map((c) => c.slug);
@@ -163,8 +169,9 @@ export const catalogService = {
     return detail;
   },
 
-  async listCategories(): Promise<CategoryDTO[]> {
-    const [categories, products] = await Promise.all([catalogRepo.listCategories(), catalogRepo.listActiveProducts()]);
+  async listCategories(season?: 'winter' | 'summer' | 'all-season'): Promise<CategoryDTO[]> {
+    const [allCategories, products] = await Promise.all([catalogRepo.listCategories(), catalogRepo.listActiveProducts()]);
+    const categories = season ? allCategories.filter((c) => (c.season ?? 'winter') === season || (c.season ?? 'winter') === 'all-season') : allCategories;
     return categories.map((c) => {
       const count = products.filter((p) => p.type === 'product' && extractCategories(p).some((cat) => cat.slug === c.slug)).length;
       return toCategoryDTO(c, count);

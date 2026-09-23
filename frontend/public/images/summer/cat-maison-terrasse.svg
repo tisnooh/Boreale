@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440" width="440" height="440">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F6EEDD"/><stop offset="1" stop-color="#EADFC6"/>
+  </linearGradient></defs>
+  <rect width="440" height="440" fill="url(#bg)"/>
+  <g opacity=".5"><circle cx="0" cy="20" r="1" fill="#C4553B" opacity=".25"/><circle cx="67" cy="61" r="2" fill="#C4553B" opacity=".25"/><circle cx="134" cy="102" r="3" fill="#C4553B" opacity=".25"/><circle cx="201" cy="143" r="1" fill="#C4553B" opacity=".25"/><circle cx="268" cy="184" r="2" fill="#C4553B" opacity=".25"/><circle cx="335" cy="45" r="3" fill="#C4553B" opacity=".25"/><circle cx="402" cy="86" r="1" fill="#C4553B" opacity=".25"/><circle cx="29" cy="127" r="2" fill="#C4553B" opacity=".25"/><circle cx="96" cy="168" r="3" fill="#C4553B" opacity=".25"/><circle cx="163" cy="29" r="1" fill="#C4553B" opacity=".25"/><circle cx="230" cy="70" r="2" fill="#C4553B" opacity=".25"/><circle cx="297" cy="111" r="3" fill="#C4553B" opacity=".25"/><circle cx="364" cy="152" r="1" fill="#C4553B" opacity=".25"/><circle cx="431" cy="193" r="2" fill="#C4553B" opacity=".25"/></g>
+  <rect x="110" y="210" width="220" height="120" rx="14" fill="none" stroke="#0C3B40" stroke-width="10"/><path d="M110 250 h220" stroke="#C4553B" stroke-width="10"/><path d="M150 210 v-50 m70 50 v-50 m70 50 v-50" stroke="#1F7A8C" stroke-width="10" stroke-linecap="round"/><circle cx="330" cy="100" r="30" fill="#E9C46A"/>
+  <text x="220" y="404" text-anchor="middle" font-family="Georgia, serif" font-size="15" letter-spacing="4" fill="#0C3B40">BORÉALE — ÉTÉ</text>
+</svg>

@@ -47,7 +47,10 @@ export default async function ProductPage({ params }: Props) {
       : `${SITE_URL}${product.imageUrl}`
     : null;
 
+  const shopSeason = product.season === 'summer' ? 'summer' : 'winter';
+
   return (
+    <div data-season={shopSeason}>
     <>
       {/* Structured data uniquement en mode live : pas de schema Produit sur des données de démonstration */}
       {!isPreview() && (
@@ -181,5 +184,6 @@ export default async function ProductPage({ params }: Props) {
         </p>
       </div>
     </>
+    </div>
   );
 }

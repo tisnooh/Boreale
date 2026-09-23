@@ -8,6 +8,7 @@ import { useCart } from '@/hooks/use-cart';
 import { useAuth } from '@/hooks/use-auth';
 import { Logo } from './Logo';
 import { CartIcon, MenuIcon, UserIcon, XIcon } from '@/components/Icons';
+import { SeasonSwitch } from './SeasonSwitch';
 
 export function Header({ announcement }: { announcement: string | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,6 +55,7 @@ export function Header({ announcement }: { announcement: string | null }) {
             <Logo />
           </Link>
 
+          <SeasonSwitch className="hidden md:inline-flex" />
           <nav aria-label="Navigation principale" className="hidden items-center gap-7 lg:flex">
             <Link href="/collections" className="text-sm font-semibold text-ink transition hover:text-ember-dark">
               Boutique
@@ -107,6 +109,9 @@ export function Header({ announcement }: { announcement: string | null }) {
       {menuOpen && (
         <nav id="menu-mobile" aria-label="Navigation mobile" className="border-b border-line bg-white lg:hidden">
           <div className="container-x flex flex-col gap-1 py-4">
+            <div className="px-3 pb-2">
+              <SeasonSwitch />
+            </div>
             <MobileLink href="/collections">Toute la boutique</MobileLink>
             {NAV_COLLECTIONS.map((c) => (
               <MobileLink key={c.slug} href={`/collections/${c.slug}`}>
