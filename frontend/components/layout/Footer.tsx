@@ -1,23 +1,41 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BRAND, FOOTER_LINKS } from '@/lib/constants';
 import { getSeasonFooterLinks } from '@/lib/season/nav';
-import type { ShopSeason } from '@/lib/season/types';
+import { getSeasonFromPath } from '@/lib/season/config';
 import { Logo } from './Logo';
 
-export function Footer({ season = 'winter' }: { season?: ShopSeason }) {
+const SEASON_BASELINE = {
+  winter: 'L’hiver, du bon côté.',
+  summer: 'L’été, à ciel ouvert.',
+} as const;
+
+const SEASON_DESC = {
+  winter:
+    'BORÉALE sélectionne des essentiels d’hiver chauds, beaux et durables : textile, chaleur sans électricité, auto et cocooning. Expédié depuis la France.',
+  summer:
+    'BORÉALE sélectionne des essentiels d’été lumineux, malins et durables : plage, voyage, fraîcheur, outdoor, auto et terrasse. Expédié depuis la France.',
+} as const;
+
+/** Footer commun aux deux saisons : liens, baseline et description suivent l'URL courante. */
+export function Footer() {
+  const pathname = usePathname();
+  const season = getSeasonFromPath(pathname);
+
   return (
     <footer className="mt-20 border-t border-line bg-ink text-ice">
       <div className="container-x pt-14" aria-hidden>
         <p className="footer-wordmark select-none text-center">BORÉALE</p>
-        <p className="mt-4 text-center text-[10px] tracking-[0.35em] text-ice/50 uppercase">L’hiver, du bon côté</p>
+        <p className="mt-4 text-center text-[10px] tracking-[0.35em] text-ice/50 uppercase">
+          {SEASON_BASELINE[season]}
+        </p>
       </div>
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <Logo light withBaseline />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ice/70">
-            {BRAND.name} sélectionne des essentiels d’hiver chauds, beaux et durables : textile, chaleur sans
-            électricité, auto et cocooning. Expédié depuis la France.
-          </p>
+          <Logo light baseline={SEASON_BASELINE[season]} />
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ice/70">{SEASON_DESC[season]}</p>
           <p className="mt-4 text-xs text-ice/50">
             Service client :{' '}
             <a href={`mailto:${BRAND.supportEmail}`} className="underline underline-offset-2 hover:text-white">

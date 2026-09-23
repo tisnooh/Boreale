@@ -15,6 +15,7 @@ import { Footer } from '@/components/layout/Footer';
 import { PreviewBanner } from '@/components/layout/PreviewBanner';
 import { OfflineNotice } from '@/components/layout/OfflineNotice';
 import { ScrollProgress } from '@/components/layout/ScrollProgress';
+import { SeasonScope } from '@/components/layout/SeasonScopeSync';
 import type { HomepageSettings } from '@/lib/types';
 
 const fraunces = Fraunces({
@@ -80,6 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           Aller au contenu
         </a>
         <ScrollProgress />
+        <SeasonScope>
         <ToastProvider>
           <AuthProvider>
             <CartProvider>
@@ -88,12 +90,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <main id="main" className="flex-1">
                 {children}
               </main>
-              <Footer season={season} />
+              <Footer />
               <CartDrawer />
               <OfflineNotice />
             </CartProvider>
           </AuthProvider>
         </ToastProvider>
+        </SeasonScope>
       </body>
     </html>
   );

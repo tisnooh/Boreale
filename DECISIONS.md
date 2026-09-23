@@ -198,3 +198,11 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
   (« Sélection été en préparation »), concepts de packs été ; l'hiver reste inchangé sans paramètre.
 - `/faq?saison=ete` : FAQ été (ouverture, panier commun, retours) ; `/about` : chapitre « Et l'été ? » ;
   `/ete` : theme-color lagune. Aucun duplicat de composant : variantes par props/scope.
+
+## D042 — Scope saisonnier client-first (fiabilité Vercel) + footer saisonnier complet
+- Contexte : sur Vercel, le scope SSR via header middleware ne s'appliquait pas (footer hiver et tokens
+  hiver visibles sur /ete) ; retour utilisateur « tout n'est pas adapté ».
+- Décision : `SeasonScope` (client) enveloppe tout l'arbre avec `data-season` dérivé de usePathname
+  (correct dès le SSR, sans middleware) + synchro `<body>` à chaque navigation ; Footer devient client :
+  liens boutique, baseline du wordmark (« L'hiver, du bon côté. » / « L'été, à ciel ouvert. ») et
+  description de marque suivent la saison courante. Logo accepte une baseline paramétrable.

@@ -16,7 +16,15 @@ export function LogoMark({ className = 'h-8 w-8' }: { className?: string }) {
   );
 }
 
-export function Logo({ light = false, withBaseline = false }: { light?: boolean; withBaseline?: boolean }) {
+export function Logo({
+  light = false,
+  withBaseline = false,
+  baseline = 'L’hiver, du bon côté.',
+}: {
+  light?: boolean;
+  withBaseline?: boolean;
+  baseline?: string;
+}) {
   return (
     <span className="inline-flex flex-col leading-none">
       <span className="inline-flex items-center gap-2.5">
@@ -29,7 +37,7 @@ export function Logo({ light = false, withBaseline = false }: { light?: boolean;
       </span>
       {withBaseline && (
         <span className={`mt-1 text-[11px] tracking-wide ${light ? 'text-white/60' : 'text-muted'}`}>
-          L’hiver, du bon côté.
+          {baseline}
         </span>
       )}
     </span>
