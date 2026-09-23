@@ -1,21 +1,36 @@
 import type { Metadata } from 'next';
-import { apiGetServer } from '@/lib/api-server';
+import { getCatalogSource } from '@/lib/catalog/source';
+import { SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
 import { buildMetadata, breadcrumbJsonLd, faqJsonLd } from '@/lib/seo';
 import { FaqSection } from '@/components/home/FaqSection';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
 import type { HomepageSettings } from '@/lib/types';
 import Link from 'next/link';
 
-export const metadata: Metadata = buildMetadata({
-  title: 'FAQ — Livraison, retours, paiement, produits',
-  description:
-    'Toutes les réponses : délais de livraison, retours 30 jours, paiement sécurisé Stripe, suivi de commande, produits chauffants, entretien du textile.',
-  path: '/faq',
-});
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ saison?: string }> }): Promise<Metadata> {
+  const sp = await searchParams;
+  if (sp.saison === 'ete') {
+    return buildMetadata({
+      title: 'FAQ été — ouverture, sélection, panier commun, retours',
+      description:
+        'Les réponses de l’univers été BORÉALE : ouverture de la sélection, panier commun hiver/été, retours 30 jours, packs à venir.',
+      path: '/faq?saison=ete',
+    });
+  }
+  return buildMetadata({
+    title: 'FAQ — Livraison, retours, paiement, produits',
+    description:
+      'Toutes les réponses : délais de livraison, retours 30 jours, paiement sécurisé Stripe, suivi de commande, produits chauffants, entretien du textile.',
+    path: '/faq',
+  });
+}
 
-export default async function FaqPage() {
-  const settings = await apiGetServer<{ data: HomepageSettings }>('/api/settings/homepage');
-  const faq = settings?.data?.faq ?? HOMEPAGE_FALLBACK.faq;
+export default async function FaqPage({ searchParams }: { searchParams: Promise<{ saison?: string }> }) {
+  const sp = await searchParams;
+  const summer = sp.saison === 'ete';
+  const source = getCatalogSource();
+  const settings = summer ? SUMMER_HOMEPAGE : await source.homepage('winter');
+  const faq = settings.faq;
 
   const extra = [
     { q: 'Expédiez-vous hors de France ?', a: 'Au lancement, nous livrons la France métropolitaine. L’extension Belgique/Suisse/Luxembourg arrive — inscrivez-vous à la newsletter pour être prévenu.' },
@@ -38,7 +53,7 @@ export default async function FaqPage() {
         }}
       />
       <div className="container-x max-w-3xl py-12">
-        <h1 className="font-display text-4xl font-semibold">Questions fréquentes</h1>
+        <h1 className="font-display text-4xl font-semibold">{summer ? 'Questions fréquentes — été' : 'Questions fréquentes'}</h1>
         <p className="mt-2 text-sm text-muted">
           Livraison, retours, paiement, entretien — tout ce qu’il faut savoir. Une question sans réponse ici ?{' '}
           <Link href="/contact" className="font-semibold text-ember-dark underline underline-offset-2">Écrivez-nous</Link>.

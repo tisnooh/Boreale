@@ -189,3 +189,12 @@ Format : contexte → décision → justification. Les décisions marquées ⚠�
 - `/` rend l'hiver tant que `NEXT_PUBLIC_DEFAULT_SEASON` ≠ 'summer' (défaut). Le jour de la bascule estivale :
   setter la variable → `/` redirige vers `/ete` ; aucune autre modification nécessaire.
 - Pas d'automatisation par date : l'utilisateur garde accès aux deux univers en permanence (switch + URLs).
+
+## D041 — Adaptation saisonnière complète de l'existant (retour utilisateur « tout n'a pas été adapté »)
+- Header : nav collections dynamiques par saison (hiver 4 univers / été 6 univers) + lien Packs saisonnier,
+  desktop et mobile ; Footer : liens boutique par saison ; Manifeste : statement + journal par saison ;
+  fiche produit : « Complétez votre hiver/été/saison » selon product.season.
+- `/collections?saison=ete` : titre, fil d'Ariane, metadata, canonical, état vide honnête
+  (« Sélection été en préparation »), concepts de packs été ; l'hiver reste inchangé sans paramètre.
+- `/faq?saison=ete` : FAQ été (ouverture, panier commun, retours) ; `/about` : chapitre « Et l'été ? » ;
+  `/ete` : theme-color lagune. Aucun duplicat de composant : variantes par props/scope.

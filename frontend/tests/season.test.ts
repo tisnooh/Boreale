@@ -56,3 +56,17 @@ describe('source catalogue saisonnière (preview)', () => {
     expect(summer.faq.length).toBeGreaterThan(0);
   });
 });
+
+describe('navigation & libellés saisonniers', () => {
+  it('nav été = 6 univers été, nav hiver = 4 univers hiver', async () => {
+    const { getSeasonNav, getSeasonFooterLinks, relatedTitle } = await import('@/lib/season/nav');
+    expect(getSeasonNav('summer')).toHaveLength(6);
+    expect(getSeasonNav('winter')).toHaveLength(4);
+    expect(getSeasonNav('summer')[0]!.name).toContain('Plage');
+    expect(getSeasonFooterLinks('summer')[0]!.href).toContain('saison=ete');
+    expect(getSeasonFooterLinks('winter')[0]!.href).toBe('/collections');
+    expect(relatedTitle('summer')).toContain('été');
+    expect(relatedTitle('winter')).toContain('hiver');
+    expect(relatedTitle('all-season')).toContain('saison');
+  });
+});

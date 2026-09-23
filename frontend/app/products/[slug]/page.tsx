@@ -8,6 +8,7 @@ import { buildMetadata, breadcrumbJsonLd, productJsonLd } from '@/lib/seo';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import type { ProductDTO } from '@/lib/types';
 import { Overline } from '@/components/ui/Overline';
+import { relatedTitle } from '@/lib/season/nav';
 import { Reveal } from '@/components/ui/Reveal';
 import { ProductPurchase } from '@/components/product/ProductPurchase';
 import { BundleContents } from '@/components/product/BundleContents';
@@ -165,7 +166,7 @@ export default async function ProductPage({ params }: Props) {
         {/* Produits liés */}
         {product.related && product.related.length > 0 && (
           <Reveal as="section" aria-label="Produits liés" className="mt-16">
-            <h2 className="font-display mb-6 text-2xl font-semibold sm:text-3xl">Complétez votre hiver</h2>
+            <h2 className="font-display mb-6 text-2xl font-semibold sm:text-3xl">{relatedTitle(product.season ?? 'winter')}</h2>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {product.related.map((p, i) => (
                 <Reveal key={p.slug} delay={i * 80}>

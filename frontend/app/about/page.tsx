@@ -59,6 +59,15 @@ export default function AboutPage() {
             des produits que nous vendons. Si nous nous trompons sur un produit, nous le retirons du catalogue.
           </p>
 
+          <h2 className="font-display pt-4 text-2xl font-semibold text-ink">Et l’été ?</h2>
+          <p>
+            BORÉALE est une maison à deux saisons : l’univers été ouvre avec ses propres territoires
+            — plage & piscine, voyage, fraîcheur, outdoor, auto été, maison & terrasse — et la même
+            règle d’or : rien n’entre au catalogue sans avoir été cherché, testé et validé. Panier,
+            compte et checkout sont communs aux deux saisons ; le sélecteur Hiver / Été passe de
+            l’un à l’autre à tout moment.
+          </p>
+
           <h2 className="font-display pt-4 text-2xl font-semibold text-ink">Où nous trouver</h2>
           <p>
             {BRAND.name} est une jeune marque française en lancement — ce site est notre première boutique. Une

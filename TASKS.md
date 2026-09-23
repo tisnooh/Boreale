@@ -73,6 +73,9 @@ Légende : ✅ fait (par l'agent) · 🧑 à faire par le propriétaire · ➖ V
 - 🧑 Exécuter la recette manuelle QA_TEST_PLAN sur l'environnement réel (Supabase + Stripe TEST) avant lancement
 - ➖ Tests E2E Playwright (V2, une fois URLs réelles)
 
+## Adaptation saisonnière complète
+- ✅ Nav header/footer par saison, manifeste saisonnier, /collections?saison=ete, /faq?saison=ete, about 2 saisons, libellés fiches ; 62 tests verts, build ✓, smoke ✓ (D041)
+
 ## Architecture saisonnière (hiver + été, une seule app)
 - ✅ Noyau saison (types/config/thèmes/switch), routes /ete + /hiver, scopes collections/produits, header switch, middleware SSR
 - ✅ Home été complète (cover, univers, sélection honnête « en préparation », manifeste, packs teaser, inspiration, FAQ, newsletter)

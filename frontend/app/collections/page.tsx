@@ -8,28 +8,41 @@ import { CatalogControls } from '@/components/CatalogControls';
 import { EmptyState } from '@/components/ui';
 import { ArrowRightIcon } from '@/components/Icons';
 import { Reveal } from '@/components/ui/Reveal';
+import { Overline } from '@/components/ui/Overline';
+import { SUMMER_PACK_CONCEPTS } from '@/lib/season/content-summer';
 
-export const metadata: Metadata = buildMetadata({
-  title: 'La collection hiver — tous les produits',
-  description:
-    'Tous les essentiels BORÉALE : chaussettes polaires, gants tactiles, bonnets, bouillottes, chauffe-mains, housses pare-brise, plaids et packs hiver. Livraison offerte dès 69 €.',
-  path: '/collections',
-});
+interface Props {
+  searchParams: Promise<{ q?: string; sort?: string; saison?: string }>;
+}
 
-export default async function CollectionsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; sort?: string }>;
-}) {
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const sp = await searchParams;
+  if (sp.saison === 'ete') {
+    return buildMetadata({
+      title: 'La collection été — plage, voyage, fraîcheur, outdoor',
+      description:
+        'L’univers été BORÉALE : plage & piscine, voyage, fraîcheur, outdoor, auto été et maison & terrasse. Sélection en préparation, même exigence que l’hiver.',
+      path: '/collections?saison=ete',
+    });
+  }
+  return buildMetadata({
+    title: 'La collection hiver — tous les produits',
+    description:
+      'Tous les essentiels BORÉALE : chaussettes polaires, gants tactiles, bonnets, bouillottes, chauffe-mains, housses pare-brise, plaids et packs hiver. Livraison offerte dès 69 €.',
+    path: '/collections',
+  });
+}
+
+export default async function CollectionsPage({ searchParams }: Props) {
   const sp = await searchParams;
   const q = sp.q ?? '';
   const sort = (sp.sort ?? 'featured') as CatalogSort;
+  const summer = sp.saison === 'ete';
   const source = getCatalogSource();
 
-  const [all, bundles, summerCategories] = await Promise.all([
-    source.products(),
-    source.bundles(),
-    source.categories('summer'),
+  const [all, bundles] = await Promise.all([
+    source.products(summer ? 'summer' : 'winter'),
+    summer ? Promise.resolve([]) : source.bundles(),
   ]);
   const products = sortProducts(
     filterProducts(all, { q: q || undefined, type: 'product' }),
@@ -42,21 +55,41 @@ export default async function CollectionsPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJsonLd([{ name: 'Accueil', path: '/' }, { name: 'Collections', path: '/collections' }])),
+          __html: JSON.stringify(
+            breadcrumbJsonLd([
+              { name: 'Accueil', path: '/' },
+              ...(summer ? [{ name: 'Été', path: '/ete' }] : []),
+              { name: summer ? 'Collections été' : 'Collections', path: summer ? '/collections?saison=ete' : '/collections' },
+            ])
+          ),
         }}
       />
       <div className="container-x py-10">
         <header className="mb-8">
           <nav aria-label="Fil d'Ariane" className="mb-3 text-xs text-muted">
             <Link href="/" className="hover:text-ember-dark">Accueil</Link> <span aria-hidden>/</span>{' '}
-            <span className="text-ink">Collections</span>
+            {summer && (
+              <>
+                <Link href="/ete" className="hover:text-ember-dark">Été</Link> <span aria-hidden>/</span>{' '}
+              </>
+            )}
+            <span className="text-ink">{summer ? 'Collections été' : 'Collections'}</span>
           </nav>
-          <h1 className="font-display text-4xl font-semibold">Toute la collection hiver</h1>
+          <h1 className="font-display text-4xl font-semibold">
+            {summer ? 'Toute la collection été' : 'Toute la collection hiver'}
+          </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted">
-            {products.length > 0
-              ? `${products.length} produit${products.length > 1 ? 's' : ''} sélectionné${products.length > 1 ? 's' : ''} et testé${products.length > 1 ? 's' : ''} pour vous garder au chaud.`
-              : 'Des essentiels chauds, beaux et durables — du textile aux packs prêts à offrir.'}
+            {summer
+              ? 'Les univers été sont ouverts : la sélection de produits arrive après la phase de sourcing dédiée. Même exigence, même transparence.'
+              : products.length > 0
+                ? `${products.length} produit${products.length > 1 ? 's' : ''} sélectionné${products.length > 1 ? 's' : ''} et testé${products.length > 1 ? 's' : ''} pour vous garder au chaud.`
+                : 'Des essentiels chauds, beaux et durables — du textile aux packs prêts à offrir.'}
           </p>
+          {summer && (
+            <Link href="/ete" className="link-editorial mt-4">
+              Retour à l’univers été <ArrowRightIcon width={14} height={14} />
+            </Link>
+          )}
         </header>
 
         <Suspense fallback={null}>
@@ -72,6 +105,17 @@ export default async function CollectionsPage({
                 </Reveal>
               ))}
             </div>
+          ) : summer ? (
+            <EmptyState
+              title="Sélection été en préparation"
+              text="Aucun produit été n’est encore au catalogue : le sourcing est une phase dédiée. Inscrivez-vous au courrier d’été pour être prévenu de l’ouverture."
+              action={
+                <div className="flex gap-2">
+                  <Link href="/ete" className="btn-primary btn-sm">Visiter l’univers été</Link>
+                  <Link href="/collections" className="btn-outline btn-sm">Voir l’hiver</Link>
+                </div>
+              }
+            />
           ) : (
             <EmptyState
               title={q ? `Aucun résultat pour « ${q} »` : 'Catalogue indisponible'}
@@ -85,53 +129,38 @@ export default async function CollectionsPage({
           )}
         </div>
 
-        {summerCategories.length > 0 && (
-          <section aria-label="Univers été" className="mt-20 rounded-card bg-snow p-8 sm:p-12">
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="overline">
-                  <span className="text-ember-dark">Univers été</span>
-                  <span>Saison claire</span>
-                </p>
-                <h2 className="display-section mt-4">
-                  L’été prépare <em>ses territoires.</em>
-                </h2>
-              </div>
-              <Link href="/ete" className="link-editorial hidden sm:inline-flex">
-                Visiter l’univers été <ArrowRightIcon width={14} height={14} />
-              </Link>
-            </div>
-            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {summerCategories.map((c) => (
-                <li key={c.slug}>
-                  <Link
-                    href={`/collections/${c.slug}`}
-                    className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-white px-5 py-4 transition hover:border-glacier"
-                  >
-                    <span>
-                      <span className="font-display block font-semibold">{c.name}</span>
-                      <span className="mt-0.5 block text-xs text-muted">{c.tagline}</span>
-                    </span>
-                    <ArrowRightIcon width={16} height={16} className="shrink-0 text-muted transition group-hover:translate-x-1 group-hover:text-ember-dark" />
-                  </Link>
+        {/* Packs : hiver = bundles réels ; été = concepts honnêtes */}
+        {summer ? (
+          <section id="packs" aria-label="Packs été" className="mt-20 rounded-card bg-snow p-8 sm:p-12">
+            <Overline index="N°04" label="Packs d’été" />
+            <h2 className="display-section mt-4">
+              Des ensembles, <em>bientôt.</em>
+            </h2>
+            <ul className="mt-8 grid gap-4 md:grid-cols-3">
+              {SUMMER_PACK_CONCEPTS.map((pack, i) => (
+                <li key={pack.name} className="card flex h-full flex-col gap-3 border-dashed p-6">
+                  <span className="font-display text-sm text-ember-dark tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="font-display text-xl font-semibold">{pack.name}</h3>
+                  <p className="text-xs tracking-[0.16em] text-muted uppercase">{pack.univers}</p>
+                  <p className="mt-auto pt-4 text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">{pack.note}</p>
                 </li>
               ))}
             </ul>
           </section>
-        )}
-
-        {bundles.length > 0 && (
-          <section id="packs" aria-label="Packs et bundles" className="mt-16 rounded-card bg-ink p-8 text-white sm:p-12">
-            <h2 className="font-display text-3xl font-semibold">Packs & bundles</h2>
-            <p className="mt-2 max-w-xl text-sm text-ice/70">
-              Des ensembles cohérents à offrir ou à s’offrir — moins chers que les articles achetés séparément.
-            </p>
-            <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {bundles.map((b) => (
-                <ProductCard key={b.slug} product={b} />
-              ))}
-            </div>
-          </section>
+        ) : (
+          bundles.length > 0 && (
+            <section id="packs" aria-label="Packs et bundles" className="mt-16 rounded-card bg-ink p-8 text-white sm:p-12">
+              <h2 className="font-display text-3xl font-semibold">Packs & bundles</h2>
+              <p className="mt-2 max-w-xl text-sm text-ice/70">
+                Des ensembles cohérents à offrir ou à s’offrir — moins chers que les articles achetés séparément.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                {bundles.map((b) => (
+                  <ProductCard key={b.slug} product={b} />
+                ))}
+              </div>
+            </section>
+          )
         )}
       </div>
     </>

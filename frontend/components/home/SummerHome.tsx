@@ -123,7 +123,7 @@ export async function SummerHome() {
       )}
 
       <ParallaxQuote image={SUMMER_QUOTE.image} text={SUMMER_QUOTE.text} />
-      <Manifesto benefits={settings.benefits} />
+      <Manifesto benefits={settings.benefits} season="summer" />
 
       {/* N°04 — Packs : système prêt, compositions à venir */}
       <section id="packs" aria-label="Packs été" className="container-x py-24 lg:py-32">

@@ -7,7 +7,21 @@ import { Reveal } from '@/components/ui/Reveal';
  * principes en registre ligné (numéros braise) — plus aucune carte-colonne « trust badges ».
  * Contenu toujours piloté par l'admin (settings.benefits), aucun claim inventé.
  */
-export function Manifesto({ benefits }: { benefits: HomepageSettings['benefits'] }) {
+const COPY = {
+  winter: {
+    statement: ['Nous ne vendons', 'pas de l’hiver.', 'Nous vendons des raisons de l’aimer.'],
+    journal:
+      'BORÉALE est née d’une conviction simple : avec les bons essentiels, l’hiver devient la saison la plus confortable de l’année. Alors nous cherchons, nous testons, nous écartons. Quatorze pièces seulement, choisies pour ce qu’elles résolvent — un carrelage glacé, un pare-brise givré, un cou exposé au vent — et pour ce qu’elles durent. Rien de plus ne rentrerait sans affaiblir le reste.',
+  },
+  summer: {
+    statement: ['Nous ne vendons', 'pas de l’été.', 'Nous vendons des raisons de l’aimer.'],
+    journal:
+      'L’été suit la même règle que l’hiver : avec les bons essentiels, la saison chaude devient la plus belle de l’année. Nous cherchons, nous testons, nous écartons — pour la plage, les trajets, les terrasses. Les pièces été arriveront quand, et seulement quand, elles auront mérité leur place au catalogue.',
+  },
+} as const;
+
+export function Manifesto({ benefits, season = 'winter' }: { benefits: HomepageSettings['benefits']; season?: 'winter' | 'summer' }) {
+  const copy = COPY[season];
   return (
     <section aria-label="Manifeste" className="bg-ink py-24 text-white lg:py-32">
       <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-10">
@@ -16,11 +30,11 @@ export function Manifesto({ benefits }: { benefits: HomepageSettings['benefits']
           <Reveal>
             <Overline index="N°03" label="Manifeste" dark />
             <p className="display-section mt-8">
-              Nous ne vendons
+              {copy.statement[0]}
               <br />
-              pas de l’hiver.
+              {copy.statement[1]}
               <br />
-              <em className="text-ember">Nous vendons des raisons de l’aimer.</em>
+              <em className="text-ember">{copy.statement[2]}</em>
             </p>
             <div className="mt-10 flex items-center gap-4">
               <span className="h-px w-16 bg-ember" aria-hidden />
@@ -35,11 +49,7 @@ export function Manifesto({ benefits }: { benefits: HomepageSettings['benefits']
         <div className="lg:col-span-7">
           <Reveal delay={120}>
             <p className="dropcap max-w-prose text-[15px] leading-[1.9] text-ice/75">
-              BORÉALE est née d’une conviction simple : avec les bons essentiels, l’hiver devient la
-              saison la plus confortable de l’année. Alors nous cherchons, nous testons, nous écartons.
-              Quatorze pièces seulement, choisies pour ce qu’elles résolvent — un carrelage glacé, un
-              pare-brise givré, un cou exposé au vent — et pour ce qu’elles durent. Rien de plus ne
-              rentrerait sans affaiblir le reste.
+              {copy.journal}
             </p>
           </Reveal>
 

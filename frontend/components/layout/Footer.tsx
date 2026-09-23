@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { BRAND, FOOTER_LINKS } from '@/lib/constants';
+import { getSeasonFooterLinks } from '@/lib/season/nav';
+import type { ShopSeason } from '@/lib/season/types';
 import { Logo } from './Logo';
 
-export function Footer() {
+export function Footer({ season = 'winter' }: { season?: ShopSeason }) {
   return (
     <footer className="mt-20 border-t border-line bg-ink text-ice">
       <div className="container-x pt-14" aria-hidden>
@@ -23,7 +25,7 @@ export function Footer() {
             </a>
           </p>
         </div>
-        <FooterCol title="Boutique" links={FOOTER_LINKS.boutique} />
+        <FooterCol title="Boutique" links={getSeasonFooterLinks(season)} />
         <FooterCol title="Aide" links={FOOTER_LINKS.aide} />
         <FooterCol title="La maison" links={FOOTER_LINKS.maison} />
       </div>

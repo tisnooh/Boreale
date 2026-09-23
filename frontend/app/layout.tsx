@@ -88,7 +88,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <main id="main" className="flex-1">
                 {children}
               </main>
-              <Footer />
+              <Footer season={season} />
               <CartDrawer />
               <OfflineNotice />
             </CartProvider>

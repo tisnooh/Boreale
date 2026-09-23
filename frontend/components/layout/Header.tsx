@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { BRAND, NAV_COLLECTIONS } from '@/lib/constants';
+import { BRAND } from '@/lib/constants';
+import { getSeasonNav } from '@/lib/season/nav';
+import { getSeasonFromPath } from '@/lib/season/config';
 import { useCart } from '@/hooks/use-cart';
 import { useAuth } from '@/hooks/use-auth';
 import { Logo } from './Logo';
@@ -16,6 +18,8 @@ export function Header({ announcement }: { announcement: string | null }) {
   const { user } = useAuth();
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
+  const season = getSeasonFromPath(pathname);
+  const navLinks = getSeasonNav(season);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -60,7 +64,7 @@ export function Header({ announcement }: { announcement: string | null }) {
             <Link href="/collections" className="text-sm font-semibold text-ink transition hover:text-ember-dark">
               Boutique
             </Link>
-            {NAV_COLLECTIONS.map((c) => (
+            {navLinks.map((c) => (
               <Link
                 key={c.slug}
                 href={`/collections/${c.slug}`}
@@ -69,7 +73,10 @@ export function Header({ announcement }: { announcement: string | null }) {
                 {c.name}
               </Link>
             ))}
-            <Link href="/collections#packs" className="text-sm text-ink-500 transition hover:text-ember-dark">
+            <Link
+              href={season === 'summer' ? '/ete#packs' : '/collections#packs'}
+              className="text-sm text-ink-500 transition hover:text-ember-dark"
+            >
               Packs
             </Link>
           </nav>
@@ -113,12 +120,14 @@ export function Header({ announcement }: { announcement: string | null }) {
               <SeasonSwitch />
             </div>
             <MobileLink href="/collections">Toute la boutique</MobileLink>
-            {NAV_COLLECTIONS.map((c) => (
+            {navLinks.map((c) => (
               <MobileLink key={c.slug} href={`/collections/${c.slug}`}>
                 {c.name}
               </MobileLink>
             ))}
-            <MobileLink href="/collections#packs">Packs & bundles</MobileLink>
+            <MobileLink href={season === 'summer' ? '/ete#packs' : '/collections#packs'}>
+              {season === 'summer' ? 'Packs d’été' : 'Packs & bundles'}
+            </MobileLink>
             <div className="my-2 border-t border-line" />
             <MobileLink href="/track-order">Suivre ma commande</MobileLink>
             <MobileLink href="/account">{user ? 'Mon compte' : 'Connexion'}</MobileLink>
