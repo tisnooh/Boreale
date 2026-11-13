@@ -22,6 +22,7 @@ export interface CheckoutDeps {
   findActiveDiscount(code: string): Promise<DbDiscount | null>;
   createOrder(input: Parameters<typeof ordersRepo.create>[0]): Promise<{ id: string; number: string }>;
   createPayment(orderId: string, amountCents: number, currency: string, sessionId: string): Promise<void>;
+  setSessionId(orderId: string, sessionId: string): Promise<void>;
   createStripeSession(args: {
     orderNumber: string;
     orderId: string;
@@ -43,15 +44,15 @@ export const defaultCheckoutDeps: CheckoutDeps = {
   findActiveDiscount: (code) => discountsRepo.findActiveByCode(code) as Promise<DbDiscount | null>,
   createOrder: (input) => ordersRepo.create(input) as never,
   createPayment: (orderId, amountCents, currency, sessionId) => ordersRepo.createPayment(orderId, amountCents, currency, sessionId),
+  setSessionId: (orderId, sessionId) => ordersRepo.setSessionId(orderId, sessionId),
   async createStripeSession({ orderNumber, orderId, email, items, totals, discountCode }) {
     const site = config().PUBLIC_SITE_URL.replace(/\/+$/, '');
     const session = await stripe().checkout.sessions.create({
       mode: 'payment',
       locale: 'fr',
       customer_email: email,
-      // Discount & shipping are explicit immutable line items computed server-side,
-      // so the Stripe total always equals our totals (no client-controlled amounts).
-      line_items: buildStripeLineItems(items, totals, discountCode) as never,
+      // Net item prices include the server discount; Stripe rejects negative lines.
+      line_items: buildStripeLineItems(items, totals, discountCode),
       metadata: { orderId, orderNumber, brand: 'boreale' },
       payment_intent_data: { metadata: { orderId, orderNumber } },
       success_url: `${site}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -64,25 +65,50 @@ export const defaultCheckoutDeps: CheckoutDeps = {
   },
 };
 
-/** Builds Stripe line items: products + explicit negative discount line + shipping line. */
-function buildStripeLineItems(items: PricedItem[], totals: TotalsDTO, discountCode: string | null) {
-  const lines = items.map((it) => ({
-    quantity: it.quantity,
-    price_data: {
-      currency: totals.currency.toLowerCase(),
-      unit_amount: it.unitPriceCents,
-      product_data: { name: it.variantTitle ? `${it.productName} — ${it.variantTitle}` : it.productName },
-    },
+export interface StripeCheckoutLineItem {
+  quantity: number;
+  price_data: { currency: string; unit_amount: number; product_data: { name: string } };
+}
+
+/** Exact integer allocation; no remote coupon and no negative Stripe price.
+ * API contract: https://docs.stripe.com/api/checkout/sessions/create#line_items
+ * Largest remainders allocate cents between items, then split a quantity only
+ * when its net total cannot be represented by one integer unit price.
+ */
+export function buildStripeLineItems(items: PricedItem[], totals: TotalsDTO, discountCode: string | null): StripeCheckoutLineItem[] {
+  const invalid = () => AppError.badRequest('invalid_stripe_totals', 'Montants du paiement incohérents.');
+  const cents = [totals.subtotalCents, totals.discountCents, totals.shippingCents, totals.totalCents];
+  if (!items.length || items.length > 50 || !/^[A-Za-z]{3}$/.test(totals.currency) ||
+      cents.some((amount) => !Number.isSafeInteger(amount) || amount < 0) ||
+      items.some((item) => !Number.isSafeInteger(item.unitPriceCents) || item.unitPriceCents < 0 ||
+        !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 20)) throw invalid();
+  const gross = items.map((item) => BigInt(item.unitPriceCents) * BigInt(item.quantity));
+  const subtotal = gross.reduce((sum, amount) => sum + amount, BigInt(0));
+  if (subtotal !== BigInt(totals.subtotalCents) || subtotal <= BigInt(0) ||
+      totals.discountCents > totals.subtotalCents ||
+      BigInt(totals.totalCents) !== subtotal - BigInt(totals.discountCents) + BigInt(totals.shippingCents) ||
+      totals.totalCents <= 0) throw invalid();
+  const net = subtotal - BigInt(totals.discountCents);
+  const allocations = gross.map((amount, index) => ({
+    index, amount: amount * net / subtotal, remainder: amount * net % subtotal,
   }));
-  if (totals.discountCents > 0) {
-    lines.push({
-      quantity: 1,
-      price_data: {
-        currency: totals.currency.toLowerCase(),
-        unit_amount: -totals.discountCents,
-        product_data: { name: `Remise ${discountCode ?? 'promotionnelle'}` },
-      },
-    });
+  const remaining = Number(net - allocations.reduce((sum, item) => sum + item.amount, BigInt(0)));
+  const ranked = [...allocations].sort((a, b) => a.remainder === b.remainder ? a.index - b.index : a.remainder > b.remainder ? -1 : 1);
+  for (let index = 0; index < remaining; index++) ranked[index]!.amount += BigInt(1);
+  const lines: StripeCheckoutLineItem[] = [];
+  for (const allocation of allocations) {
+    const item = items[allocation.index]!;
+    const unit = Number(allocation.amount / BigInt(item.quantity));
+    const extra = Number(allocation.amount % BigInt(item.quantity));
+    const name = (item.variantTitle ? `${item.productName} — ${item.variantTitle}` : item.productName) +
+      (totals.discountCents > 0 ? ` — remise ${discountCode ?? 'promotionnelle'} incluse` : '');
+    const add = (quantity: number, amount: number) => {
+      if (quantity > 0) lines.push({ quantity, price_data: {
+        currency: totals.currency.toLowerCase(), unit_amount: amount, product_data: { name },
+      } });
+    };
+    add(item.quantity - extra, unit);
+    add(extra, unit + 1);
   }
   if (totals.shippingCents > 0) {
     lines.push({
@@ -90,10 +116,12 @@ function buildStripeLineItems(items: PricedItem[], totals: TotalsDTO, discountCo
       price_data: {
         currency: totals.currency.toLowerCase(),
         unit_amount: totals.shippingCents,
-        product_data: { name: `Livraison ${totals.shippingCents === 0 ? 'offerte' : 'standard/express'}` },
+        product_data: { name: 'Livraison' },
       },
     });
   }
+  // Checkout payment mode supports at most 100 line items, including delivery.
+  if (lines.length > 100 || lines.reduce((sum, line) => sum + BigInt(line.quantity) * BigInt(line.price_data.unit_amount), BigInt(0)) !== BigInt(totals.totalCents)) throw invalid();
   return lines;
 }
 
@@ -106,7 +134,8 @@ export interface CheckoutResult {
 
 export async function createCheckout(
   input: CheckoutInput,
-  deps: CheckoutDeps = defaultCheckoutDeps
+  deps: CheckoutDeps = defaultCheckoutDeps,
+  authenticatedUserId: string | null = null
 ): Promise<CheckoutResult> {
   // 1. Load variants server-side (never trust client prices)
   const uniqueIds = [...new Set(input.items.map((i) => i.variantId))];
@@ -114,7 +143,15 @@ export async function createCheckout(
   const byId = new Map(variants.map((v) => [v.id, v]));
 
   const priced: PricedItem[] = [];
+  const quantities = new Map<string, number>();
   for (const item of input.items) {
+    quantities.set(item.variantId, (quantities.get(item.variantId) ?? 0) + item.quantity);
+  }
+  for (const [variantId, quantity] of quantities) {
+    const item = { variantId, quantity };
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
+      throw AppError.unprocessable('invalid_quantity', 'Quantité maximale par variante : 20.');
+    }
     const v = byId.get(item.variantId);
     if (!v) throw AppError.unprocessable('variant_not_found', `Variante introuvable (${item.variantId}).`);
     if (!v.is_active || !v.products || !v.products.is_active) {
@@ -127,12 +164,6 @@ export async function createCheckout(
         available,
         requested: item.quantity,
       });
-    }
-    // Merge duplicate lines for the same variant
-    const existing = priced.find((p) => p.variantId === v.id);
-    if (existing) {
-      existing.quantity += item.quantity;
-      continue;
     }
     priced.push({
       variantId: v.id,
@@ -175,8 +206,12 @@ export async function createCheckout(
     throw AppError.badRequest('invalid_total', 'Le total de la commande doit être supérieur à 0.');
   }
 
+  // Validate the exact Stripe payload before creating any customer or order.
+  buildStripeLineItems(priced, totals, discountSpec ? input.discountCode!.toUpperCase() : null);
+
   // 4. Customer + address
-  const user = await deps.findUserByEmail(input.customer.email);
+  // Seule la session authentifiée établit la propriété ; un email saisi n'est pas une preuve.
+  const user = authenticatedUserId ? { id: authenticatedUserId } : null;
   const customer = await deps.upsertCustomer({
     email: input.customer.email,
     firstName: input.customer.firstName,
@@ -233,7 +268,7 @@ export async function createCheckout(
   if (!session.url) {
     throw new AppError(502, 'stripe_session_failed', 'Stripe n’a pas retourné d’URL de paiement. Réessayez.');
   }
-  await ordersRepo.setSessionId(order.id, session.id).catch((err) => logger.warn('setSessionId failed', err));
+  await deps.setSessionId(order.id, session.id);
   await deps.createPayment(order.id, totals.totalCents, totals.currency, session.id);
 
   logger.info('checkout_session_created', { orderId: order.id, orderNumber: order.number, totalCents: totals.totalCents });

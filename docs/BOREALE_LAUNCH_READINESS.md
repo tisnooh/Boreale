@@ -1,0 +1,39 @@
+# Décision de lancement
+
+**BLOCKED — ventes non autorisées.** Une page de préouverture existe ; ce n’est pas une boutique opérationnelle.
+
+Les quinze modules du rapport final seront évalués séparément : architecture, catalogue, fournisseurs, prix/marges, livraison, panier, paiement, commandes, fulfillment, emails, administration, SAV, SEO, sécurité, conformité.
+
+Classification obligatoire : fonctionnel et testé localement ; développé non testé ; simulé ; bloqué ; non réalisé. Une validation locale ne vaut pas validation de production.
+
+Avant ouverture : produits vérifiés, coûts complets, destinations/retours, documents vendeur, services de test puis parcours complet, audit indépendant, autorisation explicite de production. Aucun objectif financier réel n’est déclaré avant obtention des coûts et du régime fiscal.
+
+## Matrice de livraison du 13 novembre
+
+| Module | Statut chef | Réalité et preuve | Blocage restant |
+|---|---|---|---|
+| Architecture | REJECTED globale | Développée, tests locaux ; audit01 | Transactions commande/paiement non démontrées |
+| Catalogue | BLOCKED | Preview simulée, audit03 ; UUID/SKU présents dans schéma | 0 produit validé, seed non exploitable tel quel |
+| Fournisseurs | BLOCKED | 39 lignes CSV, 20 noms candidats, 0 coûts rendus confirmés ; audit04 | Devis, variantes, conformité, stock et modèle fulfillment |
+| Prix et marges | BLOCKED réelle | Modèle 3 scénarios hypothétiques dans BOREALE_FINANCE | Coûts, taxes et prix approuvés manquants |
+| Livraison | BLOCKED | Rejet local des destinations hors métropole développé | Aucun contrat/coût/délai confirmé ; grille existante indicative |
+| Panier | APPROVED partiel | Régression checkout 4 tests ; design conservé | Drawer/promo quantité et mobile complet à terminer |
+| Paiement | BLOCKED externe | Payload/remises, montant/devise, liaison tests simulés | Paiement sandbox non exécuté, idempotence durable |
+| Commandes | APPROVED isolation locale seulement | AG10 ownership6/6, checkout14/14 | DB réelle, transactions, historique user_id |
+| Fulfillment | BLOCKED | Procédure manuelle proposée BOREALE_OPERATIONS | Mapping fournisseur, multicolis, affectations absents en code |
+| Emails | BLOCKED | Templates développés, pas de réception réelle | Domaine/prestataire, preuve envoi et reprise |
+| Administration | REJECTED globale | Back-office développé ; BOREALE_ADMIN_SAV | Accès réel non testé, transitions/RBAC à renforcer |
+| SAV | BLOCKED | Procédure documentée, pas de workflow ticket complet | Responsables, adresse retours, circuit réel |
+| SEO | REJECTED live | Preview/launch présents ; BOREALE_MARKETING | Sitemap live, URL finale et performance mobile à contrôler |
+| Sécurité | APPROVED correctifs bornés | Secrets production et ownership audités AG10 | Pas de scan exhaustif ni preuve DB/production ; risques historiques/admin |
+| Conformité | BLOCKED | Sources officielles consultées ; BOREALE_COMPLIANCE | Exploitant, fiscalité, produits et rétractation en ligne |
+
+## Décisions précises du propriétaire
+
+1. Connecter le bon compte Supabase puis autoriser explicitement une recette DB isolée ; aucun secret en conversation.
+2. Choisir stock propre, prestataire ou expédition directe ; budget d’échantillons et assortiment initial.
+3. Valider offres fournisseur exactes, pays desservis, origine expédition et lieu de retours après preuves.
+4. Fournir identité/régime vendeur et coordonnées professionnelles par les canaux appropriés.
+5. Autoriser ultérieurement les connexions de test et, séparément, toute prise de contact, achat ou production.
+
+Aucune de ces décisions n’est remplacée par une hypothèse financière ou une réussite de test simulé.

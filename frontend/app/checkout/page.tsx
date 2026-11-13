@@ -31,7 +31,7 @@ interface FormState {
 const EMPTY_FORM: FormState = { email: '', firstName: '', lastName: '', phone: '', line1: '', line2: '', postalCode: '', city: '' };
 
 export default function CheckoutPage() {
-  const { items, ready, subtotalCents, clear } = useCart();
+  const { items, ready, subtotalCents } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -74,8 +74,7 @@ export default function CheckoutPage() {
       .catch(() => undefined);
   }
 
-  async function applyCode(e: React.FormEvent) {
-    e.preventDefault();
+  async function applyCode() {
     setDiscountError(null);
     if (!codeInput.trim()) return;
     try {
@@ -123,7 +122,8 @@ export default function CheckoutPage() {
         setSubmitting(false);
         return;
       }
-      clear(); // le paiement Stripe suit ; le webhook confirme la commande
+      // Une session Stripe n’est pas une preuve de paiement : conserver le panier
+      // pour les annulations, refus et interruptions de navigation.
       window.location.href = result.url;
     } catch (err) {
       setSubmitting(false);
@@ -251,16 +251,22 @@ export default function CheckoutPage() {
               ))}
             </ul>
 
-            <form onSubmit={applyCode} className="mb-4">
+            <div className="mb-4">
               <label className="field-label" htmlFor="checkout-code">Code promo</label>
               <div className="flex gap-2">
                 <input id="checkout-code" className="field py-2 text-sm uppercase" value={codeInput}
-                  onChange={(e) => setCodeInput(e.target.value.toUpperCase())} placeholder="WELCOME10" autoComplete="off" />
-                <button type="submit" className="btn-outline btn-sm">OK</button>
+                  onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void applyCode();
+                    }
+                  }} placeholder="WELCOME10" autoComplete="off" />
+                <button type="button" onClick={() => void applyCode()} className="btn-outline btn-sm">OK</button>
               </div>
               {discount.code && <p className="mt-1.5 text-xs font-semibold text-success">✓ {discount.code} appliqué</p>}
               {discountError && <p role="alert" className="mt-1.5 text-xs font-semibold text-danger">{discountError}</p>}
-            </form>
+            </div>
 
             <dl className="space-y-2 border-t border-line pt-4 text-sm">
               <div className="flex justify-between"><dt className="text-muted">Sous-total</dt><dd className="tabular-nums">{formatCents(totals.subtotalCents)}</dd></div>

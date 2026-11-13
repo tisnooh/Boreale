@@ -46,11 +46,22 @@ const paidOrder = {
 };
 
 describe('webhook checkout.session.completed', () => {
+  it.each([{ amount_total: 1, currency: 'eur' }, { amount_total: 6760, currency: 'usd' }, {}])('rejette paiement incohérent avant effets %j', async (payment) => {
+    const { deps, calls } = makeDeps(paidOrder);
+    await expect(handleWebhookEvent({ type: 'checkout.session.completed', data: { object: { id: 'cs_bad', payment_status: 'paid', ...payment } } }, deps)).rejects.toMatchObject({ code: 'payment_amount_mismatch' });
+    expect(calls).toEqual([]);
+  });
+
+  it('traite le succès de paiement asynchrone', async () => {
+    const { deps, calls } = makeDeps(paidOrder);
+    await handleWebhookEvent({ type: 'checkout.session.async_payment_succeeded', data: { object: { id: 'cs_async', payment_status: 'paid', amount_total: 6760, currency: 'eur' } } }, deps);
+    expect(calls).toContain('markPaid');
+  });
   it('marque payé, décrémenté le stock, consomme le code promo, envoie les emails', async () => {
     const { deps, calls } = makeDeps(paidOrder);
     const event: StripeEventLike = {
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_test_1', payment_status: 'paid', payment_intent: 'pi_1' } },
+      data: { object: { id: 'cs_test_1', payment_status: 'paid', amount_total: 6760, currency: 'eur', payment_intent: 'pi_1' } },
     };
     const result = await handleWebhookEvent(event, deps);
     expect(result.handled).toBe(true);
@@ -68,7 +79,7 @@ describe('webhook checkout.session.completed', () => {
     const { deps, calls } = makeDeps({ ...paidOrder, status: 'paid' });
     const event: StripeEventLike = {
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_test_1', payment_status: 'paid', payment_intent: 'pi_1' } },
+      data: { object: { id: 'cs_test_1', payment_status: 'paid', amount_total: 6760, currency: 'eur', payment_intent: 'pi_1' } },
     };
     await handleWebhookEvent(event, deps);
     expect(calls).not.toContain('markPaid');
@@ -85,14 +96,13 @@ describe('webhook checkout.session.completed', () => {
     expect(calls).toEqual([]);
   });
 
-  it('commande inconnue → handled false, aucune écriture', async () => {
+  it('commande inconnue → erreur réessayable, aucune écriture', async () => {
     const { deps, calls } = makeDeps(null);
     const event: StripeEventLike = {
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_unknown', payment_status: 'paid' } },
+      data: { object: { id: 'cs_unknown', payment_status: 'paid', amount_total: 6760, currency: 'eur' } },
     };
-    const result = await handleWebhookEvent(event, deps);
-    expect(result.handled).toBe(false);
+    await expect(handleWebhookEvent(event, deps)).rejects.toMatchObject({ status: 503, code: 'payment_order_unresolved' });
     expect(calls).toEqual([]);
   });
 
@@ -101,7 +111,7 @@ describe('webhook checkout.session.completed', () => {
     (deps.decrementInventory as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('insufficient_stock'));
     const event: StripeEventLike = {
       type: 'checkout.session.completed',
-      data: { object: { id: 'cs_test_1', payment_status: 'paid', payment_intent: 'pi_1' } },
+      data: { object: { id: 'cs_test_1', payment_status: 'paid', amount_total: 6760, currency: 'eur', payment_intent: 'pi_1' } },
     };
     const result = await handleWebhookEvent(event, deps);
     expect(result.handled).toBe(true);

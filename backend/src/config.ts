@@ -3,6 +3,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
+  CHECKOUT_ENABLED: z.enum(['true', 'false']).default('false'),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
   SUPABASE_URL: z.string().url().optional().or(z.literal('')),
   SUPABASE_ANON_KEY: z.string().optional(),
@@ -28,6 +29,14 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     throw new Error(`Invalid environment configuration — ${issues}`);
   }
   const env = parsed.data;
+  if (env.NODE_ENV === 'production') {
+    for (const key of ['JWT_SECRET', 'CRON_SECRET'] as const) {
+      if (env[key].trim().length < 32 || env[key].startsWith('dev-')) {
+        throw new Error(`Invalid production configuration: ${key} must be a unique secret of at least 32 characters`);
+      }
+    }
+    if (env.JWT_SECRET === env.CRON_SECRET) throw new Error('JWT_SECRET and CRON_SECRET must be distinct');
+  }
   // Normalize FRONTEND_URL: drop trailing slash
   env.FRONTEND_URL = env.FRONTEND_URL.replace(/\/+$/, '');
   return env;

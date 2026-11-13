@@ -16,7 +16,7 @@ export default async function CheckoutCancelPage({
     <div className="container-x py-20 text-center">
       <h1 className="font-display text-3xl font-semibold">Paiement interrompu</h1>
       <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
-        Aucun débit n’a été effectué{order ? ` pour la commande ${order}` : ''}. Votre panier est conservé : vous
+        Le paiement a été interrompu{order ? ` pour la commande ${order}` : ''}. Cette page ne confirme pas son statut bancaire. Votre panier est conservé : vous
         pouvez reprendre le paiement à tout moment, ou nous écrire si une difficulté vous a bloqué.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">

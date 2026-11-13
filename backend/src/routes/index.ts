@@ -66,7 +66,7 @@ export function buildRouter(): Router {
   r.get('/api/orders/:id', optionalUser, requireUserOrAdmin, ordersController.getById);
 
   /* ---------- checkout / stripe ---------- */
-  r.post('/api/stripe/checkout', validateBody(checkoutSchema), checkoutController.createCheckout);
+  r.post('/api/stripe/checkout', optionalUser, validateBody(checkoutSchema), checkoutController.createCheckout);
   r.get('/api/stripe/session/:id', checkoutController.getSession);
   r.post('/api/webhooks/stripe', checkoutController.stripeWebhook);
 

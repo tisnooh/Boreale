@@ -59,7 +59,8 @@ export async function handleWebhookEvent(event: StripeEventLike, deps: WebhookDe
   const obj = event.data.object;
 
   switch (event.type) {
-    case 'checkout.session.completed': {
+    case 'checkout.session.completed':
+    case 'checkout.session.async_payment_succeeded': {
       const sessionId = obj.id;
       if (!sessionId || obj.payment_status !== 'paid') {
         logger.info('webhook_ignored', { type: event.type, reason: 'session not paid' });
@@ -68,7 +69,10 @@ export async function handleWebhookEvent(event: StripeEventLike, deps: WebhookDe
       const order = await deps.getOrderBySessionId(sessionId);
       if (!order) {
         logger.warn('webhook_order_not_found', { sessionId });
-        return { handled: false, type: event.type };
+        throw AppError.serviceUnavailable('payment_order_unresolved', 'Paiement reçu sans commande associée ; rapprochement et nouvelle tentative nécessaires.');
+      }
+      if (obj.amount_total !== order.total_cents || typeof obj.currency !== 'string' || obj.currency.toUpperCase() !== order.currency) {
+        throw AppError.conflict('payment_amount_mismatch', 'Le montant ou la devise du paiement ne correspond pas à la commande.');
       }
       if (order.status !== 'pending') {
         // Idempotency: already processed

@@ -30,6 +30,10 @@ describe('checkoutSchema', () => {
     expect(checkoutSchema.safeParse({ ...valid, items: [] }).success).toBe(false);
   });
 
+  it.each([['US', '75001'], ['BE', '10000'], ['FR', '97100'], ['FR', '98000'], ['FR', '00000']])('refuse destination non desservie %s %s', (country, postalCode) => {
+    expect(checkoutSchema.safeParse({ ...valid, customer: { ...valid.customer, address: { ...valid.customer.address, country, postalCode } } }).success).toBe(false);
+  });
+
   it('rejette quantity > 20 et quantity fractionnaire', () => {
     expect(checkoutSchema.safeParse({ ...valid, items: [{ ...valid.items[0]!, quantity: 21 }] }).success).toBe(false);
     expect(checkoutSchema.safeParse({ ...valid, items: [{ ...valid.items[0]!, quantity: 1.5 }] }).success).toBe(false);

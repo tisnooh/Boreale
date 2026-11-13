@@ -41,6 +41,7 @@ function makeDeps(overrides: Partial<CheckoutDeps> = {}) {
     createPayment: vi.fn(async () => {
       created.payment = true;
     }),
+    setSessionId: vi.fn(async () => undefined),
     createStripeSession: vi.fn(async () => ({ id: 'cs_test_1', url: 'https://checkout.stripe.com/cs_test_1' })),
     ...overrides,
   };
@@ -61,6 +62,24 @@ const baseInput: CheckoutInput = {
 };
 
 describe('createCheckout', () => {
+  it('rejette les doublons dont le cumul dépasse le stock avant création', async () => {
+    const { deps } = makeDeps();
+    await expect(createCheckout({ ...baseInput, items: [{ variantId: VAR_B, quantity: 1 }, { variantId: VAR_B, quantity: 1 }] }, deps)).rejects.toMatchObject({ code: 'insufficient_stock' });
+    expect(deps.createOrder).not.toHaveBeenCalled();
+    expect(deps.createStripeSession).not.toHaveBeenCalled();
+  });
+
+  it('rejette une quantité cumulée supérieure à 20', async () => {
+    const { deps } = makeDeps();
+    await expect(createCheckout({ ...baseInput, items: [{ variantId: VAR_A, quantity: 11 }, { variantId: VAR_A, quantity: 10 }] }, deps)).rejects.toMatchObject({ code: 'invalid_quantity' });
+    expect(deps.upsertCustomer).not.toHaveBeenCalled();
+  });
+
+  it('ne retourne aucune URL si la liaison session-commande échoue', async () => {
+    const { deps } = makeDeps({ setSessionId: vi.fn(async () => { throw new Error('persistence failed'); }) });
+    await expect(createCheckout(baseInput, deps)).rejects.toThrow('persistence failed');
+    expect(deps.createPayment).not.toHaveBeenCalled();
+  });
   it('happy path : totaux serveur, commande créée, URL Stripe retournée', async () => {
     const { deps, created } = makeDeps();
     const result = await createCheckout(baseInput, deps);
@@ -159,9 +178,16 @@ describe('createCheckout', () => {
     await expect(createCheckout(baseInput, deps)).rejects.toMatchObject({ status: 502 });
   });
 
-  it('utilisateur connu → user_id lié à la commande', async () => {
+  it('email connu sans session ne confère pas la propriété de la commande', async () => {
     const { deps, created } = makeDeps({ findUserByEmail: vi.fn(async () => ({ id: 'user-9' })) });
     await createCheckout(baseInput, deps);
-    expect((created.order as { userId: string }).userId).toBe('user-9');
+    expect((created.order as { userId: string | null }).userId).toBeNull();
+    expect(deps.findUserByEmail).not.toHaveBeenCalled();
+  });
+
+  it('lie uniquement la session authentifiée à la commande', async () => {
+    const { deps, created } = makeDeps();
+    await createCheckout(baseInput, deps, 'user-authenticated');
+    expect((created.order as { userId: string }).userId).toBe('user-authenticated');
   });
 });

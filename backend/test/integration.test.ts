@@ -25,6 +25,14 @@ afterAll(async () => {
 });
 
 describe('HTTP integration', () => {
+  it('refuse un checkout valide tant que les ventes ne sont pas explicitement ouvertes', async () => {
+    const res = await fetch(`${base}/api/stripe/checkout`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ variantId: '550e8400-e29b-41d4-a716-446655440001', quantity: 1 }], shippingMethod: 'standard', customer: { email: 'test@example.fr', firstName: 'Test', lastName: 'Client', address: { line1: 'Adresse test', postalCode: '75001', city: 'Paris', country: 'FR' } } }),
+    });
+    expect(res.status).toBe(503);
+    expect((await res.json() as { error: { code: string } }).error.code).toBe('checkout_closed');
+  });
   it('GET /api/health → 200 + état honnête des services', async () => {
     const res = await fetch(`${base}/api/health`);
     expect(res.status).toBe(200);

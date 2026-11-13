@@ -16,7 +16,10 @@ import { catalogRepo } from '../repositories/catalog.js';
 export const checkoutController = {
   /** POST /api/stripe/checkout — creates a pending order + Stripe Checkout Session. */
   createCheckout: asyncHandler(async (req: AuthedRequest, res: Response) => {
-    const result = await createCheckout(req.body);
+    if (config().CHECKOUT_ENABLED !== 'true') {
+      throw AppError.serviceUnavailable('checkout_closed', 'Les commandes ne sont pas encore ouvertes.');
+    }
+    const result = await createCheckout(req.body, undefined, req.user?.sub ?? null);
     // If a logged-in user checks out, remember their cart may convert: mark abandoned carts
     res.status(201).json({
       data: { url: result.url, orderId: result.orderId, orderNumber: result.orderNumber, totals: result.totals },
@@ -110,7 +113,8 @@ export const ordersController = {
     const order = await ordersRepo.getById(req.params.id!);
     if (!order) throw AppError.notFound('order_not_found', 'Commande introuvable.');
     const isAdmin = Boolean(req.admin);
-    const isOwner = req.user && (order.user_id === req.user.sub || order.email === req.user.email);
+    // Email ownership is not verified by registration: only the persisted user ID grants access.
+    const isOwner = req.user && order.user_id === req.user.sub;
     if (!isAdmin && !isOwner) throw AppError.forbidden('not_your_order', 'Cette commande ne vous appartient pas.');
     res.json({ data: toOrderDTO(order) });
   }),
@@ -118,11 +122,8 @@ export const ordersController = {
   /** GET /api/me/orders — orders of the authenticated user. */
   myOrders: asyncHandler(async (req: AuthedRequest, res: Response) => {
     const orders = await ordersRepo.listByUserId(req.user!.sub);
-    // Also include guest orders placed with the same email before account creation
-    const byEmail = await ordersRepo.listByEmail(req.user!.email);
-    const seen = new Set(orders.map((o) => o.id));
-    const merged = [...orders, ...byEmail.filter((o) => !seen.has(o.id))];
-    merged.sort((a, b) => b.placed_at.localeCompare(a.placed_at));
-    res.json({ data: merged.map(toOrderDTO) });
+    // Guest orders require a future verified claim flow, never an email-string match.
+    orders.sort((a, b) => b.placed_at.localeCompare(a.placed_at));
+    res.json({ data: orders.map(toOrderDTO) });
   }),
 };
