@@ -60,6 +60,7 @@ export function buildRouter(): Router {
   r.post('/api/auth/register', authLimiter, validateBody(registerSchema), authController.register);
   r.post('/api/auth/login', authLimiter, validateBody(loginSchema), authController.login);
   r.post('/api/auth/logout', authController.logout);
+  r.post('/api/auth/refresh', authLimiter, authController.refresh);
   r.get('/api/me', requireUser, authController.me);
   r.patch('/api/me', requireUser, validateBody(updateProfileSchema), authController.updateProfile);
   r.get('/api/me/orders', requireUser, ordersController.myOrders);

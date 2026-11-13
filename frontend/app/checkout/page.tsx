@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCart } from '@/hooks/use-cart';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { ApiError } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import { submitCheckout, validateDiscount } from '@/lib/services/actions';
 import { isPreview } from '@/lib/config';
 import { formatCents } from '@/lib/format';
@@ -32,7 +32,7 @@ const EMPTY_FORM: FormState = { email: '', firstName: '', lastName: '', phone: '
 
 export default function CheckoutPage() {
   const { items, ready, subtotalCents } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -93,11 +93,19 @@ export default function CheckoutPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting || items.length === 0) return;
+    if (submitting || authLoading || items.length === 0) return;
     setSubmitting(true);
     setFatalError(null);
     setPreviewMessage(null);
     try {
+      // Renouveler/vérifier une session expirée avant de créer une commande,
+      // sans jamais rejouer automatiquement le paiement ni basculer en invité.
+      if (user && !isPreview()) {
+        const current = await api.get<{ data: { id: string } }>('/api/me');
+        if (current.data.id !== user.id) {
+          throw new ApiError(401, 'session_changed', 'Votre session a changé. Reconnectez-vous avant de commander.');
+        }
+      }
       const result = await submitCheckout({
         items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
         discountCode: discount.code ?? undefined,
@@ -302,7 +310,7 @@ export default function CheckoutPage() {
               </p>
             )}
 
-            <button type="submit" disabled={submitting || !acceptTerms} className="btn-primary mt-4 w-full">
+            <button type="submit" disabled={submitting || authLoading || !acceptTerms} className="btn-primary mt-4 w-full">
               {submitting ? 'Redirection vers Stripe…' : `Payer ${formatCents(totals.totalCents)}`}
             </button>
             <p className="mt-3 text-center text-[11px] leading-relaxed text-muted">

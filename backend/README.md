@@ -22,6 +22,38 @@ configuré ou manquant, et les endpoints dépendants renvoient `503 service non 
 (jamais de faux succès).
 
 ## Scripts
+### Préparation Supabase Auth (opt-in, non activée par défaut)
+
+`AUTH_PROVIDER=supabase` et `SUPABASE_PUBLISHABLE_KEY` activent les comptes clients Supabase
+avec un client public séparé par opération. Le mode `legacy` demeure le défaut ; les admins
+ne sont pas migrés. Aucun JWT client maison n’est accepté en mode Supabase.
+
+L’accès est vérifié par `getUser` côté serveur. Access token et refresh token restent dans
+des cookies httpOnly ; le refresh est borné à `/api/auth`. `POST /api/auth/refresh` effectue
+la rotation explicite : `frontend/lib/api.ts` l’appelle après un 401 sur `/api/me`, ses sous-routes
+et les détails `/api/orders/:id`, puis rejoue une seule fois. Les refresh concurrents et les
+401 tardifs sont dédupliqués. Les routes admin/auth, le suivi invité et le checkout ne sont
+pas rejoués. Aucun retry réseau/5xx ; un refresh refusé exige une reconnexion. Les tests
+mockés ne remplacent pas la validation navigateur et prestataire réels.
+
+Si la confirmation email est requise, une inscription sans session renvoie
+`email_confirmation_required` ; elle ne crée pas une connexion fictive.
+Le logout efface toujours les cookies et expose `remoteRevoked:false` si la révocation
+distante n’a pas pu être confirmée. Les access tokens déjà émis peuvent rester valides
+jusqu’à expiration : ne pas revendiquer une invalidation JWT instantanée.
+
+La table `profiles` du schéma historique référence `public.users`, pas `auth.users`.
+Le mode Supabase retourne les données d’identité validées par Auth pour `/api/me`, mais
+bloque `PATCH /api/me` avec `profile_schema_pending` tant que le mapping et la migration
+des relations ne sont pas vérifiés. Ne pas fabriquer une ligne `public.users` ni des mots
+de passe pour contourner cette incompatibilité. Aucune migration distante n’est appliquée
+par cette préparation ; la recette Auth/DB réelle reste nécessaire.
+
+Contrats consultés : [signUp](https://supabase.com/docs/reference/javascript/auth-signup),
+[getUser](https://supabase.com/docs/reference/javascript/auth-getuser),
+[refreshSession](https://supabase.com/docs/reference/javascript/auth-refreshsession),
+[signOut](https://supabase.com/docs/reference/javascript/auth-signout).
+
 | Script | Rôle |
 |---|---|
 | `npm run dev` | serveur local (port 4000) |

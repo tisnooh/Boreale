@@ -2,7 +2,7 @@
 
 | Origine | Impact | Responsable | Action attendue | Dépendance |
 |---|---|---|---|---|
-| Mauvais compte connecté au plugin Supabase, accès interdit par le propriétaire | Aucun test DB réel ni migration | Propriétaire | Connecter le bon compte et autoriser la recette isolée | Supabase |
+| Accès autorisé, mais le compte « Supabase de Boreale » retourne projects:[] | Projet non identifié, aucun test DB réel ni migration | Propriétaire + chef | Autoriser le projet existant dans cette connexion ou fournir son URL dashboard non secrète pour contrôle ciblé ; aucun nouveau projet | Visibilité projet Supabase |
 | Aucun produit/fournisseur confirmé par le propriétaire | Vente et marge non validables | Propriétaire + sourcing | Choisir modèle de fulfillment, budget, assortiment ; obtenir devis, échantillons, conformité, stock et droits images | Fournisseurs |
 | Identité juridique et régime fiscal inconnus | Documents et TVA non finalisables | Propriétaire | Fournir identité vendeur et régime applicable via canal approprié ; aucun secret | Exploitant |
 | Transport et retours non contractualisés | Délais/coûts/destinations non prouvés | Propriétaire + logistique | Confirmer origine stock, destinations, transport et adresse/procédure retours | Prestataires |

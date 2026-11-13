@@ -1,5 +1,16 @@
 # Décision de lancement
 
+## Évolution — missions complémentaires
+
+| Périmètre | Décision actuelle | Preuve | Limite |
+|---|---|---|---|
+| Recherche produits autonome | APPROVED comme dossier préparatoire | Trois candidats, deux offres comparées chacun, sources primaires recoupées, JSON contrôlé | Aucun produit déclaré vendable/rentable prouvé |
+| Identification Supabase | BLOCKED | Appel compte Boreale retourne projects:[] | Autoriser visibilité du projet existant ou fournir URL dashboard non secrète pour contrôle ciblé |
+| Supabase Auth | Développé et testé avec mocks, non activé | Tests/Auth et isolation locale | Projet, profils/FK, RLS et confirmation email réelle non vérifiés |
+| Sitemap live | APPROVED correction locale | Pagination50, 6 tests sitemap/preview passent | Production et catalogue distant non testés |
+
+L’autorisation Supabase est maintenant donnée ; l’ancienne mention « accès interdit » dans les historiques est dépassée. Aucun autre projet n’est créé. Les ventes restent fermées et le design est conservé.
+
 **BLOCKED — ventes non autorisées.** Une page de préouverture existe ; ce n’est pas une boutique opérationnelle.
 
 Les quinze modules du rapport final seront évalués séparément : architecture, catalogue, fournisseurs, prix/marges, livraison, panier, paiement, commandes, fulfillment, emails, administration, SAV, SEO, sécurité, conformité.

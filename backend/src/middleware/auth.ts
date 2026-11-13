@@ -1,13 +1,19 @@
 import type { NextFunction, Request, Response } from 'express';
 import { verifyToken, type AdminTokenPayload, type UserTokenPayload } from '../lib/jwt.js';
 import { AppError } from '../lib/errors.js';
+import { config } from '../config.js';
+import { supabaseAuth } from '../lib/supabase-auth.js';
+import type { User } from '@supabase/supabase-js';
 
 export const USER_COOKIE = 'boreale_token';
 export const ADMIN_COOKIE = 'boreale_admin';
+export const REFRESH_COOKIE = 'boreale_refresh';
 
 export interface AuthedRequest extends Request {
   user?: UserTokenPayload;
   admin?: AdminTokenPayload;
+  authAccessToken?: string;
+  authUser?: User;
 }
 
 function readToken(req: Request, cookieName: string): string | null {
@@ -20,6 +26,23 @@ function readToken(req: Request, cookieName: string): string | null {
 /** Attaches req.user when a valid user token is present; never throws. */
 export function optionalUser(req: AuthedRequest, _res: Response, next: NextFunction) {
   const token = readToken(req, USER_COOKIE);
+  if (config().AUTH_PROVIDER === 'supabase') {
+    if (token && req.authAccessToken === token && req.authUser && req.user) return next();
+    delete req.user;
+    delete req.authAccessToken;
+    delete req.authUser;
+    // No local decoding or legacy-token fallback grants identity in this mode.
+    if (!token) return next();
+    void supabaseAuth.getUser(token).then((user) => {
+      if (user.email) {
+        req.user = { sub: user.id, email: user.email, kind: 'user' };
+        req.authAccessToken = token;
+        req.authUser = user;
+      }
+      next();
+    }).catch(() => next());
+    return;
+  }
   if (token) {
     const payload = verifyToken(token);
     if (payload?.kind === 'user') req.user = payload;
@@ -28,6 +51,7 @@ export function optionalUser(req: AuthedRequest, _res: Response, next: NextFunct
 }
 
 export function requireUser(req: AuthedRequest, _res: Response, next: NextFunction) {
+  if (req.user) return next();
   optionalUser(req, _res, () => {
     if (!req.user) return next(AppError.unauthorized('auth_required', 'Connexion requise pour accéder à cette ressource.'));
     next();

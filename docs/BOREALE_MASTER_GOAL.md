@@ -2,6 +2,12 @@
 
 Date : 2026-11-13. Branche : `master/operational-readiness`.
 
+## Complément autorisé le 13 novembre
+
+Le propriétaire demande une recherche produits/fournisseurs autonome avec preuves actuelles et prépare des candidats brouillons, sans achat ni publication. Il autorise désormais l’identification et la connexion du projet Supabase existant dédié à BORÉALE, Supabase Auth, contrôle RLS et recette. Cette autorisation remplace l’interdiction d’accès Supabase mentionnée ci-dessous ; elle ne permet ni projet supplémentaire, dépense, mutation destructive, ni déploiement de production. Inspecter l’existant avant toute écriture distante et conserver le design.
+
+Missions séparées : recherche produits, identification/inventaire Supabase en lecture seule, adaptation locale Auth. Le chef examine les résultats puis demande une revue indépendante. Aucun secret dans les documents ou le chat.
+
 Objectif : une chaîne produit → fournisseur → prix → livraison → panier → paiement → commande → fulfillment → SAV vérifiable. Une compilation ou simulation ne valide pas une vente réelle.
 
 Contraintes : conserver le design, aucun accès Supabase (compte non corrigé), aucune migration appliquée, production, dépense, commande payante, message externe ou secret dans les rapports. Aucune nouvelle dépendance sans demande.

@@ -6,10 +6,18 @@ const mocks = vi.hoisted(() => ({
   clear: vi.fn(),
   submitCheckout: vi.fn(),
   validateDiscount: vi.fn(),
+  getMe: vi.fn(),
+  authLoading: false,
+  user: null as { id: string; email: string; firstName: null; lastName: null } | null,
 }));
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
-vi.mock('@/hooks/use-auth', () => ({ useAuth: () => ({ user: null }) }));
+vi.mock('@/hooks/use-auth', () => ({ useAuth: () => ({ user: mocks.user, loading: mocks.authLoading }) }));
+vi.mock('@/lib/config', () => ({ isPreview: () => false, isLaunch: () => false }));
+vi.mock('@/lib/api', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/api')>(),
+  api: { get: mocks.getMe, post: vi.fn() },
+}));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock('@/hooks/use-cart', () => ({
   useCart: () => ({
@@ -26,10 +34,40 @@ vi.mock('@/lib/services/actions', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.user = null;
+  mocks.authLoading = false;
+  mocks.getMe.mockResolvedValue({ data: { id: 'customer-authenticated' } });
   mocks.validateDiscount.mockResolvedValue({ valid: true, discountCents: 100, message: 'Valide' });
 });
 
 describe('checkout : promotion et conservation du panier', () => {
+  it('attend la résolution de session initiale avant toute commande invitée', () => {
+    mocks.authLoading = true;
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    expect(mocks.submitCheckout).not.toHaveBeenCalled();
+    expect(mocks.getMe).not.toHaveBeenCalled();
+  });
+  it('vérifie la session du client connecté avant une seule création checkout', async () => {
+    mocks.user = { id: 'customer-authenticated', email: 'client@example.fr', firstName: null, lastName: null };
+    mocks.submitCheckout.mockResolvedValue({ status: 'preview', message: 'Test isolé' });
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    await waitFor(() => expect(mocks.submitCheckout).toHaveBeenCalledOnce());
+    expect(mocks.getMe).toHaveBeenCalledWith('/api/me');
+    expect(mocks.getMe.mock.invocationCallOrder[0]).toBeLessThan(mocks.submitCheckout.mock.invocationCallOrder[0]!);
+  });
+
+  it.each(['expired', 'changed'])('ne transforme pas une session %s en commande invitée', async (state) => {
+    mocks.user = { id: 'customer-authenticated', email: 'client@example.fr', firstName: null, lastName: null };
+    if (state === 'expired') mocks.getMe.mockRejectedValueOnce(new Error('Session expirée'));
+    else mocks.getMe.mockResolvedValueOnce({ data: { id: 'different-customer' } });
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
+    expect(mocks.submitCheckout).not.toHaveBeenCalled();
+    expect(mocks.clear).not.toHaveBeenCalled();
+  });
   it('ne contient qu’un formulaire, et appliquer une promotion ne lance pas le paiement', async () => {
     const { container } = render(<CheckoutPage />);
     expect(container.querySelectorAll('form')).toHaveLength(1);
