@@ -1,4 +1,5 @@
 import { API_URL } from './constants';
+import { isLaunch } from './config';
 
 /** Erreur API normalisée (enveloppe { error: { code, message, details } }). */
 export class ApiError extends Error {
@@ -28,6 +29,7 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 
 /** Client API navigateur — envoie les cookies (auth httpOnly) sur le domaine API. */
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  if (isLaunch()) throw new ApiError(503, 'launch_mode', 'La boutique est en préparation. Les commandes ne sont pas encore ouvertes.');
   const { body, throwOnError = true, headers, ...rest } = options;
   let res: Response;
   try {

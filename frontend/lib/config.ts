@@ -6,13 +6,16 @@
  *   injoignable, les pages affichent des états vides honnêtes (jamais de données inventées).
  *
  * Aucune clé réelle n'est requise dans les deux modes (DECISIONS.md D028).
+ * - "launch" : page publique d’ouverture prochaine, sans services ni catalogue.
  */
-export type SiteMode = 'preview' | 'live';
+export type SiteMode = 'preview' | 'launch' | 'live';
 
 export const SITE_MODE: SiteMode =
-  process.env.NEXT_PUBLIC_SITE_MODE === 'live' ? 'live' : 'preview';
+  process.env.NEXT_PUBLIC_SITE_MODE === 'live' ? 'live' :
+    process.env.NEXT_PUBLIC_SITE_MODE === 'launch' ? 'launch' : 'preview';
 
 export const isPreview = (): boolean => SITE_MODE === 'preview';
+export const isLaunch = (): boolean => SITE_MODE === 'launch';
 
 /** Message unique et honnête affiché quand une action réelle est impossible en preview. */
 export const PREVIEW_NOTICE =

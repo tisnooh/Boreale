@@ -1,0 +1,57 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { NextRequest } from 'next/server';
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+  vi.resetModules();
+});
+
+describe('publication avant ouverture', () => {
+  it('bloque les appels API navigateur et serveur avant toute requête distante', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_MODE', 'launch');
+    vi.resetModules();
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const { api } = await import('@/lib/api');
+    const { apiGetServer } = await import('@/lib/api-server');
+    await expect(api.post('/api/stripe/checkout', {})).rejects.toMatchObject({ code: 'launch_mode' });
+    expect(await apiGetServer('/api/products')).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it('ne contacte aucun service dans le sitemap preview ou launch', async () => {
+    const fetchMock = vi.fn(() => { throw new Error('Accès distant interdit'); });
+    vi.stubGlobal('fetch', fetchMock);
+    for (const mode of ['preview', 'launch']) {
+      vi.stubEnv('NEXT_PUBLIC_SITE_MODE', mode);
+      vi.resetModules();
+      const { default: sitemap } = await import('@/app/sitemap');
+      const entries = await sitemap();
+      expect(entries).toHaveLength(mode === 'launch' ? 1 : 0);
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('redirige les anciennes URLs boutique en launch et conserve les aperçus', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_MODE', 'launch');
+    vi.resetModules();
+    const { middleware } = await import('@/middleware');
+    for (const path of ['/collections', '/products/chaussons', '/checkout', '/admin', '/ete', '/account']) {
+      const response = middleware(new NextRequest(`https://boreale.example${path}`));
+      expect(response.status).toBe(307);
+      expect(response.headers.get('location')).toBe('https://boreale.example/');
+    }
+    expect(middleware(new NextRequest('https://boreale.example/')).status).toBe(200);
+    vi.stubEnv('NEXT_PUBLIC_SITE_MODE', 'preview');
+    vi.resetModules();
+    const preview = await import('@/middleware');
+    expect(preview.middleware(new NextRequest('https://boreale.example/collections')).status).toBe(200);
+  });
+
+  it('interdit l’indexation du catalogue de démonstration', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_MODE', 'preview');
+    vi.resetModules();
+    const { default: robots } = await import('@/app/robots');
+    expect(robots().rules).toEqual([{ userAgent: '*', disallow: '/' }]);
+  });
+});

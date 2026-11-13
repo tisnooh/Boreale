@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { API_URL, SITE_URL } from '@/lib/constants';
+import { isLaunch, isPreview } from '@/lib/config';
 
 interface ProductRow {
   slug: string;
@@ -8,6 +9,8 @@ interface ProductRow {
 
 /** Sitemap dynamique : pages fixes + catalogue réel depuis l'API. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (isPreview()) return [];
+  if (isLaunch()) return [{ url: `${SITE_URL}/`, changeFrequency: 'monthly', priority: 1 }];
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [

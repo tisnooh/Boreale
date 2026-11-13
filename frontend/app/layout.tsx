@@ -3,7 +3,8 @@ import { Fraunces, Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import { apiGetServer } from '@/lib/api-server';
-import { isPreview } from '@/lib/config';
+import { isLaunch, isPreview } from '@/lib/config';
+import { ComingSoon } from '@/components/ComingSoon';
 import { headers } from 'next/headers';
 import { getSeasonFromPath } from '@/lib/season/config';
 import { CartProvider } from '@/hooks/use-cart';
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     description: 'Des essentiels chauds, beaux et durables pour affronter l’hiver. Expédié depuis la France.',
     images: [{ url: '/og/og-default.jpg', width: 1200, height: 630, alt: BRAND.name }],
   },
-  robots: { index: true, follow: true },
+  robots: { index: !isPreview(), follow: !isPreview() },
 };
 
 export const viewport: Viewport = {
@@ -59,6 +60,13 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  if (isLaunch()) {
+    return (
+      <html lang="fr" className={`${fraunces.variable} ${inter.variable} h-full`}>
+        <body><ComingSoon /></body>
+      </html>
+    );
+  }
   // Saison courante (SSR via middleware x-pathname) → scope de tokens thème
   const pathname = (await headers()).get('x-pathname') ?? '/';
   const season = getSeasonFromPath(pathname);

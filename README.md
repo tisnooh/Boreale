@@ -1,6 +1,8 @@
 # BORÉALE — winter-store
 
 Marque e-commerce française spécialisée hiver (nom provisoire, voir `DECISIONS.md` D001).
+Pour publier avant de disposer des produits et des services, utiliser le mode **`launch`** :
+voir [la préparation de l’ouverture](docs/LAUNCH.md). Aucune base de données nécessaire.
 Monorepo contenant **2 applications indépendantes** déployables séparément sur Vercel :
 
 ```

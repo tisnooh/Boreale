@@ -1,5 +1,6 @@
 
 import { API_URL } from './constants';
+import { isLaunch } from './config';
 
 /**
  * Fetch serveur (Server Components) — jamais de cache (données catalogue fraîches),
@@ -7,6 +8,7 @@ import { API_URL } from './constants';
  * affiche son état vide/fallback. Aucun faux contenu n'est injecté.
  */
 export async function apiGetServer<T>(path: string): Promise<T | null> {
+  if (isLaunch()) return null;
   try {
     const res = await fetch(`${API_URL}${path}`, {
       cache: 'no-store',
