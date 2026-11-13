@@ -4,7 +4,7 @@ import { asyncHandler, AppError } from '../lib/errors.js';
 import type { AuthedRequest, } from '../middleware/auth.js';
 import { ADMIN_COOKIE, USER_COOKIE, REFRESH_COOKIE } from '../middleware/auth.js';
 import { authService, type AuthResult } from '../services/auth.js';
-import { authUserDTO, supabaseAuth } from '../lib/supabase-auth.js';
+import { supabaseAuth, supabaseProfiles } from '../lib/supabase-auth.js';
 import { usersRepo } from '../repositories/users.js';
 import type { Request } from 'express';
 
@@ -78,8 +78,8 @@ export const authController = {
 
   me: asyncHandler(async (req: AuthedRequest, res: Response) => {
     if (config().AUTH_PROVIDER === 'supabase') {
-      if (!req.authUser) throw AppError.unauthorized('auth_required', 'Connexion requise.');
-      res.json({ data: authUserDTO(req.authUser) });
+      if (!req.authUser || !req.authAccessToken) throw AppError.unauthorized('auth_required', 'Connexion requise.');
+      res.json({ data: await supabaseProfiles.read(req.authUser, req.authAccessToken) });
       return;
     }
     const user = await authService.me(req.user!.sub);
@@ -88,7 +88,9 @@ export const authController = {
 
   updateProfile: asyncHandler(async (req: AuthedRequest, res: Response) => {
     if (config().AUTH_PROVIDER === 'supabase') {
-      throw AppError.serviceUnavailable('profile_schema_pending', 'La liaison sécurisée des profils Supabase est en préparation.');
+      if (!req.authUser || !req.authAccessToken) throw AppError.unauthorized('auth_required', 'Connexion requise.');
+      res.json({ data: await supabaseProfiles.update(req.authUser, req.authAccessToken, req.body) });
+      return;
     }
     await usersRepo.updateProfile(req.user!.sub, req.body);
     res.json({ data: await authService.me(req.user!.sub) });

@@ -2,7 +2,7 @@
 
 | Origine | Impact | Responsable | Action attendue | Dépendance |
 |---|---|---|---|---|
-| Accès autorisé, mais le compte « Supabase de Boreale » retourne projects:[] | Projet non identifié, aucun test DB réel ni migration | Propriétaire + chef | Autoriser le projet existant dans cette connexion ou fournir son URL dashboard non secrète pour contrôle ciblé ; aucun nouveau projet | Visibilité projet Supabase |
+| Résolu : organisation vide, premier projet autorisé puis créé et connecté | Fondation Auth/profils/catalogue réellement testée | Chef | Poursuivre transactions, modèle fournisseurs et panier persistant ; aucun autre projet nécessaire | Aucun blocage de visibilité Supabase actuel |
 | Aucun produit/fournisseur confirmé par le propriétaire | Vente et marge non validables | Propriétaire + sourcing | Choisir modèle de fulfillment, budget, assortiment ; obtenir devis, échantillons, conformité, stock et droits images | Fournisseurs |
 | Identité juridique et régime fiscal inconnus | Documents et TVA non finalisables | Propriétaire | Fournir identité vendeur et régime applicable via canal approprié ; aucun secret | Exploitant |
 | Transport et retours non contractualisés | Délais/coûts/destinations non prouvés | Propriétaire + logistique | Confirmer origine stock, destinations, transport et adresse/procédure retours | Prestataires |
@@ -11,6 +11,8 @@
 Les montants du seed, stocks de démonstration et shortlists historiques ne constituent pas des preuves commerciales actuelles.
 
 ## Blocages techniques sous responsabilité agent
+
+La fondation Supabase est maintenant appliquée et sespermissions réellement testées. Restent sous responsabilitéagent : créationcommande transactionnelle, idempotence/repriseswebhooks, fournisseurs/offres/attributions, panierspersistants (abandoned_carts n’est pas un panier synchronisé), modèlesincidents/fulfillment et durcissementadmin. Ne pas qualifier la connexion initiale comme chaîneachatcomplète.
 
 Ces défauts sont des travaux à poursuivre, pas des demandes d’action propriétaire : sitemap live paginé, drawer clavier, promo panier, transitions admin/RBAC, reprises emails et consentement, modèle incident/fulfillment. Les transactions et l’idempotence persistante nécessitent également une conception locale puis une recette DB autorisée. Ne pas considérer les échecs techniques comme résolus parce que les services externes sont absents.
 

@@ -3,6 +3,23 @@
 API e-commerce serverless : Express sur Vercel Functions + Supabase (Postgres + RLS) + Stripe + Resend. Application **indépendante** : projet Vercel n°2 avec `Root Directory = backend`.
 
 ## Démarrage local
+
+Le projet Boréale créé utilise Supabase Auth (`AUTH_PROVIDER=supabase`) et le bootstrap séparé
+`supabase/bootstrap/migrations/20261113193043_boreale_initial_auth.sql`. Ne pas lui appliquer
+en plus la chaîne legacy ni son seed. Les accès locaux sont dans `.env.local`, ignoré par Git.
+`npm run dev` et `npm start` chargent ce fichier avant l'application (Node20.12+ requis pour
+ce chargement natif) ; les variables déjà définies par l'environnement gardent priorité.
+
+Recettes réelles sans email ni paiement :
+
+```bash
+node --env-file=.env.local scripts/verify-supabase-bootstrap.mjs
+# Avec npm start actif dans un autre terminal :
+node --env-file=.env.local scripts/verify-boreale-auth-http.mjs
+```
+
+Ces scripts sont limités à la référence Boréale et créent puis suppriment uniquement leurs
+comptes QA identifiés. Ils ne constituent pas un test de commande Stripe ou de fulfillment.
 ```bash
 cp .env.example .env.local
 # renseigner au minimum : SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET, FRONTEND_URL
@@ -43,16 +60,34 @@ distante n’a pas pu être confirmée. Les access tokens déjà émis peuvent r
 jusqu’à expiration : ne pas revendiquer une invalidation JWT instantanée.
 
 La table `profiles` du schéma historique référence `public.users`, pas `auth.users`.
-Le mode Supabase retourne les données d’identité validées par Auth pour `/api/me`, mais
-bloque `PATCH /api/me` avec `profile_schema_pending` tant que le mapping et la migration
-des relations ne sont pas vérifiés. Ne pas fabriquer une ligne `public.users` ni des mots
-de passe pour contourner cette incompatibilité. Aucune migration distante n’est appliquée
-par cette préparation ; la recette Auth/DB réelle reste nécessaire.
+Le mode Supabase requiert le nouveau schéma compatible `profiles.user_id → auth.users.id`,
+un profil initialisé par le trigger Auth validé et des politiques SELECT/UPDATE propriétaire
+avec contrôle `USING` et `WITH CHECK`. Le rôle `authenticated` doit pouvoir lire les colonnes
+profil et modifier uniquement prénom, nom, téléphone et préférence marketing.
+
+`GET/PATCH /api/me` utilise un client Data API séparé par opération, avec la clé publishable
+et le JWT du client vérifié côté serveur ; aucune clé service-role n’intervient pour le profil.
+Chaque requête filtre `user_id` sur l’identité validée. Le payload ne peut changer ni
+propriétaire ni rôle. Les noms et préférences de `/api/me` viennent du profil en base,
+pas d’un fallback silencieux aux métadonnées. Les réponses d’inscription avec session,
+de connexion et de refresh relisent également ce profil avec le nouveau JWT : un changement
+de nom ou de préférence n’est pas annulé visuellement par d’anciennes métadonnées Auth.
+Un profil absent, un schéma incompatible,
+une erreur RLS ou un UPDATE ne renvoyant aucune ligne donne `profile_unavailable` (503),
+jamais un faux succès. Une session Auth créée ou renouvelée dont le profil est indisponible
+n’est pas annoncée comme connectée ; après échec du refresh, les cookies sont effacés et
+une reconnexion sera nécessaire. Aucun upsert ni utilisateur legacy artificiel n’est créé.
+
+Cette préparation locale n’applique aucune migration distante ; la recette DB/RLS réelle
+reste nécessaire après revue et application du schéma initial. Ne pas activer ces routes
+sur une base legacy sans migration étudiée ni présenter les tests mockés comme preuve RLS.
 
 Contrats consultés : [signUp](https://supabase.com/docs/reference/javascript/auth-signup),
 [getUser](https://supabase.com/docs/reference/javascript/auth-getuser),
 [refreshSession](https://supabase.com/docs/reference/javascript/auth-refreshsession),
 [signOut](https://supabase.com/docs/reference/javascript/auth-signout).
+Profils/RLS : [gestion des utilisateurs](https://supabase.com/docs/guides/auth/managing-user-data),
+[Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
 | Script | Rôle |
 |---|---|

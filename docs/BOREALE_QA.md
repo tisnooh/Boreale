@@ -1,5 +1,21 @@
 # Qualité et preuves
 
+## Preuves réelles du nouveau projet
+
+Projet luojeyfznonjnacftxbm créé après autorisationexplicite dans organisationboreale ; coût annoncé0/mois. Avantbootstrap :public0table,migrations0,authusers0. Aprèsbootstrap :19tables,19RLS, migrationboreale_initial_auth/version20261113193043.
+
+Script reproductible : `cd backend` puis `node --env-file=.env.local scripts/verify-supabase-bootstrap.mjs`. GardeURLprojetexacte ; ne logue ni clés, ni tokens, ni motsdepasse. ComptesQAadminconfirmés avec adresses@example.invalid et runUUID, aucunemailenvoyé ; suppression limitéeaux IDscréés, marqueurrun+emailrevérifiés.
+
+Résultat chef puis auditeur indépendant :29checksPASS chacun,2comptescréés/2supprimés chacun. Preuves :Authpasswordlogin,getUser,triggerprofil,lecture/updateowner,refusautreprofil,changementowner/insertrefusés, tablesprivées refuséesanonetclient,RPCstockanonrefusée,cataloguevide. Aprèsnettoyage :authusers0,profiles0,products0,inventory0.
+
+APIExpressréellementreliée : GET/api/health200 DBconfigured, GET/api/products?limit=50 et/api/categories200[] ; GET/api/me et/api/me/orders401 sanssession. npmstartcorrigé versdist/src/start.js et chargement.envlocal avantconfiguration. backend129/129tests,build,typecheck,lint passent. Aucune nouvellemodificationfrontend à cette étape.
+
+Advisorssecurity :13signauxINFO rls_enabled_no_policy sur tablesbackendprivées. C’est le deny-by-default volontaire, associéà révocationdesgrantsclients, pas une validation d’accèslarge. Référence : https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy . Ne pas annoncer zéroavis ni ouvrir les donnéespourlesfaire disparaître.
+
+Acceptationchef : APPROVED fondationSupabase/Auth/RLS et connexionAPIlocale après contre-vérificationindépendante. BLOCKED pour achatStripecomplet, inscriptionavecréceptionemail, fournisseurs, fulfillment et fiabilitétransactionnelle descommandes. Aucun produitmis envente.
+
+Recette HTTP réelle supplémentaire : `node --env-file=.env.local scripts/verify-boreale-auth-http.mjs`, API locale déjà démarrée sur4000. 11 contrôles passent : connexion et profil persisté, cookies httpOnly, identité, modification du profil via JWT utilisateur, rotation refresh avec valeurs DB, refus admin d’un jeton client, checkout fermé503, révocation logout confirmée et refus après déconnexion. Compte QA unique supprimé après vérification de son marqueur. Premier essai : le test visait `/api/admin/me` au lieu de `/api/admin/auth/me` et échouait après7contrôles sur404 ; chemin de test corrigé, aucune assertion affaiblie, relance11/11.
+
 ## Complément : Supabase Auth, sourcing et sitemap
 
 La suite backend de la reprise passe114/114, avec timeout30s et un seul worker ; build, typecheck et lint passent. Auth Supabase préparée opt-in, sans requête réelle : 12 tests provider/HTTP mockés et régressions ownership/JWT. Le chef et le reviewer ont contrôlé séparément l’identité issue de getUser, la séparation admin, l’absence de fallback JWT legacy et les métadonnées réservées à l’affichage. Le profil reste explicitement indisponible tant que le mapping FK n’est pas validé.

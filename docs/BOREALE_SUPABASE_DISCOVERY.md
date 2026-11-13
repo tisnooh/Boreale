@@ -1,5 +1,7 @@
 # BORÉALE — découverte Supabase, lecture seule
 
+> Historique de découverte : l’état bloqué ci-dessous a été levé. L’organisation était vide ; le propriétaire a autorisé la création du premier projet boreale, ref luojeyfznonjnacftxbm, à Paris. Le projet est actif et connecté localement, avec bootstrap et tests réels. Voir BOREALE_SUPABASE_CONNECTION.md pour l’état actuel, les preuves et les limites. Aucun deuxième projet créé.
+
 Date : 13 novembre 2026. Mission AGENT Supabase, acceptation réservée au chef.
 
 ## Résultat vérifié

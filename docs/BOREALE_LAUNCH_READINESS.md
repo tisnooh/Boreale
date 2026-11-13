@@ -1,5 +1,11 @@
 # Décision de lancement
 
+## Mise à jour — premier projet Supabase opérationnel pour la fondation
+
+Le propriétaire a autorisé la création après constat d’une organisation vide. Projet boreale luojeyfznonjnacftxbm, Paris, coût annoncé0/mois, état actif. Connexion sécurisée locale et bootstrap19tables RLS réellement appliqués. Deux exécutions indépendantes de29contrôles Auth/RLS réussies et comptes QA nettoyés. Recette HTTP locale Auth/profil/refresh/logout11contrôles réussie. Backend129/129, compilation/lint réussis.
+
+Les anciens statuts d’identification bloquée sont historiques. Auth/profils/RLS et connexion locale sont APPROVED dans ce périmètre ; les ventes restent BLOCKED. Aucune recette Stripe, fournisseur, fulfillment, transaction commande durable ou email réellement reçu n’est démontrée. Aucun produit ni stock ajouté. Voir BOREALE_SUPABASE_CONNECTION.md.
+
 ## Évolution — missions complémentaires
 
 | Périmètre | Décision actuelle | Preuve | Limite |

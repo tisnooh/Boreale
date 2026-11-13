@@ -2,6 +2,12 @@
 
 Date : 2026-11-13. Branche : `master/operational-readiness`.
 
+## Autorisation la plus récente — premier projet Supabase
+
+Après constat organisation vide, le propriétaire a explicitement autorisé la création du premier projet BORÉALE dans l’organisation boreale. Projet créé : luojeyfznonjnacftxbm, Paris eu-west-3, coût annoncé par Supabase0/mois, état ACTIVE_HEALTHY. Bootstrap et connexion réalisés dans le cadre de l’autorisation de connecter les modules et Auth. Aucun deuxième projet ni branche, aucun produit publié, dépense payante ou déploiement storefront.
+
+Cette autorisation remplace la contrainte historique « ne pas créer de projet supplémentaire » uniquement pour ce premier projet. Les autres limites restent applicables.
+
 ## Complément autorisé le 13 novembre
 
 Le propriétaire demande une recherche produits/fournisseurs autonome avec preuves actuelles et prépare des candidats brouillons, sans achat ni publication. Il autorise désormais l’identification et la connexion du projet Supabase existant dédié à BORÉALE, Supabase Auth, contrôle RLS et recette. Cette autorisation remplace l’interdiction d’accès Supabase mentionnée ci-dessous ; elle ne permet ni projet supplémentaire, dépense, mutation destructive, ni déploiement de production. Inspecter l’existant avant toute écriture distante et conserver le design.

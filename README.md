@@ -21,9 +21,12 @@ winter-store/
 Prérequis : Node.js ≥ 20, un projet [Supabase](https://supabase.com), un compte [Stripe](https://stripe.com) (mode test), un compte [Resend](https://resend.com) (optionnel en dev).
 
 ### 1. Base de données
-1. Créer un projet Supabase.
-2. Exécuter dans l'ordre les fichiers de `backend/supabase/migrations/` (SQL Editor ou `supabase db push`).
-3. Exécuter `backend/supabase/seed.sql` (catalogue de lancement : 14 produits, 4 bundles, catégories, contenus).
+Le premier projet **boreale** est créé et connecté : `luojeyfznonjnacftxbm`, Paris.
+Le bootstrap Supabase Auth a déjà été appliqué ; voir [la connexion vérifiée](docs/BOREALE_SUPABASE_CONNECTION.md).
+**Ne pas créer un autre projet, rejouer les migrations legacy de `backend/supabase/migrations/`,
+ni exécuter `backend/supabase/seed.sql` sur ce projet.** Le seed contient des stocks de démonstration.
+La chaîne canonique du projet neuf est isolée dans `backend/supabase/bootstrap/migrations/`.
+Le catalogue reste vide tant que les références, prix, stocks et fournisseurs ne sont pas validés.
 
 ### 2. Backend
 ```bash

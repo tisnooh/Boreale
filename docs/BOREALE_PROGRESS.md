@@ -1,5 +1,17 @@
 # Progression
 
+## État actuel — premier projet créé et connecté
+
+Le propriétaire a autorisé le premier projet dans l’organisation vide. Création à coût annoncé0/mois : boreale, ref luojeyfznonjnacftxbm, régionParis eu-west-3, ACTIVE_HEALTHY. Aucun autre projet créé. Les sections plus anciennes projects:[] décrivent l’état AVANT cette création.
+
+Bootstrap appliqué et revu indépendamment :19tables toutesRLS, identité clientauth.users, profilsowner, donnéescommerce privées, stock0, aucunseed. Migration canonique backend/supabase/bootstrap/migrations/20261113193043_boreale_initial_auth.sql ; nom aligné sur l’historique distant, SHA256 inchangé après renommage. Ne pas exécuter en plus les migrations legacy0001/0002/0003.
+
+Accès local dans backend/.env.local ignoré parGit ; aucuneclé au dépôt/rapport. APIlocalestart corrigé, charge.envlocal avant importapp et cible dist/src/start.js. ContrôlesréelsHTTP :health200 DBconfigured, products200[] et categories200[], me401 et me/orders401 sanssession.
+
+Recette réelle Auth/DataAPI :29contrôlesPASS parchef puis29PASS indépendants; chaque exécution crée2comptesQA@example.invalid confirmésadmin sansemail et supprimeexactement ses2fixtures. ComptagepostQA authusers0,profiles0,products0,inventory0. Suite backend129/129, build/typecheck/lint passent. Aucun paiement, fournisseur, fulfillment ni commandecomplète validé parcespreuves.
+
+Advisorssecurity :13informations RLSenabled_no_policy pour les tables privéesréservéesau servicebackend ; les refusclients ont été testésréellement. Aucun accès public ne doit être ajouté pour faire disparaître ce signal. Voir rapportconnexion.
+
 ## Preuves de la reprise complémentaire
 
 - Chef : appel direct `list_projects` sur le seul compte Boreale → `projects:[]`, sans erreur ; aucun projet distant ni URL API identifié. Aucune permission403 démontrée. Demande utilisateur en attente : visibilité du projet existant ou URL dashboard non secrète. Aucun projet supplémentaire ni clé réclamée dans le chat.
