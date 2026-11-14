@@ -1,5 +1,7 @@
 # BORÉALE — mandat d’exploitation
 
+Checkpoint du 14 novembre : le GOAL global reste ouvert. La tranche commandes/règlement est revue et testée en base, sans valider les ventes. Référence actuelle : `BOREALE_TRANSACTION_DELIVERY.md`. Conserver le même dépôt, la même branche, le même projet Supabase et le design ; reprendre les tâches non terminées listées dans `BOREALE_PROGRESS.md`. Les limites sur production, dépenses, engagements et données commerciales restent applicables.
+
 Date : 2026-11-13. Branche : `master/operational-readiness`.
 
 ## Autorisation la plus récente — premier projet Supabase

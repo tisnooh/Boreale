@@ -20,6 +20,16 @@ node --env-file=.env.local scripts/verify-boreale-auth-http.mjs
 
 Ces scripts sont limités à la référence Boréale et créent puis suppriment uniquement leurs
 comptes QA identifiés. Ils ne constituent pas un test de commande Stripe ou de fulfillment.
+
+La migration additive suivante est `supabase/bootstrap/migrations/20261114033519_boreale_order_payment_atomic.sql`,
+appliquée au même projet après revue. Elle ajoute les RPC commande/règlement/annulation et les journaux privés.
+La recette `node --env-file=.env.local scripts/verify-order-transactions.mjs` utilise des produits inactifs et
+des événements de paiement **synthétiques**. Elle laisse un fichier SQL de nettoyage hors dépôt : son exécution
+par un administrateur est obligatoire après chaque run, car les journaux sont volontairement sans droit DELETE
+pour le backend. Ne pas lancer cette recette sans prendre en charge ce nettoyage. Le contrôle SQL
+`scripts/verify-create-order-rollback.sql` ne laisse aucune ligne et peut avancer la séquence de numérotation.
+Voir `../docs/BOREALE_TRANSACTION_DELIVERY.md` pour les preuves et limites.
+
 ```bash
 cp .env.example .env.local
 # renseigner au minimum : SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET, FRONTEND_URL

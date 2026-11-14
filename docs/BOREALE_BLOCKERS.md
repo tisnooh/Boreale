@@ -1,5 +1,11 @@
 # Blocages et décisions
 
+## Mise à jour du 14 novembre
+
+Création commande transactionnelle, confirmation de paiement durable et annulation pending sont désormais appliquées et testées sur Supabase, avec contre-vérification indépendante. Aucun blocage d’accès à la base. Les anciens paragraphes contraires décrivent les étapes antérieures.
+
+Travaux agent prioritaires restants : intention checkout idempotente et reprise interprestataire ; remboursements atomiques et monotones ; transitions admin atomiques ; worker de notifications ; fournisseurs/offres/attributions, paniers persistants et fulfillment. L’outbox existe mais n’envoie rien. `fulfillment_status=ready` confirme seulement une allocation de stock interne. Les dépendances commerciales du tableau restent requises avant toute ouverture.
+
 | Origine | Impact | Responsable | Action attendue | Dépendance |
 |---|---|---|---|---|
 | Résolu : organisation vide, premier projet autorisé puis créé et connecté | Fondation Auth/profils/catalogue réellement testée | Chef | Poursuivre transactions, modèle fournisseurs et panier persistant ; aucun autre projet nécessaire | Aucun blocage de visibilité Supabase actuel |

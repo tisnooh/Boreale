@@ -1,5 +1,19 @@
 # Qualité et preuves
 
+## 14 novembre — validation transactionnelle bornée
+
+Décision chef : **APPROVED pour création atomique et confirmation de paiement en base**, après corrections des courses détectées par l’auditeur. **BLOCKED pour ouverture commerciale et achat complet.** Voir `BOREALE_TRANSACTION_DELIVERY.md` pour le détail et les 15 modules.
+
+- Backend global : **174/174 PASS**, zéro échec ; rapport JSON `work/boreale-transactions-tests.json` hors dépôt. ESLint global PASS. Typecheck indépendant PASS ; compilation finale consignée dans la livraison.
+- Indépendant : 48/48 tests webhook/repository et 8/8 premiers garde-fous admin ; deux cas supplémentaires refusent les statuts remboursement manuels et sont inclus dans la suite globale de 174.
+- Supabase réel : 32/32 contrôles chef puis 32/32 auditeur. Produits/variantes QA inactifs, événements Stripe synthétiques. Ni email ni requête Stripe. Nettoyage privilégié exact des deux marqueurs exécuté ; comptage final des dix tables commerciales contrôlées : toutes zéro.
+- Concurrence : même événement, événements distincts/même session, commandes concurrentes pour un stock de 1, expiration simultanée au paiement. Une seule allocation quand elle est possible, encaissement conservé avec incident sinon.
+- Rollback tardif règlement : collision d’intent après effets stock/promotion ; aucun effet partiel ni événement conservé. Création : validation des erreurs et contrôle supplémentaire du rollback transactionnel après retour réussi du RPC ; cette dernière preuve n’est pas une panne injectée à l’intérieur du RPC.
+- Échecs corrigés : annulation pouvant écraser `paid`, ligne de stock nouvellement apparue non verrouillée, cleanup impossible avec journaux append-only (nettoyage admin ciblé conservant les permissions), deux erreurs de typage dans le harness admin corrigées avant la suite globale.
+- Advisors : 17 signaux INFO `rls_enabled_no_policy` (13 précédents + quatre tables backend privées). Refus public vérifié réellement ; pas de policy permissive ajoutée. [Explication Supabase](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy).
+
+Limites non résolues : clé durable checkout, remboursements concurrents/désordonnés, transitions admin hors annulation, worker outbox et délivrabilité, recette Stripe et fulfillment réel. Le frontend n’a pas changé dans cette tranche ; aucune nouvelle recette mobile revendiquée.
+
 ## Preuves réelles du nouveau projet
 
 Projet luojeyfznonjnacftxbm créé après autorisationexplicite dans organisationboreale ; coût annoncé0/mois. Avantbootstrap :public0table,migrations0,authusers0. Aprèsbootstrap :19tables,19RLS, migrationboreale_initial_auth/version20261113193043.

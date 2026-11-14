@@ -1,7 +1,6 @@
 import type { Response } from 'express';
 import type { AuthedRequest } from '../middleware/auth.js';
 import { asyncHandler, AppError } from '../lib/errors.js';
-import { logger } from '../lib/logger.js';
 import { stripe } from '../lib/stripe.js';
 import { catalogRepo } from '../repositories/catalog.js';
 import { ordersRepo } from '../repositories/orders.js';
@@ -134,26 +133,37 @@ export const adminController = {
     if (!canTransition(order.status, status)) {
       throw AppError.conflict('invalid_transition', `Transition impossible : ${order.status} → ${status}.`);
     }
+    if (['paid', 'refunded', 'partially_refunded'].includes(status)) {
+      throw AppError.conflict('provider_confirmation_required', 'Le paiement doit être confirmé par le prestataire.');
+    }
+    if (['processing', 'shipped', 'delivered'].includes(status) && order.fulfillment_status !== 'ready') {
+      throw AppError.conflict('fulfillment_blocked', 'Le stock de cette commande n’est pas alloué ; traiter son incident avant préparation.');
+    }
+    if (status === 'cancelled') {
+      // Paid cancellation/restocking requires a separate atomic workflow. In
+      // particular a paid shortage has never consumed stock and must not add it.
+      if (order.status !== 'pending' || order.paid_at) {
+        throw AppError.conflict('paid_cancellation_requires_review', 'Une commande encaissée nécessite un traitement de remboursement et de stock contrôlé.');
+      }
+      const cancelled = await ordersRepo.cancelPending(order.id, `admin:${req.admin?.email ?? 'admin'}`);
+      if (!cancelled) throw AppError.conflict('order_state_changed', 'La commande a changé ; rechargez-la avant de poursuivre.');
+      const updated = await ordersRepo.getById(order.id);
+      if (!updated) throw AppError.notFound('order_not_found', 'Commande introuvable.');
+      res.json({ data: toOrderDTO(updated) });
+      return;
+    }
+    if (status === 'shipped' && (!(trackingCarrier ?? order.tracking_carrier)?.trim() || !(trackingNumber ?? order.tracking_number)?.trim())) {
+      throw AppError.conflict('tracking_required', 'Le transporteur et le numéro de suivi sont nécessaires pour déclarer l’expédition.');
+    }
     const extra: Record<string, unknown> = {};
     if (trackingCarrier !== undefined) extra.tracking_carrier = trackingCarrier;
     if (trackingNumber !== undefined) extra.tracking_number = trackingNumber;
     if (trackingUrl !== undefined) extra.tracking_url = trackingUrl;
     if (status === 'shipped') extra.shipped_at = new Date().toISOString();
     if (status === 'delivered') extra.delivered_at = new Date().toISOString();
-    if (status === 'cancelled') extra.cancelled_at = new Date().toISOString();
-    if (status === 'paid' && !order.paid_at) extra.paid_at = new Date().toISOString();
 
     const updated = await ordersRepo.setStatus(order.id, status, extra as never);
     await ordersRepo.addEvent(order.id, `status_${status}`, { from: order.status, by: req.admin?.email ?? 'admin' });
-
-    // Restock when a PAID order is cancelled
-    if (status === 'cancelled' && order.paid_at) {
-      for (const item of order.order_items ?? []) {
-        if (item.variant_id) {
-          await catalogRepo.restoreInventory(item.variant_id, item.quantity).catch((e) => logger.warn('restock_failed', e));
-        }
-      }
-    }
 
     if (notify && status === 'shipped') {
       const dto = { ...toOrderDTO({ ...order, ...updated, order_items: order.order_items } as never) };

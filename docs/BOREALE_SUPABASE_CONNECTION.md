@@ -1,5 +1,7 @@
 # BORÉALE — premier projet et connexion vérifiée
 
+Mise à jour du 14 novembre : une seconde migration additive `20261114033519_boreale_order_payment_atomic.sql` a été appliquée au même projet après revue. Le schéma compte désormais 23 tables publiques RLS, dont quatre nouvelles tables privées de règlement, événements, incidents et notifications. Recette transactionnelle réelle 32/32 par le chef puis 32/32 par l’auditeur, paiements synthétiques, nettoyage confirmé. Les constats initiaux de 19 tables/13 advisors ci-dessous décrivent le bootstrap précédent ; l’état suivant comporte 17 advisors INFO de tables privées sans policy client. Voir `BOREALE_TRANSACTION_DELIVERY.md` pour la portée et les limites. Aucune ouverture des ventes.
+
 Date : 13 novembre 2026. Autorisation explicite du propriétaire pour créer le premier projet après constat d’une organisation vide. Aucun second projet, branche ou abonnement payant.
 
 - Organisation : boreale, jpyeitgsliddczxzxmro.

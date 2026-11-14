@@ -38,6 +38,7 @@ export function toOrderDTO(row: DbOrder & { order_items?: DbOrderItem[] }): Orde
     number: row.number,
     email: row.email,
     status: row.status,
+    fulfillmentStatus: row.fulfillment_status ?? 'pending',
     currency: row.currency,
     subtotalCents: row.subtotal_cents,
     discountCents: row.discount_cents,

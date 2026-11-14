@@ -1,5 +1,15 @@
 # Progression
 
+## 14 novembre — commandes et règlement transactionnels
+
+La migration additive `20261114033519_boreale_order_payment_atomic.sql` a été appliquée au projet existant après revue indépendante. Création commande/lignes/événement atomique ; règlement sous verrou, journaux durables, déduplication événement/session, stock agrégé sans allocation partielle, incidents et outbox. Annulation en attente sous le même verrou ; les statuts financiers manuels et le traitement sans allocation sont refusés. Aucune modification du design.
+
+Preuves : **174/174 tests backend**, lint global réussi ; 48 tests webhook/repository reproduits indépendamment. Recette DB réelle **32/32 par le chef et 32/32 par l’auditeur**, événements de paiement synthétiques, aucun appel Stripe/email. Nettoyages admin ciblés exécutés ; commandes, lignes, paiements, clients, produits, stock et quatre nouvelles tables tous à zéro. Un contrôle SQL supplémentaire confirme le rollback global après retour du RPC, sans prétendre injecter une panne à l’intérieur de celui-ci. Les numéros de commande peuvent comporter des trous après QA : les séquences PostgreSQL ne sont pas transactionnelles.
+
+Fichiers : migration bootstrap, repository orders, services webhooks/orders, contrôleurs checkout/admin, types, trois fichiers de tests, deux scripts QA et `BOREALE_TRANSACTION_DESIGN/DELIVERY.md`. Voir la livraison pour la matrice complète et les limites.
+
+Suite : idempotence de l’intention checkout et liaison Stripe, remboursements atomiques/monotones, transitions administratives atomiques, worker outbox ; puis fournisseurs/paniers/fulfillment. Ces travaux techniques restent sous responsabilité agent. Stripe isolé, réception email, catalogue vendable, transport et informations exploitant demeurent non validés. Aucun push, déploiement, achat, publication ou message externe.
+
 ## État actuel — premier projet créé et connecté
 
 Le propriétaire a autorisé le premier projet dans l’organisation vide. Création à coût annoncé0/mois : boreale, ref luojeyfznonjnacftxbm, régionParis eu-west-3, ACTIVE_HEALTHY. Aucun autre projet créé. Les sections plus anciennes projects:[] décrivent l’état AVANT cette création.

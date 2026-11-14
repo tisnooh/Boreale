@@ -11,7 +11,6 @@ import { computeDiscountCents, type DiscountSpec } from '../services/pricing.js'
 import { toOrderDTO } from '../services/orders.js';
 import type { AuthedRequest } from '../middleware/auth.js';
 import { buildDefaultWebhookDeps, handleWebhookEvent } from '../services/webhooks.js';
-import { catalogRepo } from '../repositories/catalog.js';
 
 export const checkoutController = {
   /** POST /api/stripe/checkout — creates a pending order + Stripe Checkout Session. */
@@ -90,9 +89,6 @@ export const checkoutController = {
     }
     const deps = buildDefaultWebhookDeps({
       ordersRepo: ordersRepo as never,
-      catalogRepo: catalogRepo as never,
-      discountsRepo: discountsRepo as never,
-      abandonedCartsRepo: abandonedCartsRepo as never,
     });
     await handleWebhookEvent(event as never, deps);
     res.json({ received: true });

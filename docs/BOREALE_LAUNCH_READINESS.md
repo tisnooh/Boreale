@@ -1,5 +1,13 @@
 # Décision de lancement
 
+## Décision du 14 novembre — ventes toujours fermées
+
+**APPROVED, périmètre technique borné :** fondation Auth/RLS et transactions commande/règlement. Nouvelle migration appliquée au même projet, aucun doublon. Recettes Supabase réelles 32/32 par le chef et 32/32 indépendants ; backend 174/174. Fixtures nettoyées, aucune donnée commerciale fictive persistante.
+
+**BLOCKED pour lancement :** aucun achat Stripe complet, fournisseur exploitable, transport réel, réception email, catalogue vendable ou dossier juridique finalisé. Checkout durable, remboursements atomiques et worker outbox restent à développer. Le statut `ready` ne vaut pas validation fournisseur/logistique.
+
+Le rapport courant et la matrice des 15 modules sont dans `BOREALE_TRANSACTION_DELIVERY.md`. Les sections plus anciennes ci-dessous sont historiques et ne remplacent pas cette décision. Aucun déploiement storefront, achat, campagne, publication ou message externe autorisé par cette validation.
+
 ## Mise à jour — premier projet Supabase opérationnel pour la fondation
 
 Le propriétaire a autorisé la création après constat d’une organisation vide. Projet boreale luojeyfznonjnacftxbm, Paris, coût annoncé0/mois, état actif. Connexion sécurisée locale et bootstrap19tables RLS réellement appliqués. Deux exécutions indépendantes de29contrôles Auth/RLS réussies et comptes QA nettoyés. Recette HTTP locale Auth/profil/refresh/logout11contrôles réussie. Backend129/129, compilation/lint réussis.

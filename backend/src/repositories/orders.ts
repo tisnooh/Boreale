@@ -1,4 +1,5 @@
 import { db } from '../lib/supabase.js';
+import { AppError } from '../lib/errors.js';
 import type { AddressSnapshot, DbOrder, DbOrderItem, OrderStatus, ShippingMethod } from '../types/index.js';
 
 export interface NewOrderInput {
@@ -17,38 +18,55 @@ export interface NewOrderInput {
   stripeSessionId?: string | null;
 }
 
+export interface SettlePaymentInput {
+  eventId: string;
+  sessionId: string;
+  paymentIntentId: string;
+  amountCents: number;
+  currency: string;
+}
+
+export interface PaymentSettlement {
+  order_id: string;
+  duplicate: boolean;
+  fulfillment_status: 'ready' | 'blocked';
+  incident_code: string | null;
+}
+
 export const ordersRepo = {
   async create(input: NewOrderInput): Promise<DbOrder> {
-    const c = db();
-    const { data: order, error } = await c
-      .from('orders')
-      .insert({
-        customer_id: input.customerId,
-        user_id: input.userId,
-        email: input.email,
-        status: 'pending' satisfies OrderStatus,
-        currency: input.currency,
-        subtotal_cents: input.subtotalCents,
-        discount_cents: input.discountCents,
-        shipping_cents: input.shippingCents,
-        total_cents: input.totalCents,
-        shipping_method: input.shippingMethod,
-        discount_code: input.discountCode,
-        shipping_address: input.shippingAddress,
-        stripe_session_id: input.stripeSessionId ?? null,
-      })
-      .select()
-      .single();
-    if (error) throw error;
-    const o = order as DbOrder;
+    // One database transaction owns the order, its item snapshots and its event.
+    // An unavailable RPC must fail closed, never fall back to separate inserts.
+    const { data: order, error } = await db().rpc('create_order_atomic', { p_input: input }).single();
+    if (error) throw AppError.serviceUnavailable('order_creation_failed', 'La création de la commande a échoué ; une nouvelle tentative est nécessaire.');
+    if (!order) throw AppError.serviceUnavailable('order_creation_unconfirmed', 'La création de la commande n’a pas été confirmée.');
+    return order as DbOrder;
+  },
 
-    const items = input.items.map((it) => ({ ...it, order_id: o.id }));
-    if (items.length > 0) {
-      const { error: itemsError } = await c.from('order_items').insert(items);
-      if (itemsError) throw itemsError;
+  async settlePayment(input: SettlePaymentInput): Promise<PaymentSettlement> {
+    const { data, error } = await db().rpc('settle_order_payment', {
+      p_event_id: input.eventId,
+      p_session_id: input.sessionId,
+      p_payment_intent_id: input.paymentIntentId,
+      p_amount_cents: input.amountCents,
+      p_currency: input.currency,
+    });
+    if (error) throw AppError.serviceUnavailable('payment_settlement_failed', 'Le traitement du paiement a échoué ; une nouvelle tentative est nécessaire.');
+    const result = data as PaymentSettlement | null;
+    if (!result || typeof result.order_id !== 'string' || typeof result.duplicate !== 'boolean'
+      || !['ready', 'blocked'].includes(result.fulfillment_status)
+      || (result.incident_code !== null && typeof result.incident_code !== 'string')) {
+      throw AppError.serviceUnavailable('payment_settlement_unconfirmed', 'Le traitement du paiement n’a pas été confirmé ; une nouvelle tentative est nécessaire.');
     }
-    await this.addEvent(o.id, 'order_created', { number: o.number, totalCents: o.total_cents });
-    return o;
+    return result;
+  },
+
+  async cancelPending(id: string, reason: string): Promise<boolean> {
+    const { data, error } = await db().rpc('cancel_pending_order', { p_order_id: id, p_reason: reason });
+    if (error || typeof data !== 'boolean') {
+      throw AppError.serviceUnavailable('order_cancellation_unconfirmed', 'L’annulation de la commande n’a pas été confirmée ; une nouvelle tentative est nécessaire.');
+    }
+    return data;
   },
 
   async addEvent(orderId: string, type: string, data: Record<string, unknown> = {}): Promise<void> {
