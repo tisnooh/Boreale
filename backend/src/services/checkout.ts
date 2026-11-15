@@ -15,7 +15,7 @@ export interface StripeSessionResult {
 }
 
 export interface CheckoutDeps {
-  getVariantsByIds(ids: string[]): Promise<{ id: string; sku: string; title: string; price_cents: number; is_active: boolean; products: { id: string; name: string; is_active: boolean; image_url: string | null } | null; inventory: { quantity: number } | null }[]>;
+  getVariantsByIds(ids: string[]): Promise<{ id: string; sku: string; title: string; price_cents: number; is_active: boolean; products: { id: string; name: string; procurement_status?: 'unverified' | 'verified'; is_active: boolean; image_url: string | null } | null; inventory: { quantity: number } | null }[]>;
   findUserByEmail(email: string): Promise<{ id: string } | null>;
   upsertCustomer(input: { email: string; firstName: string; lastName: string; phone?: string | null; userId?: string | null }): Promise<{ id: string }>;
   addAddress(customerId: string, address: CheckoutInput['customer']['address'] & { firstName: string; lastName: string; phone?: string | null }): Promise<void>;
@@ -156,6 +156,9 @@ export async function createCheckout(
     if (!v) throw AppError.unprocessable('variant_not_found', `Variante introuvable (${item.variantId}).`);
     if (!v.is_active || !v.products || !v.products.is_active) {
       throw AppError.conflict('product_unavailable', `« ${v.products?.name ?? 'Produit'} » n’est plus disponible.`);
+    }
+    if (v.products.procurement_status !== 'verified') {
+      throw AppError.conflict('procurement_unverified', 'Approvisionnement non vérifié : ce produit ne peut pas être commandé.');
     }
     const available = v.inventory?.quantity ?? 0;
     if (available < item.quantity) {

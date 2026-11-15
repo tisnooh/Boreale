@@ -17,6 +17,7 @@ const NAV = [
   { href: '/admin', label: 'Dashboard', exact: true },
   { href: '/admin/commandes', label: 'Commandes' },
   { href: '/admin/produits', label: 'Produits' },
+  { href: '/admin/sourcing', label: 'Sourcing' },
   { href: '/admin/clients', label: 'Clients' },
   { href: '/admin/promotions', label: 'Promotions' },
   { href: '/admin/newsletter', label: 'Newsletter' },
@@ -93,16 +94,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile nav */}
-      <div className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t border-line bg-white py-1.5 md:hidden">
-        {NAV.slice(0, 5).map((item) => {
+      <nav aria-label="Navigation admin mobile" className="fixed inset-x-0 bottom-0 z-50 flex gap-1 overflow-x-auto border-t border-line bg-white px-2 py-1.5 md:hidden">
+        {NAV.map((item) => {
           const active = item.exact ? pathname === item.href : pathname?.startsWith(item.href);
           return (
-            <Link key={item.href} href={item.href} className={`px-2 py-1 text-[11px] font-semibold ${active ? 'text-ember-dark' : 'text-muted'}`}>
+            <Link key={item.href} href={item.href} className={`min-w-20 shrink-0 px-2 py-1 text-center text-[11px] font-semibold whitespace-nowrap ${active ? 'text-ember-dark' : 'text-muted'}`}>
               {item.label}
             </Link>
           );
         })}
-      </div>
+      </nav>
 
       <main className="min-w-0 flex-1 pb-16 md:pb-0">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</div>

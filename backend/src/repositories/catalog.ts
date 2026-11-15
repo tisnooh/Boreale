@@ -39,6 +39,7 @@ export const catalogRepo = {
     const { data, error } = await client()
       .from('products')
       .select(PRODUCT_SELECT)
+      .eq('procurement_status', 'verified')
       .eq('is_active', true)
       .order('position', { ascending: true })
       .order('created_at', { ascending: false })
@@ -52,6 +53,7 @@ export const catalogRepo = {
       .from('products')
       .select(PRODUCT_SELECT)
       .eq('slug', slug)
+      .eq('procurement_status', 'verified')
       .maybeSingle();
     if (error) throw error;
     return (data as ProductWithRelations) ?? null;
@@ -157,7 +159,8 @@ export const catalogRepo = {
 
   async adminSetInventory(variantId: string, quantity: number, lowStockThreshold?: number): Promise<void> {
     const c = client();
-    const { data: existing } = await c.from('inventory').select('variant_id').eq('variant_id', variantId).maybeSingle();
+    const { data: existing, error: lookupError } = await c.from('inventory').select('variant_id').eq('variant_id', variantId).maybeSingle();
+    if (lookupError) throw lookupError;
     const row: Partial<DbInventory> = { variant_id: variantId, quantity, updated_at: new Date().toISOString() } as Partial<DbInventory>;
     if (lowStockThreshold !== undefined) row.low_stock_threshold = lowStockThreshold;
     if (existing) {

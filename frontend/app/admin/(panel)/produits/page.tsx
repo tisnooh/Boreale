@@ -25,6 +25,8 @@ interface AdminProduct {
   is_active: boolean;
   is_featured: boolean;
   product_variants?: AdminVariant[];
+  procurement_status?: 'unverified' | 'verified';
+  source_candidate_key?: string | null;
 }
 
 function stockOf(v: AdminVariant): number {
@@ -121,35 +123,36 @@ export default function AdminProductsPage() {
             <tbody className="divide-y divide-line">
               {visible.map((p) => {
                 const variants = p.product_variants ?? [];
-                const minPrice = variants.length > 0 ? Math.min(...variants.map((v) => v.price_cents)) : 0;
+                const minPrice = variants.length > 0 ? Math.min(...variants.map((v) => v.price_cents)) : null;
                 const totalStock = variants.reduce((s, v) => s + stockOf(v), 0);
                 return (
                   <tr key={p.id} className="transition hover:bg-snow">
                     <td className="px-4 py-3">
-                      <Link href={`/admin/produits/${p.id}`} className="font-bold hover:text-ember-dark">{p.name}</Link>
+                      <Link href={p.source_candidate_key ? `/admin/sourcing/${encodeURIComponent(p.source_candidate_key)}` : `/admin/produits/${p.id}`} className="font-bold hover:text-ember-dark">{p.name}</Link>
+                      {p.source_candidate_key && <Link href={`/admin/sourcing/${encodeURIComponent(p.source_candidate_key)}`} className="block text-xs text-ember-dark">{p.source_candidate_key}</Link>}
                       <span className="block text-xs text-muted">/{p.slug}{p.is_featured && ' · ★ vedette'}</span>
                     </td>
                     <td className="px-4 py-3"><span className="badge bg-ice text-ink-500">{p.type === 'bundle' ? 'Pack' : 'Produit'}</span></td>
                     <td className="px-4 py-3">
                       <span className={`badge ${(p.season ?? 'winter') === 'summer' ? 'bg-cream text-ember-dark' : 'bg-ice text-ink-500'}`}>
-                        {(p.season ?? 'winter') === 'summer' ? 'Été' : (p.season ?? 'winter') === 'all-season' ? 'All-season' : 'Hiver'}
+                        {p.source_candidate_key && !p.season ? 'Non confirmé' : (p.season ?? 'winter') === 'summer' ? 'Été' : (p.season ?? 'winter') === 'all-season' ? 'All-season' : 'Hiver'}
                       </span>
                     </td>
                     <td className="px-4 py-3 tabular-nums">{variants.length}</td>
-                    <td className="px-4 py-3 tabular-nums">{formatCents(minPrice)}</td>
+                    <td className="px-4 py-3 tabular-nums">{minPrice === null ? 'Non renseigné' : formatCents(minPrice)}</td>
                     <td className="px-4 py-3">
                       <span className={`badge ${totalStock === 0 ? 'bg-danger/10 text-danger' : totalStock <= 20 ? 'bg-cream text-ink-500' : 'bg-success/10 text-success'}`}>
-                        {p.type === 'bundle' ? `${totalStock} packs` : `${totalStock} u.`}
+                        {p.source_candidate_key ? 'Non confirmé' : p.type === 'bundle' ? `${totalStock} packs` : `${totalStock} u.`}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`badge ${p.is_active ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
-                        {p.is_active ? 'Actif' : 'Inactif'}
+                        {p.source_candidate_key ? 'Brouillon fournisseur — non vendable' : p.is_active ? 'Actif' : 'Inactif'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Link href={`/admin/produits/${p.id}`} className="btn-outline btn-sm mr-2">Éditer</Link>
-                      {p.is_active && (
+                      <Link href={p.source_candidate_key ? `/admin/sourcing/${encodeURIComponent(p.source_candidate_key)}` : `/admin/produits/${p.id}`} className="btn-outline btn-sm mr-2">{p.source_candidate_key ? 'Dossier sourcing' : 'Éditer'}</Link>
+                      {p.is_active && !p.source_candidate_key && (
                         <button type="button" className="btn-ghost btn-sm text-danger" onClick={() => void remove(p)}>Désactiver</button>
                       )}
                     </td>

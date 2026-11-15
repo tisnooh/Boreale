@@ -46,7 +46,7 @@ const variantInputSchema = z.object({
   weightG: z.number().int().min(0).max(100_000).nullable().optional(),
   stock: z.number().int().min(0).max(1_000_000).optional(),
   lowStockThreshold: z.number().int().min(0).max(10_000).optional(),
-  isActive: z.boolean().optional().default(true),
+  isActive: z.boolean().optional().default(false),
   position: z.number().int().min(0).optional().default(0),
 });
 
@@ -62,7 +62,7 @@ export const productUpsertSchema = z.object({
   description: z.string().trim().min(10).max(5000),
   longDescription: z.string().trim().max(20000).optional().nullable(),
   type: z.enum(['product', 'bundle']).default('product'),
-  isActive: z.boolean().optional().default(true),
+  isActive: z.boolean().optional().default(false),
   isFeatured: z.boolean().optional().default(false),
   imageUrl: z.string().trim().max(500).optional().nullable(),
   images: z.array(z.string().trim().max(500)).max(10).optional().default([]),

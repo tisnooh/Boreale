@@ -1,5 +1,12 @@
 # Qualité et preuves
 
+## 16 novembre — liaison sourcing privée
+
+Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.
+
+Revues : défaut de variante active par défaut et perte de diagnostic RPC rejetés puis corrigés. URLs .com/.co.uk alignées. Les42 contrôles combinés incluent les26 API déjà exécutés : ne pas les présenter comme68 tests distincts ni42 tests navigateur seuls. Session admin de QA éphémère, pas un login propriétaire. Advisors19 INFO privés intentionnels, pas zéro notice.
+
+
 ## 15 novembre — adaptation des écrans APPROVED, périmètre UI
 
 Code et harness relus indépendamment ; rejet initial focus/scroll corrigé. Rapport complet99/99 assertions confirmé indépendamment (processus interrompu après rapport, sans exit0 revendiqué). Lint124fichiers :0erreur/24warnings préexistants, exit0. Buildwebpack et TypeScript :exit0,32pages générées. Chef :300contrôles uniques tous réussis, sept écrans complets, zéro exceptionJS/mutation inattendue ; neuf captures examinées. Reçu versionné et limites dans BOREALE_RESPONSIVE_QA.md. Aucun second passage navigateur indépendant revendiqué. Auth simulée anonyme, catalogue/panier preview ; aucun achat Stripe ou commande réelle. La performance et les navigateurs/appareils physiques ne sont pas validés ici.

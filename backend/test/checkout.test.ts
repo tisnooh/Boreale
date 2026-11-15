@@ -12,7 +12,7 @@ const variants = [
     title: 'S/M · Bleu nuit',
     price_cents: 2490,
     is_active: true,
-    products: { id: 'p1', name: 'Chaussettes polaires « Nuage »', is_active: true, image_url: '/products/x.svg' },
+    products: { id: 'p1', name: 'Chaussettes polaires « Nuage »', is_active: true, procurement_status: 'verified', image_url: '/products/x.svg' },
     inventory: { quantity: 10 },
   },
   {
@@ -21,7 +21,7 @@ const variants = [
     title: 'Taille unique',
     price_cents: 1290,
     is_active: true,
-    products: { id: 'p2', name: 'Gant grattoir « Polaire »', is_active: true, image_url: null },
+    products: { id: 'p2', name: 'Gant grattoir « Polaire »', is_active: true, procurement_status: 'verified', image_url: null },
     inventory: { quantity: 1 },
   },
 ];
@@ -62,6 +62,16 @@ const baseInput: CheckoutInput = {
 };
 
 describe('createCheckout', () => {
+  it.each(['unverified', undefined])('refuse un approvisionnement %s malgré le stock, sans aucun effet', async (status) => {
+    const { deps } = makeDeps({ getVariantsByIds: vi.fn(async () => [{ ...variants[0]!, products: {
+      ...variants[0]!.products, procurement_status: status,
+    } }] as never) });
+    await expect(createCheckout(baseInput, deps)).rejects.toMatchObject({ code: 'procurement_unverified' });
+    for (const method of ['findUserByEmail', 'upsertCustomer', 'addAddress', 'findActiveDiscount', 'createOrder', 'createPayment', 'setSessionId', 'createStripeSession'] as const) {
+      expect(deps[method]).not.toHaveBeenCalled();
+    }
+  });
+
   it('rejette les doublons dont le cumul dépasse le stock avant création', async () => {
     const { deps } = makeDeps();
     await expect(createCheckout({ ...baseInput, items: [{ variantId: VAR_B, quantity: 1 }, { variantId: VAR_B, quantity: 1 }] }, deps)).rejects.toMatchObject({ code: 'insufficient_stock' });

@@ -1,0 +1,112 @@
+{
+  "scope": "real database and local API; optional local UI",
+  "authFixture": "ephemeral signed admin token, not owner login",
+  "realPaymentTested": false,
+  "checks": [
+    {
+      "name": "anonymous_admin_api_denied",
+      "passed": true
+    },
+    {
+      "name": "user_kind_cannot_be_admin",
+      "passed": true
+    },
+    {
+      "name": "admin_reads_three_candidates",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_linked_private_draft",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_source_preserved",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_concurrent_import_is_idempotent",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_metadata_save_works",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_forged_fields_rejected",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_generic_activation_rejected_before_writes",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-01_public_detail_hidden",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_linked_private_draft",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_source_preserved",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_concurrent_import_is_idempotent",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_metadata_save_works",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_forged_fields_rejected",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_generic_activation_rejected_before_writes",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-02_public_detail_hidden",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_linked_private_draft",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_source_preserved",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_concurrent_import_is_idempotent",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_metadata_save_works",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_forged_fields_rejected",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_generic_activation_rejected_before_writes",
+      "passed": true
+    },
+    {
+      "name": "BOR-ALI-20261114-03_public_detail_hidden",
+      "passed": true
+    },
+    {
+      "name": "public_catalogue_has_no_unverified_product",
+      "passed": true
+    },
+    {
+      "name": "checkout_remains_closed",
+      "passed": true
+    }
+  ],
+  "pageErrors": []
+}

@@ -1,5 +1,12 @@
 # Blocages et décisions
 
+## 16 novembre — liaison sourcing privée
+
+Résolu techniquement : persistance/liaison dossiers-produits, administration privée et protections de publication, preuves dans BOREALE_SOURCING_DELIVERY.md.
+
+Restent : devis par variante/quantité/destination, stock réel, coût livré, droits images/conformité/retours. Propriétaire : accord avant contact fournisseur, compte Alibaba approprié, destination/code postal, budget et mode de fulfillment ; identité légale et provisionnement sécurisé de son compte admin. Agent : qualification contrôlée, checkout idempotent, remboursements et transitions atomiques, worker email et durcissement admin. C: saturé ; copie D conservée pour travailler. Aucun secret demandé dans la conversation.
+
+
 ## 15 novembre — environnement local et dépendances restantes
 
 - Responsive : APPROVED dans le périmètre UI anonyme preview (300/300, sept tailles). Build/lint/typecheck terminés sur D ; plus de blocage de cette recette. Preuves et limites dans BOREALE_RESPONSIVE_QA.md.

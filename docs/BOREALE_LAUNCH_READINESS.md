@@ -1,5 +1,14 @@
 # Décision de lancement
 
+## 16 novembre — liaison sourcing privée
+
+Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.
+
+**Ouverture commerciale : BLOCKED.** Les trois produits sont réels en base mais volontairement non vendables. Fournisseurs = dossiers sourcés, pas une connexion de commandes Alibaba. Prix/livraison = observations et hypothèses non qualifiées. Administration = lecture/écriture testées localement avec jeton QA ; compte exploitant absent. Les statuts des quinze modules ci-dessous restent à lire avec cette mise à jour ; commandes/paiement/emails/fulfillment/conformité ne sont pas validés par le sourcing.
+
+Décisions : devis autorisés ou conservés en brouillon, destination et budget, lot ou livraison unitaire. Aucun de ces choix n’autorise achat, publication, campagne ou production. Les développements restants restent sous responsabilité agent.
+
+
 ## 15 novembre — responsive APPROVED, lancement commercial BLOCKED
 
 Livraison de code sur branche master/operational-readiness uniquement. Aucun déploiement en production autorisé. [Recette responsive](BOREALE_RESPONSIVE_QA.md) :300/300, sept formats, neuf captures,99/99 assertions, lint0erreur et build/typecheck réussis. Revue indépendante du code et des preuves unitaires ; recette navigateur finale exécutée et contrôlée par le chef. Catalogue preview et Auth anonyme simulée : ce résultat ne valide aucune vente.

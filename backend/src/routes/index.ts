@@ -1,3 +1,5 @@
+import { sourcingController } from '../controllers/sourcing.js';
+import { sourcingCandidateSchema } from '../validators/sourcing.js';
 import { Router } from 'express';
 import { healthController, catalogController } from '../controllers/health.js';
 import { authController } from '../controllers/auth.js';
@@ -78,6 +80,11 @@ export function buildRouter(): Router {
   r.post('/api/admin/auth/login', adminAuthLimiter, validateBody(adminLoginSchema), authController.adminLogin);
   r.post('/api/admin/auth/logout', authController.adminLogout);
   r.get('/api/admin/auth/me', requireAdmin, authController.adminMe);
+
+  r.get('/api/admin/sourcing-candidates', requireAdmin, sourcingController.list);
+  r.get('/api/admin/sourcing-candidates/:key', requireAdmin, sourcingController.get);
+  r.post('/api/admin/sourcing-candidates', requireAdmin, validateBody(sourcingCandidateSchema), sourcingController.create);
+  r.put('/api/admin/sourcing-candidates/:key', requireAdmin, validateBody(sourcingCandidateSchema), sourcingController.update);
 
   r.get('/api/admin/products', requireAdmin, adminController.listProducts);
   r.post('/api/admin/products', requireAdmin, validateBody(productUpsertSchema), adminController.createProduct);

@@ -1,5 +1,12 @@
 # Progression
 
+## 16 novembre — liaison sourcing privée
+
+Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.
+
+Fichiers : modules sourcing backend, routes/guards catalogue-checkout, composants/routes admin et tests ; registre Alibaba distinct, migration et scripts QA, rapports et trois demandes de devis. Copie de livraison sur D, branche master/operational-readiness. Prochaine étape agent : qualification commerciale et fiabilité checkout/remboursements/outbox ; dépendances fournisseur et exploitant indiquées dans les blocages.
+
+
 ## 15 novembre — responsive vérifié, livraison sur branche dédiée
 
 Travaux terminés : header adaptatif et menu paysage, accueil mobile, panier clavier/focus/défilement, titre en mouvement réduit, polices locales et références preview manquantes. Sources et fichiers détaillés dans BOREALE_RESPONSIVE_QA.md. Revue indépendante du diff et du harness APPROVED ; rapport99/99 assertions, lint0erreur/24warnings, build exit0 et TypeScript32pages. Recette finale :300/300, sept tailles de320à1440px paysage inclus, neuf captures relues, zéro exception JS ou écriture inattendue. Auth anonyme isolée et catalogue demo : aucune vente réelle validée.

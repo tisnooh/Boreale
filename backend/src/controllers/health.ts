@@ -60,7 +60,7 @@ export const catalogController = {
     const { ids } = req.query as unknown as { ids: string[] };
     const rows = await catalogRepo.getVariantsByIds(ids);
     const data = rows
-      .filter((r) => r.products && r.products.is_active && r.is_active)
+      .filter((r) => r.products && r.products.procurement_status === 'verified' && r.products.is_active && r.is_active)
       .map((r) => ({
         id: r.id,
         sku: r.sku,

@@ -16,6 +16,12 @@ import type { OrderStatus } from '../types/index.js';
 /* ---------- products ---------- */
 
 async function upsertProduct(body: ProductUpsertInput, existingId?: string) {
+  const existing = existingId ? await catalogRepo.adminGetProductById(existingId) : null;
+  if (existingId && !existing) throw AppError.notFound('product_not_found', 'Produit introuvable.');
+  if (existing?.source_candidate_key != null) throw sourcedDraftError(existing.source_candidate_key);
+  if ((body.isActive || body.variants.some((v) => v.isActive)) && existing?.procurement_status !== 'verified') {
+    throw AppError.conflict('procurement_unverified', 'Vérifiez l’approvisionnement avant toute activation du produit ou de ses variantes.');
+  }
   const productRow = {
     slug: body.slug,
     name: body.name,
@@ -59,10 +65,8 @@ async function upsertProduct(body: ProductUpsertInput, existingId?: string) {
     kept.add(saved.id);
     if (v.stock !== undefined) {
       await catalogRepo.adminSetInventory(saved.id, v.stock, v.lowStockThreshold);
-    } else {
-      // Ensure an inventory row exists for new variants
-      await catalogRepo.adminSetInventory(saved.id, 0, v.lowStockThreshold ?? 5).catch(() => undefined);
-      if (!existingId) continue;
+    } else if (!v.id) {
+      await catalogRepo.adminSetInventory(saved.id, 0, v.lowStockThreshold ?? 5);
     }
   }
   if (existingId) {
@@ -72,6 +76,10 @@ async function upsertProduct(body: ProductUpsertInput, existingId?: string) {
     }
   }
   return product;
+}
+
+function sourcedDraftError(key: string) {
+  return AppError.conflict('sourced_draft_readonly', 'Ce brouillon se modifie dans le dossier sourcing privé.', { href: `/admin/sourcing/${encodeURIComponent(key)}` });
 }
 
 export const adminController = {
@@ -96,6 +104,7 @@ export const adminController = {
     // Soft delete by default (catalog integrity), hard delete on ?hard=1 for drafts
     const existing = await catalogRepo.adminGetProductById(req.params.id!);
     if (!existing) throw AppError.notFound('product_not_found', 'Produit introuvable.');
+    if (existing.source_candidate_key != null) throw sourcedDraftError(existing.source_candidate_key);
     if (req.query.hard === '1') {
       await catalogRepo.adminDeleteProduct(existing.id);
     } else {

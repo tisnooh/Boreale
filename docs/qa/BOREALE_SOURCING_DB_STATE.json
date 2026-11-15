@@ -1,0 +1,16 @@
+{
+  "projectRef": "luojeyfznonjnacftxbm",
+  "checkedAt": "2026-11-16",
+  "migration": "20261115052055_boreale_sourcing_drafts",
+  "events": 3,
+  "orders": 0,
+  "payments": 0,
+  "variants": 0,
+  "customers": 0,
+  "inventory": 0,
+  "candidates": 3,
+  "rls_tables": 25,
+  "admin_users": 0,
+  "active_products": 0,
+  "linked_inactive_unverified_products": 3
+}
