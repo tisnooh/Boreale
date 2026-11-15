@@ -1,5 +1,9 @@
 # Qualité et preuves
 
+## 15 novembre — adaptation des écrans APPROVED, périmètre UI
+
+Code et harness relus indépendamment ; rejet initial focus/scroll corrigé. Rapport complet99/99 assertions confirmé indépendamment (processus interrompu après rapport, sans exit0 revendiqué). Lint124fichiers :0erreur/24warnings préexistants, exit0. Buildwebpack et TypeScript :exit0,32pages générées. Chef :300contrôles uniques tous réussis, sept écrans complets, zéro exceptionJS/mutation inattendue ; neuf captures examinées. Reçu versionné et limites dans BOREALE_RESPONSIVE_QA.md. Aucun second passage navigateur indépendant revendiqué. Auth simulée anonyme, catalogue/panier preview ; aucun achat Stripe ou commande réelle. La performance et les navigateurs/appareils physiques ne sont pas validés ici.
+
 ## 14 novembre — validation transactionnelle bornée
 
 Décision chef : **APPROVED pour création atomique et confirmation de paiement en base**, après corrections des courses détectées par l’auditeur. **BLOCKED pour ouverture commerciale et achat complet.** Voir `BOREALE_TRANSACTION_DELIVERY.md` pour le détail et les 15 modules.

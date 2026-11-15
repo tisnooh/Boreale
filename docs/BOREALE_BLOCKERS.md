@@ -1,5 +1,12 @@
 # Blocages et décisions
 
+## 15 novembre — environnement local et dépendances restantes
+
+- Responsive : APPROVED dans le périmètre UI anonyme preview (300/300, sept tailles). Build/lint/typecheck terminés sur D ; plus de blocage de cette recette. Preuves et limites dans BOREALE_RESPONSIVE_QA.md.
+- C: saturé ; copie C conservée, copie de livraison sur D:/CodexTools/BorealeAudit-20261114/checkout. Agent responsable de la livraison GitHub depuis D ; propriétaire responsable du traitement ultérieur du disque système. Aucune suppression contournant le refus automatique des caches.
+- Alibaba : trois pistes publiques, aucun devis rendu France, variante/stock/retour/conformité confirmés ; aucune marge annoncée ni produit publiable. Chef/sourcing : rechercher les preuves et préparer les devis sans envoi ; propriétaire : valider assortiment, budget et mode de fulfillment avant engagement.
+- Dépendances de lancement : Stripe de test et parcours réel isolé, domaine email vérifié et réception, fournisseurs/transport/retours et identité exploitant. Les travaux techniques restants (idempotence checkout, remboursements atomiques, worker outbox, transitions admin et fulfillment) restent sous responsabilité agent, pas délégués au propriétaire.
+
 ## Mise à jour du 14 novembre
 
 Création commande transactionnelle, confirmation de paiement durable et annulation pending sont désormais appliquées et testées sur Supabase, avec contre-vérification indépendante. Aucun blocage d’accès à la base. Les anciens paragraphes contraires décrivent les étapes antérieures.

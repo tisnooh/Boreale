@@ -50,13 +50,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, serializeCart(items));
   }, [items, ready]);
 
-  // Empêche le scroll quand le drawer est ouvert
-  useEffect(() => {
-    document.body.style.overflow = drawerOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [drawerOpen]);
+  // Modal focus and scroll locking belong to CartDrawer. Keep these callbacks
+  // stable across item changes so its modal effect does not steal quantity focus.
+  const openDrawer = useCallback(() => setDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const addItem = useCallback((product: { slug: string; name: string; imageUrl: string | null }, variant: VariantDTO, quantity = 1) => {
     setItems((prev) => addFn(prev, product, variant, quantity));
@@ -82,15 +79,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       count: countFn(items),
       subtotalCents: subtotalFn(items),
       drawerOpen,
-      openDrawer: () => setDrawerOpen(true),
-      closeDrawer: () => setDrawerOpen(false),
+      openDrawer,
+      closeDrawer,
       addItem,
       updateQuantity,
       removeItem,
       clear,
       replaceCart,
     }),
-    [items, ready, drawerOpen, addItem, updateQuantity, removeItem, clear, replaceCart]
+    [items, ready, drawerOpen, openDrawer, closeDrawer, addItem, updateQuantity, removeItem, clear, replaceCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

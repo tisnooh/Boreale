@@ -1,5 +1,13 @@
 # Progression
 
+## 15 novembre — responsive vérifié, livraison sur branche dédiée
+
+Travaux terminés : header adaptatif et menu paysage, accueil mobile, panier clavier/focus/défilement, titre en mouvement réduit, polices locales et références preview manquantes. Sources et fichiers détaillés dans BOREALE_RESPONSIVE_QA.md. Revue indépendante du diff et du harness APPROVED ; rapport99/99 assertions, lint0erreur/24warnings, build exit0 et TypeScript32pages. Recette finale :300/300, sept tailles de320à1440px paysage inclus, neuf captures relues, zéro exception JS ou écriture inattendue. Auth anonyme isolée et catalogue demo : aucune vente réelle validée.
+
+Branche de livraison autorisée : master/operational-readiness, origine tisnooh/Boreale ; aucune fusion main ni déploiement en production. Copie de livraison et preuves sur D:/CodexTools/BorealeAudit-20261114, C: saturé et conservé. Le reçu navigateur est versionné dans docs/qa/BOREALE_RESPONSIVE_RESULTS.json. Les anciens paragraphes ci-dessous sont historiques.
+
+Alibaba : trois candidats documentés et sources publiques recoupées, tous non vendables. Aucun achat/contact/import/publication. Prochaines actions : devis exacts et coûts rendus France, conformité et retours ; puis intention checkout idempotente, remboursements atomiques, worker emails et fulfillment réel. GOAL global ouvert ; décisions propriétaire détaillées dans BOREALE_LAUNCH_READINESS.md.
+
 ## 14 novembre — commandes et règlement transactionnels
 
 La migration additive `20261114033519_boreale_order_payment_atomic.sql` a été appliquée au projet existant après revue indépendante. Création commande/lignes/événement atomique ; règlement sous verrou, journaux durables, déduplication événement/session, stock agrégé sans allocation partielle, incidents et outbox. Annulation en attente sous le même verrou ; les statuts financiers manuels et le traitement sans allocation sont refusés. Aucune modification du design.

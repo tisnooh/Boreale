@@ -309,6 +309,10 @@ body {
 /* Reduced-motion : on coupe uniquement les motions continues / déplacantes,
    on conserve des fondus courts (lisibles sur PC avec effets visuels désactivés). */
 @media (prefers-reduced-motion: reduce) {
+  .line-mask > span {
+    animation: none !important;
+    transform: none !important;
+  }
   .kenburns,
   .scroll-cue { animation: none !important; }
   .cursor-preview { display: none !important; }

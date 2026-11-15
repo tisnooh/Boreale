@@ -99,7 +99,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'Gratter sans se geler la main.',
     description: 'Le grattoir à pare-brise dans un gant : lame ABS rigide d’un côté, fourrure polaire qui protège la main de l’autre.',
     longDescription: 'Le « Polaire » combine une lame ABS de 10 cm et une manchette en fausse fourrure polaire qui empêche la neige fondue de couler dans la manche.',
-    type: 'product', season: WINTER, isFeatured: false, imageUrl: '/images/products/gant-grattoir-polaire.jpg', images: ['/images/products/gant-grattoir-polaire.jpg'],
+    type: 'product', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: null, tags: ['grattoir', 'voiture'], bundleItems: [],
     seoTitle: null, seoDescription: null, priceCents: 1290, variantCount: 1, inStock: true,
     categories: [{ slug: 'auto-hiver', name: 'Auto Hiver' }],
@@ -143,7 +143,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'La soirée refuge, tout compris.',
     description: 'Plaid sherpa « Nid » + chaussettes polaires « Nuage » + bouillotte sèche « Brasero ». Moins cher que les articles achetés séparément.',
     longDescription: 'Le pack des soirées d’hiver : on enfile les « Nuage », on chauffe le « Brasero » deux minutes, et on disparaît dans le « Nid ».',
-    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/images/products/pack-cocooning.jpg', images: ['/images/products/pack-cocooning.jpg'],
+    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: '−14,80 €', tags: ['pack', 'cocooning'],
     bundleItems: [
       { sku: 'BOR-NID-EC', name: 'Plaid sherpa « Nid » — Écru', quantity: 1 },
@@ -159,7 +159,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'Kit complet pour températures négatives.',
     description: 'Bonnet torsadé + cache-cou « Bise » + gants tactiles + chaussons bouillotte « Foyer ». Économie réelle vs articles séparés.',
     longDescription: 'Tout l’équipement grand froid en un pack : la tête, le cou, les mains et les pieds.',
-    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/images/products/pack-grand-froid.jpg', images: ['/images/products/pack-grand-froid.jpg'],
+    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: '−19,70 €', tags: ['pack', 'grand-froid'],
     bundleItems: [
       { sku: 'BOR-BON-U-BN', name: 'Bonnet torsadé « Boréale » — Bleu nuit', quantity: 1 },

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import '@/styles/globals.css';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import { apiGetServer } from '@/lib/api-server';
@@ -19,15 +19,18 @@ import { ScrollProgress } from '@/components/layout/ScrollProgress';
 import { SeasonScope } from '@/components/layout/SeasonScopeSync';
 import type { HomepageSettings } from '@/lib/types';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
+const fraunces = localFont({
+  src: './fonts/fraunces-latin.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-fraunces',
   display: 'swap',
-  axes: ['SOFT', 'WONK', 'opsz'],
 });
 
-const inter = Inter({
-  subsets: ['latin'],
+const inter = localFont({
+  src: './fonts/inter-latin.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-inter',
   display: 'swap',
 });

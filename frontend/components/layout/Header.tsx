@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BRAND } from '@/lib/constants';
 import { getSeasonNav } from '@/lib/season/nav';
 import { getSeasonFromPath } from '@/lib/season/config';
@@ -14,6 +14,7 @@ import { SeasonSwitch } from './SeasonSwitch';
 
 export function Header({ announcement }: { announcement: string | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const { count, openDrawer, ready } = useCart();
   const { user } = useAuth();
   const pathname = usePathname();
@@ -28,25 +29,39 @@ export function Header({ announcement }: { announcement: string | null }) {
   // Fermeture du menu mobile au clavier (ESC)
   useEffect(() => {
     if (!menuOpen) return;
+    const header = headerRef.current;
+    // The preview banner can leave the sticky header below the viewport top.
+    // Reserve that visible offset so the last menu link remains reachable.
+    const updateOffset = () => {
+      if (header) header.style.setProperty('--header-offset', `${Math.max(0, header.getBoundingClientRect().top)}px`);
+    };
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+    window.addEventListener('scroll', updateOffset, { passive: true });
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', updateOffset);
+      window.removeEventListener('scroll', updateOffset);
+      header?.style.removeProperty('--header-offset');
+    };
   }, [menuOpen]);
 
   if (isAdmin) return null; // l'admin a son propre shell
 
   return (
-    <header className="sticky top-0 z-50">
+    <header ref={headerRef} className="sticky top-0 z-50 flex max-h-[calc(100dvh-var(--header-offset,0px))] flex-col">
       {announcement && (
-        <div className="bg-ink px-4 py-2 text-center text-[12px] font-medium tracking-wide text-ice">
+        <div className="shrink-0 bg-ink px-4 py-2 text-center text-[12px] font-medium tracking-wide text-ice">
           {announcement}
         </div>
       )}
-      <div className="border-b border-line bg-white/90 backdrop-blur-md">
-        <div className="container-x flex h-16 items-center justify-between gap-4">
+      <div className="shrink-0 border-b border-line bg-white/90 backdrop-blur-md">
+        <div className="container-x flex h-16 items-center justify-between gap-2 sm:gap-4">
           <button
             type="button"
-            className="grid h-10 w-10 place-items-center rounded-xl text-ink hover:bg-ice lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-xl text-ink hover:bg-ice xl:hidden"
             aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={menuOpen}
             aria-controls="menu-mobile"
@@ -59,8 +74,8 @@ export function Header({ announcement }: { announcement: string | null }) {
             <Logo />
           </Link>
 
-          <SeasonSwitch className="hidden md:inline-flex" />
-          <nav aria-label="Navigation principale" className="hidden items-center gap-7 lg:flex">
+          <div className="hidden md:block"><SeasonSwitch /></div>
+          <nav aria-label="Navigation principale" className="hidden items-center gap-7 xl:flex">
             <Link href="/collections" className="text-sm font-semibold text-ink transition hover:text-ember-dark">
               Boutique
             </Link>
@@ -114,7 +129,7 @@ export function Header({ announcement }: { announcement: string | null }) {
 
       {/* Menu mobile */}
       {menuOpen && (
-        <nav id="menu-mobile" aria-label="Navigation mobile" className="border-b border-line bg-white lg:hidden">
+        <nav id="menu-mobile" aria-label="Navigation mobile" className="min-h-0 overflow-y-auto overscroll-contain border-b border-line bg-white xl:hidden">
           <div className="container-x flex flex-col gap-1 py-4">
             <div className="px-3 pb-2">
               <SeasonSwitch />

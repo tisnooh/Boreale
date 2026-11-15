@@ -62,8 +62,8 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
       </div>
 
       {/* Corps */}
-      <div className="container-x relative grid flex-1 items-center gap-12 pt-16 lg:grid-cols-12 lg:pt-24">
-        <div className="lg:col-span-7">
+      <div className="container-x relative grid flex-1 grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-12 lg:pt-24">
+        <div className="min-w-0 lg:col-span-7">
           <p className="overline overline-dark mb-8 max-w-md">
             <span className="text-ember">Maison d’hiver</span>
             <span>France — 14 pièces</span>
