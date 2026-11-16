@@ -2,7 +2,7 @@
 
 ## 16 novembre — mise à jour courante : confirmations validées en base
 
-**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe, push de cette tranche ou déploiement de production.
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe ni déploiement de production. Code poussé sur master/operational-readiness : 3d7d87e1ae9105913218e5a244ffd3e9b60fceac, vérifié avec git ls-remote ; main reste à 0a4428bb5d9fcdd8ef4f31afdf4b0462aee937bc.
 
 Migration appliquée via MCP (success=true) : 20261116051026_boreale_notification_delivery.sql, nom aligné sur la version distante, SHA-256 inchangé EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3. Recette SQL renforcée exécutée sans erreur : baux/jetons/corps figé, périmètre test, backoff, rétention, cinq tentatives, acquittement synthétique/rejeu, privilèges et incident support. Quatre comptages après rollback à zéro ; seconde requête : clients, commandes, notifications, incidents tous à zéro, zéro produit actif. Aucune concurrence entre deux connexions testée. Advisors : 19 INFO RLS sans policy sur tables privées, aucun WARN/ERROR ; protections conservées. Backend **273/273**, typecheck/lint/build exit 0 ; smoke HTTP désactivé **5/5**, externalRequests=0.
 

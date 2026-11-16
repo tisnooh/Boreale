@@ -1,6 +1,12 @@
 {
   "observedAt": "2026-11-16",
   "branch": "master/operational-readiness",
+  "gitDelivery": {
+    "codeCommit": "3d7d87e1ae9105913218e5a244ffd3e9b60fceac",
+    "pushVerifiedWithLsRemote": true,
+    "mainUnchangedAt": "0a4428bb5d9fcdd8ef4f31afdf4b0462aee937bc",
+    "unrelatedUntrackedFrontendGuidanceExcluded": true
+  },
   "scope": "confirmation worker, checkout prerequisites, private supplier qualification",
   "backend": {
     "tests": { "total": 273, "passed": 273, "failed": 0 },

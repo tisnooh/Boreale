@@ -1,6 +1,6 @@
 # Préparation finale — état courant du 16 novembre 2026
 
-**GOAL commercial IN PROGRESS ; ouverture BLOCKED.** La tranche confirmations est approuvée après revue indépendante et validée en base. Les envois restent désactivés (`ORDER_EMAIL_MODE=off`). Aucun prestataire email appelé, aucune remise email prouvée, aucun achat Stripe ni déploiement de production. Aucun push de cette tranche à ce checkpoint. Le design est conservé.
+**GOAL commercial IN PROGRESS ; ouverture BLOCKED.** La tranche confirmations est approuvée après revue indépendante et validée en base. Les envois restent désactivés (`ORDER_EMAIL_MODE=off`). Aucun prestataire email appelé, aucune remise email prouvée, aucun achat Stripe ni déploiement de production. Code poussé et vérifié sur master/operational-readiness : 3d7d87e1ae9105913218e5a244ffd3e9b60fceac. Le design est conservé.
 
 ## Résultat et preuves de la tranche
 
@@ -66,4 +66,4 @@ Les catégories décrivent un périmètre : fonctionnel et testé, développé n
 
 ## Décision et reprise
 
-**APPROVED pour la tranche technique confirmations et sa migration/recette en base ; BLOCKED pour ouverture commerciale.** Reprendre les développements ; achever les deux demandes fournisseurs déjà autorisées après connexion manuelle Alibaba, puis les recettes prestataires lorsque les accès sont disponibles. Aucun push de cette tranche ni déploiement de production à ce checkpoint. Ne pas clore le GOAL : achat complet, réception email, approvisionnement et exploitation restent non validés.
+**APPROVED pour la tranche technique confirmations et sa migration/recette en base ; BLOCKED pour ouverture commerciale.** Reprendre les développements ; achever les deux demandes fournisseurs déjà autorisées après connexion manuelle Alibaba, puis les recettes prestataires lorsque les accès sont disponibles. Code poussé et vérifié sur la branche dédiée ; main reste à 0a4428bb5d9fcdd8ef4f31afdf4b0462aee937bc. Aucun déploiement de production. Ne pas clore le GOAL : achat complet, réception email, approvisionnement et exploitation restent non validés.
