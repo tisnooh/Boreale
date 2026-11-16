@@ -1,5 +1,25 @@
 # Blocages et décisions
 
+## 16 novembre — mise à jour courante : confirmations validées en base
+
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe, push de cette tranche ou déploiement de production.
+
+Migration appliquée via MCP (success=true) : 20261116051026_boreale_notification_delivery.sql, nom aligné sur la version distante, SHA-256 inchangé EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3. Recette SQL renforcée exécutée sans erreur : baux/jetons/corps figé, périmètre test, backoff, rétention, cinq tentatives, acquittement synthétique/rejeu, privilèges et incident support. Quatre comptages après rollback à zéro ; seconde requête : clients, commandes, notifications, incidents tous à zéro, zéro produit actif. Aucune concurrence entre deux connexions testée. Advisors : 19 INFO RLS sans policy sur tables privées, aucun WARN/ERROR ; protections conservées. Backend **273/273**, typecheck/lint/build exit 0 ; smoke HTTP désactivé **5/5**, externalRequests=0.
+
+Recherche et corrections produits relues par le chef ; candidats non vendables. Les trois RFQ sont déjà autorisés. Wordans **SENT**, identifiant 1a1e2b5102560167 : aucune réception, lecture ou réponse prouvée ; ne pas renvoyer. Fuying et Haining Jinhu **non envoyés** : le contact officiel Alibaba redirige vers « Sign in or create account ». Connexion manuelle du propriétaire requise ; aucune authentification automatisée et aucune nouvelle autorisation d’envoi identique à demander. Stripe : cinq liens UNAUTHORIZED ; décisions exploitant non reçues.
+
+| Blocage actuel | Responsable de la prochaine action | Action bornée |
+|---|---|---|
+| Deux RFQ Alibaba autorisés, session absente | Propriétaire : connexion manuelle ; agent : envoi ensuite | Ouvrir la session navigateur, puis envoyer exactement les deux demandes relues ; aucune authentification automatisée |
+| Cinq liens Stripe UNAUTHORIZED | Accès propriétaire puis agent | Identifier le compte BORÉALE de test et valider l’intégration isolée ; aucun secret dans le chat |
+| Aucun prestataire email appelé/réception vérifiée | Agent avec accès et destinataire autorisé | Valider domaine/expéditeur, tester isolément et vérifier la réception ; conserver off en attendant |
+| Catalogue, approvisionnement, transport et retours non qualifiés | Agent/fournisseurs ; décisions exploitant attendues | Qualifier devis/variantes/stock/coûts/conformité ; Wordans envoyé ne vaut pas devis reçu |
+| Identité légale, pays/code postal, budget, stock/direct et email admin non reçus | Propriétaire pour les décisions ; agent pour l’intégration | Finaliser les données et le compte exploitant par canal approprié |
+| Fiabilité commerce encore incomplète | Agent | Idempotence checkout, remboursements atomiques/monotones, autres notifications, paniers persistants, mapping fournisseur/fulfillment et recette complète |
+
+Résolus : revue indépendante disponible, worker confirmation développé, migration et recette SQL appliquées/exécutées. Restent non prouvées la concurrence entre deux connexions et la délivrabilité. [État complet et quinze modules](BOREALE_LAUNCH_PREPARATION_20261116.md). Les blocages ci-dessous sont historiques lorsque cette mise à jour les remplace.
+
+
 ## 16 novembre — exploitation de l’administration
 
 | Origine | Impact | Responsable | Action attendue / dépendance |

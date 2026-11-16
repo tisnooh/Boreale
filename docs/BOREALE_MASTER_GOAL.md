@@ -1,5 +1,18 @@
 # BORÉALE — mandat d’exploitation
 
+## 16 novembre — mise à jour courante : confirmations validées en base
+
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe, push de cette tranche ou déploiement de production.
+
+Migration appliquée via MCP (success=true) : 20261116051026_boreale_notification_delivery.sql, nom aligné sur la version distante, SHA-256 inchangé EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3. Recette SQL renforcée exécutée sans erreur : baux/jetons/corps figé, périmètre test, backoff, rétention, cinq tentatives, acquittement synthétique/rejeu, privilèges et incident support. Quatre comptages après rollback à zéro ; seconde requête : clients, commandes, notifications, incidents tous à zéro, zéro produit actif. Aucune concurrence entre deux connexions testée. Advisors : 19 INFO RLS sans policy sur tables privées, aucun WARN/ERROR ; protections conservées. Backend **273/273**, typecheck/lint/build exit 0 ; smoke HTTP désactivé **5/5**, externalRequests=0.
+
+Recherche et corrections produits relues par le chef ; candidats non vendables. Les trois RFQ sont déjà autorisés. Wordans **SENT**, identifiant 1a1e2b5102560167 : aucune réception, lecture ou réponse prouvée ; ne pas renvoyer. Fuying et Haining Jinhu **non envoyés** : le contact officiel Alibaba redirige vers « Sign in or create account ». Connexion manuelle du propriétaire requise ; aucune authentification automatisée et aucune nouvelle autorisation d’envoi identique à demander. Stripe : cinq liens UNAUTHORIZED ; décisions exploitant non reçues.
+
+Le mandat commercial reste ouvert. L’agent conserve intention checkout idempotente et reprise de session, remboursements atomiques/monotones et reprise prestataire, autres notifications/facturation, paniers persistants, mapping fournisseur/fulfillment, puis recette complète. Le propriétaire fournit les accès/décisions qui dépendent de lui, dont la session Alibaba manuelle, sans secret dans le chat. La migration réussie n’autorise aucune activation email ni ouverture commerciale. [État détaillé et matrice courante des quinze modules](BOREALE_LAUNCH_PREPARATION_20261116.md).
+
+Les sections suivantes constituent l’historique ; leurs anciens blocages Supabase/revue/autorisation RFQ ne remplacent pas cet état courant.
+
+
 ## 16 novembre — administration des commandes
 
 Mission ajoutée : compléter l’administration existante pour l’exploitation des commandes, sans refonte, paiement, email réel ni production. Les pages dashboard/liste/détail, incidents, notes et suivi sont reliées au backend privé. Migration additive d’opérations appliquée après revue indépendante et recette SQL annulée. La vérification d’un compte admin actif et de son rôle actuel est désormais effective à chaque requête ; les anciennes mentions « durcissement admin non réalisé » sont historiques sur ces points précis.

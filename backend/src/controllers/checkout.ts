@@ -18,6 +18,9 @@ export const checkoutController = {
     if (config().CHECKOUT_ENABLED !== 'true') {
       throw AppError.serviceUnavailable('checkout_closed', 'Les commandes ne sont pas encore ouvertes.');
     }
+    if (!features.database() || !features.stripe() || !features.stripeWebhook()) {
+      throw AppError.serviceUnavailable('checkout_dependencies_unavailable', 'Le paiement et sa confirmation sécurisée ne sont pas encore configurés.');
+    }
     const result = await createCheckout(req.body, undefined, req.user?.sub ?? null);
     // If a logged-in user checks out, remember their cart may convert: mark abandoned carts
     res.status(201).json({

@@ -13,6 +13,8 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   EMAIL_API_KEY: z.string().optional(),
+  ORDER_EMAIL_MODE: z.enum(['off', 'test', 'live']).default('off'),
+  ORDER_EMAIL_TEST_RECIPIENTS: z.string().default(''),
   EMAIL_FROM: z.string().default('BORÉALE <bonjour@localhost>'),
   NOTIFY_EMAIL: z.string().optional(),
   JWT_SECRET: z.string().default('dev-only-insecure-secret-change-me'),

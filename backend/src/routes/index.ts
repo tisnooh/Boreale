@@ -1,4 +1,5 @@
 import { sourcingController } from '../controllers/sourcing.js';
+import { processOrderConfirmations } from '../controllers/order-notifications.js';
 import { sourcingCandidateSchema } from '../validators/sourcing.js';
 import { Router } from 'express';
 import { healthController, catalogController } from '../controllers/health.js';
@@ -77,6 +78,7 @@ export function buildRouter(): Router {
 
   /* ---------- cron ---------- */
   r.get('/api/cron/abandoned-carts', cronController.abandonedCarts);
+  r.post('/api/cron/order-notifications', processOrderConfirmations);
 
   /* ---------- admin ---------- */
   r.post('/api/admin/auth/login', adminAuthLimiter, validateBody(adminLoginSchema), authController.adminLogin);

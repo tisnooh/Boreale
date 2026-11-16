@@ -1,5 +1,18 @@
 # Décision de lancement
 
+## 16 novembre — mise à jour courante : confirmations validées en base
+
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe, push de cette tranche ou déploiement de production.
+
+Migration appliquée via MCP (success=true) : 20261116051026_boreale_notification_delivery.sql, nom aligné sur la version distante, SHA-256 inchangé EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3. Recette SQL renforcée exécutée sans erreur : baux/jetons/corps figé, périmètre test, backoff, rétention, cinq tentatives, acquittement synthétique/rejeu, privilèges et incident support. Quatre comptages après rollback à zéro ; seconde requête : clients, commandes, notifications, incidents tous à zéro, zéro produit actif. Aucune concurrence entre deux connexions testée. Advisors : 19 INFO RLS sans policy sur tables privées, aucun WARN/ERROR ; protections conservées. Backend **273/273**, typecheck/lint/build exit 0 ; smoke HTTP désactivé **5/5**, externalRequests=0.
+
+Recherche et corrections produits relues par le chef ; candidats non vendables. Les trois RFQ sont déjà autorisés. Wordans **SENT**, identifiant 1a1e2b5102560167 : aucune réception, lecture ou réponse prouvée ; ne pas renvoyer. Fuying et Haining Jinhu **non envoyés** : le contact officiel Alibaba redirige vers « Sign in or create account ». Connexion manuelle du propriétaire requise ; aucune authentification automatisée et aucune nouvelle autorisation d’envoi identique à demander. Stripe : cinq liens UNAUTHORIZED ; décisions exploitant non reçues.
+
+**APPROVED pour la tranche technique confirmations ; lancement BLOCKED.** Catalogue sans produit actif, fournisseur/transport non qualifié, coût rendu non approuvé. Aucun parcours Stripe complet, email remis, remboursement fiable ou fulfillment connecté validé. Migration/tests réussis ne constituent pas une autorisation de vendre ou d’activer les envois.
+
+La [matrice courante des quinze modules](BOREALE_LAUNCH_PREPARATION_20261116.md#matrice-courante-des-quinze-modules) distingue fonctionnel et testé, développé non testé en réel, simulé/mocké, bloqué et non réalisé. Elle remplace les anciens statuts de worker non développé ou revue impossible. L’agent conserve checkout idempotent, remboursements, autres notifications, paniers et fulfillment ; le propriétaire fournit session Alibaba manuelle, accès dédiés et décisions exploitant. Aucun GOAL complet ni production revendiqué. Les matrices suivantes sont historiques.
+
+
 ## 16 novembre — administration des commandes
 
 **Ouverture commerciale : BLOCKED. Tranche locale admin : APPROVED.** Les écrans et actions opérationnelles sont vérifiés : recette finale77/77, zéro exception JS et neuf captures acceptées indépendamment sur320/768/1440px. La précédente recette71/71 n’avait pas suffi : recherche tablette masquée, corrigée et maintenant contrôlée par sa largeur exploitable et un clic réel HTTP200.

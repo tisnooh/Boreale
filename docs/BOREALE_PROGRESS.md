@@ -1,5 +1,18 @@
 # Progression
 
+## 16 novembre — mise à jour courante : confirmations validées en base
+
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe, push de cette tranche ou déploiement de production.
+
+Migration appliquée via MCP (success=true) : 20261116051026_boreale_notification_delivery.sql, nom aligné sur la version distante, SHA-256 inchangé EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3. Recette SQL renforcée exécutée sans erreur : baux/jetons/corps figé, périmètre test, backoff, rétention, cinq tentatives, acquittement synthétique/rejeu, privilèges et incident support. Quatre comptages après rollback à zéro ; seconde requête : clients, commandes, notifications, incidents tous à zéro, zéro produit actif. Aucune concurrence entre deux connexions testée. Advisors : 19 INFO RLS sans policy sur tables privées, aucun WARN/ERROR ; protections conservées. Backend **273/273**, typecheck/lint/build exit 0 ; smoke HTTP désactivé **5/5**, externalRequests=0.
+
+Recherche et corrections produits relues par le chef ; candidats non vendables. Les trois RFQ sont déjà autorisés. Wordans **SENT**, identifiant 1a1e2b5102560167 : aucune réception, lecture ou réponse prouvée ; ne pas renvoyer. Fuying et Haining Jinhu **non envoyés** : le contact officiel Alibaba redirige vers « Sign in or create account ». Connexion manuelle du propriétaire requise ; aucune authentification automatisée et aucune nouvelle autorisation d’envoi identique à demander. Stripe : cinq liens UNAUTHORIZED ; décisions exploitant non reçues.
+
+Livré : worker confirmation, route cron privée, garde checkout avant effets, configuration/tests, migration canonique appliquée et script SQL renforcé exécuté avec rollback. Les acquittements QA sont fictifs ; sent signifie acceptation prestataire dans le modèle, jamais preuve de remise. Les types receipt/admin et les notifications expédition/remboursement ne sont pas traités par ce worker.
+
+Suite agent : intention checkout durable/reprise de session, remboursements atomiques/monotones, autres notifications, paniers persistants et fulfillment exploitable. Après connexion manuelle Alibaba, achever les deux envois déjà autorisés ; suivre Wordans sans doublon et qualifier les réponses. Les accès Stripe/email et données exploitant manquants ne transfèrent pas ces développements au propriétaire. [Preuves et quinze modules](BOREALE_LAUNCH_PREPARATION_20261116.md). Historique conservé ci-dessous.
+
+
 ## 16 novembre — administration des commandes
 
 Développé : pages admin existantes, recherche/tri/filtres et erreurs, actions opérationnelles atomiques, suivi avec contrôle de concurrence, notes, incidents/notifications et compteurs réels, contrôle de compte admin actif. Aucun écran parallèle ni changement d’identité graphique. Fichiers : `frontend/app/admin/(panel)/` (dashboard/commandes), types/tests ; contrôleur/repository/services/validators/routes backend, middleware Auth/JWT, scripts de recette et migration bootstrap `20261115233647`.
