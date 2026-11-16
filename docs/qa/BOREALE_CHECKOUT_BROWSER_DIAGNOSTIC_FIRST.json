@@ -1,0 +1,132 @@
+{
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/css/f7bca3e1c852ee4c.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/webpack-87dccef3a5314b9b.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/4bd1b696-93bf506b236d6248.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/3794-a5847af9175ef2fe.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/main-app-5680bf46beda76e2.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/8500-f4d7bfbe7500f274.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/checkout/success/page-f8b48f954bdfc57f.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/5772-256dd74fa40c2a0a.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/layout-1cb66c9ce9fa0a2f.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/error-074b6f0df76e8a2c.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/7925-d5fdc01bdf5f2179.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/page-10c687a46db77b55.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/media/cb9f64d62d112b41-s.p.woff2",
+      "method": "GET"
+    }
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/css/f7bca3e1c852ee4c.css",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/4bd1b696-93bf506b236d6248.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/webpack-87dccef3a5314b9b.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/main-app-5680bf46beda76e2.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/8500-f4d7bfbe7500f274.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/5772-256dd74fa40c2a0a.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/7925-d5fdc01bdf5f2179.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/checkout/success/page-f8b48f954bdfc57f.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/page-10c687a46db77b55.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/error-074b6f0df76e8a2c.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/app/layout-1cb66c9ce9fa0a2f.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/3794-a5847af9175ef2fe.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/media/cb9f64d62d112b41-s.p.woff2",
+      "status": 200
+    }
+  ],
+  "failed": [],
+  "console": [],
+  "errors": [],
+  "waitError": "locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Paiement reçu, confirmation de commande en cours' }) to be visible\u001b[22m\n",
+  "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+  "failure": "locator.innerText: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('body')\u001b[22m\n"
+}

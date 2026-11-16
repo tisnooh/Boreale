@@ -1,5 +1,36 @@
 # Blocages et décisions
 
+## 17 novembre — checkpoint local, parcours client non validé
+
+**Code et SQL revus ; ouverture commerciale BLOCKED.** Les 351 tests backend et 165 tests frontend passent. Builds backend et frontend webpack réussis (34 pages générées côté frontend). Lint backend : zéro erreur/avertissement ; frontend global : zéro erreur et 27 avertissements existants, dont deux dans les fichiers ciblés. La recette SQL est exécutée et nettoyée ; les deux connexions observées sont en série, sans preuve de concurrence.
+
+Le contrôle navigateur ne valide pas encore la confirmation : navigation DOMContentLoaded expirée à 30 s, puis titre attendu non observé à 60 s. Le formulaire preview à 320 px a passé ses trois premiers contrôles. Deux probes indépendants ont reçu le document et des ressources HTTP 200, mais aucun appel API ; DOM/body et capture sont devenus inaccessibles. Aucune erreur métier, CORS ou boucle applicative n’est démontrée par ces traces. Mesure Windows : 3,39 Go de RAM, environ 0,02 Go libres. **UI BLOCKED ; aucun parcours d’achat complet revendiqué.** Le harness instrumenté distingue maintenant disponibilité DOM et assertions métier ; il est relu et passe le contrôle de syntaxe, mais n’est pas relancé sous cette contrainte.
+
+La clé serveur Stripe test et le secret webhook restent absents du fichier privé préparé ; la demande de saisie sécurisée est en attente. Le plugin est connecté au compte isolé choisi, ce qui ne configure pas les secrets du site. Les produits restent non vendables et la livraison non qualifiée. Les remboursements, autres notifications et opérations fournisseur restent à terminer par l’agent. Aucun achat réel, email client envoyé ou déploiement du site en production.
+
+Le travail reste en checkpoint local : aucun push de cette nouvelle tranche avant validation UI. Après disponibilité de la clé et des ressources navigateur, l’agent reprend la recette, corrige tout échec réel et livre les preuves. Les applications tierces dont le travail en cours est inconnu ne sont pas arrêtées automatiquement. [Rapport détaillé](BOREALE_CHECKOUT_RECOVERY_20261116.md) et [reçu structuré](qa/BOREALE_CHECKOUT_RECOVERY_20261116_RESULTS.json). Les états plus anciens ci-dessous sont historiques.
+
+
+## 16 novembre — état courant : reprise checkout validée en base
+
+**GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche checkout APPROVED après revue indépendante du code/SQL et correction des deux HIGH : aucun pipeline séquentiel réservé aux tests ; action explicite après expiration vérifiée, restaurable après rechargement. Migration appliquée via MCP : version réelle 20261116142245_boreale_checkout_intent.sql, SHA-256 inchangé EE9C2C93CDAB8FE8F97CE9C17B135C952F179880D8AE5F10AE827D67BCC8CB9B. Script SQL renforcé exécuté sans erreur, huit comptages post-rollback à zéro ; seconde requête confirme commandes/intentions/paiements/clients/Auth QA à zéro, trois produits privés et zéro actif. Deux connexions SQL réelles retrouvent une intention/commande et une ligne : idempotence en série PASS. Intervalles non chevauchants : concurrence INCONCLUSIVE, aucun test concurrent réussi revendiqué. Nettoyage finally confirmé : produits/variantes/commandes/clients/intentions QA tous à zéro.
+
+Backend global **351/351**, typecheck/build exit 0, lint 92 fichiers sans erreur ni warning. Frontend **51/51 ciblés et 165/165 globaux**, zéro échec, suite globale fraîche confirmée ; typecheck exit 0, lint sans erreur et deux warnings existants. Build webpack final réussi (exit 0, 34 pages générées). Le build standard Turbopack interrompu après compilation/typecheck ne compte pas comme un build terminé. Aucun achat Stripe complet, paiement réel, email remis ou production validé. Stripe est désormais accessible : compte utilisateur choisi acct_1Uc6bxGLTNMkV9aW, environnement BORÉALE isolé livemode=false ; webhooks lus vides. Les anciennes mentions UNAUTHORIZED sont historiques. Clé Stripe/whsec/email absents de la configuration locale contrôlée ; fichier privé ignoré Git préparé sans clé, demande sécurisée utilisateur déjà en attente. Vercel : une équipe accessible, aucun projet lié BORÉALE trouvé lors de deux lectures personnel/équipe.
+
+Choix explicite : session Stripe par défaut 24 heures, reprises de création bornées à 23 heures/cinq tentatives, corps et compte/mode figés ; nouvelle intention = prix recalculés. Modification du contenu avant preuve d’expiration : mêmes informations ou support, aucune nouvelle clé automatique. Wordans reste un SENT sans réponse/réception prouvée ; deux RFQ Alibaba déjà autorisés restent bloqués sur connexion manuelle. Candidats non vendables, décisions exploitant non reçues. [Rapport courant et matrice des quinze modules](BOREALE_CHECKOUT_RECOVERY_20261116.md).
+
+| Blocage courant | Responsable / action |
+|---|---|
+| Configuration Stripe test et webhook absents | Utilisateur : configuration sécurisée demandée, réponse attendue ; agent : connexion contrôlée et recette isolée |
+| Point d’entrée hébergé non identifié | Agent : préparer le rattachement BORÉALE et le endpoint de test autorisé ; aucun déploiement de production déduit |
+| Deux RFQ Alibaba autorisés mais non envoyés | Propriétaire : connexion manuelle ; agent : envoi sans redemander la même autorisation |
+| Fournisseurs, coût rendu, livraison, produits et retours non qualifiés | Agent/fournisseurs ; décisions exploitant attendues |
+| Paiement bout en bout, réception email et fulfillment non validés | Agent avec accès dédiés ; aucune validation commerciale par les mocks |
+| Remboursements, autres notifications et paniers persistants | Agent : développer et recetter ; ces travaux ne sont pas transférés au propriétaire |
+
+Résolus : visibilité du compte Stripe isolé, développement de l’intention et recette SQL. Restent politique commerciale de validité du devis, informations exploitant et vérifications en cours. Historique préservé ci-dessous ; anciens blocages de compte Stripe/reprise checkout remplacés par cette section.
+
+
 ## 16 novembre — mise à jour courante : confirmations validées en base
 
 **GOAL IN PROGRESS ; ouverture commerciale BLOCKED.** Tranche confirmations APPROVED après revue indépendante TypeScript/SQL et correction des confirmations périmées après annulation/remboursement. Plus de blocage de quota de revue. Mode off : aucun prestataire email appelé ni remise prouvée, aucun achat Stripe ni déploiement de production. Code poussé sur master/operational-readiness : 3d7d87e1ae9105913218e5a244ffd3e9b60fceac, vérifié avec git ls-remote ; main reste à 0a4428bb5d9fcdd8ef4f31afdf4b0462aee937bc.

@@ -11,6 +11,8 @@ import { computeDiscountCents, type DiscountSpec } from '../services/pricing.js'
 import { toOrderDTO } from '../services/orders.js';
 import type { AuthedRequest } from '../middleware/auth.js';
 import { buildDefaultWebhookDeps, handleWebhookEvent } from '../services/webhooks.js';
+import { verifyCheckoutSession } from '../services/checkout-verification.js';
+import { ensureStripeEnvironment } from '../lib/stripe-environment.js';
 
 export const checkoutController = {
   /** POST /api/stripe/checkout — creates a pending order + Stripe Checkout Session. */
@@ -21,6 +23,13 @@ export const checkoutController = {
     if (!features.database() || !features.stripe() || !features.stripeWebhook()) {
       throw AppError.serviceUnavailable('checkout_dependencies_unavailable', 'Le paiement et sa confirmation sécurisée ne sont pas encore configurés.');
     }
+    if (!req.body.idempotencyKey || !['guest', 'customer'].includes(req.body.customerMode)) {
+      throw AppError.badRequest('checkout_attempt_required', 'Rechargez le panier avant de reprendre votre paiement.');
+    }
+    if ((req.body.customerMode === 'customer') !== Boolean(req.user)) {
+      throw AppError.unauthorized('checkout_identity_changed', 'Votre session a changé. Reconnectez-vous avant de reprendre le paiement.');
+    }
+    await ensureStripeEnvironment();
     const result = await createCheckout(req.body, undefined, req.user?.sub ?? null);
     // If a logged-in user checks out, remember their cart may convert: mark abandoned carts
     res.status(201).json({
@@ -30,19 +39,10 @@ export const checkoutController = {
 
   /** GET /api/stripe/session/:id — success-page verification (no secrets exposed). */
   getSession: asyncHandler(async (req: Request, res: Response) => {
-    const session = await stripe().checkout.sessions.retrieve(req.params.id!);
-    const meta = session.metadata ?? {};
-    res.json({
-      data: {
-        paymentStatus: session.payment_status,
-        status: session.status,
-        amountTotal: session.amount_total,
-        currency: session.currency,
-        customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
-        orderNumber: meta.orderNumber ?? null,
-        orderId: meta.orderId ?? null,
-      },
-    });
+    const environment = await ensureStripeEnvironment();
+    const session = await stripe().checkout.sessions.retrieve(req.params.id!, { timeout: 10000, maxNetworkRetries: 0 });
+    if (session.livemode !== environment.livemode) throw AppError.conflict('stripe_session_mode_mismatch', 'La session ne correspond pas à l’environnement de paiement.');
+    res.json({ data: await verifyCheckoutSession(session) });
   }),
 
   /** POST /api/discounts/validate — live feedback in the cart. */
@@ -89,6 +89,10 @@ export const checkoutController = {
     } catch (err) {
       logger.warn('webhook_signature_invalid', { err: err instanceof Error ? err.message : String(err) });
       throw AppError.badRequest('invalid_signature', 'Signature de webhook invalide.');
+    }
+    const environment = await ensureStripeEnvironment();
+    if (event.livemode !== environment.livemode || (event.account && event.account !== environment.accountId)) {
+      throw AppError.conflict('stripe_event_scope_mismatch', 'L’événement ne correspond pas au compte et au mode attendus.');
     }
     const deps = buildDefaultWebhookDeps({
       ordersRepo: ordersRepo as never,

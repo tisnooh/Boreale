@@ -3,6 +3,7 @@ import { logger } from '../lib/logger.js';
 import { emailTemplates, sendEmail } from './email.js';
 import { toOrderDTO } from './orders.js';
 import type { PaymentSettlement, SettlePaymentInput } from '../repositories/orders.js';
+import { recoverCheckoutSession } from './checkout-recovery.js';
 
 /**
  * Stripe webhook handling — dependency-injected so it is unit-testable without
@@ -25,7 +26,7 @@ export interface StripeEventLike {
   };
 }
 
-interface OrderRowLike {
+export interface OrderRowLike {
   id: string;
   number: string;
   status: string;
@@ -38,6 +39,7 @@ interface OrderRowLike {
 
 export interface WebhookDeps {
   getOrderBySessionId(sessionId: string): Promise<OrderRowLike | null>;
+  recoverCheckoutSession?(event: StripeEventLike): Promise<OrderRowLike | null>;
   settlePayment(input: SettlePaymentInput): Promise<PaymentSettlement>;
   cancelOrder(orderId: string, reason: string): Promise<boolean>;
   handleRefund(paymentIntentId: string, amountRefundedCents: number, amountCents: number): Promise<void>;
@@ -70,7 +72,7 @@ export async function handleWebhookEvent(event: StripeEventLike, deps: WebhookDe
         || typeof obj.currency !== 'string' || !/^[a-z]{3}$/i.test(obj.currency)) {
         throw AppError.conflict('payment_amount_mismatch', 'Le montant ou la devise du paiement est invalide.');
       }
-      const order = await deps.getOrderBySessionId(sessionId);
+      const order = await deps.getOrderBySessionId(sessionId) ?? await deps.recoverCheckoutSession?.(event);
       if (!order) {
         logger.warn('webhook_order_not_found', { sessionId });
         throw AppError.serviceUnavailable('payment_order_unresolved', 'Paiement reçu sans commande associée ; rapprochement et nouvelle tentative nécessaires.');
@@ -101,7 +103,8 @@ export async function handleWebhookEvent(event: StripeEventLike, deps: WebhookDe
     case 'checkout.session.async_payment_failed': {
       const sessionId = obj.id;
       if (!sessionId) return { handled: false, type: event.type };
-      const order = await deps.getOrderBySessionId(sessionId);
+      const order = await deps.getOrderBySessionId(sessionId) ?? await deps.recoverCheckoutSession?.(event);
+      if (!order) throw AppError.serviceUnavailable('payment_order_unresolved', 'L’événement doit être rapproché avant acquittement.');
       if (order && order.status === 'pending') {
         const cancelled = await deps.cancelOrder(order.id, event.type);
         if (cancelled) logger.info('order_cancelled_by_webhook', { orderId: order.id, type: event.type });
@@ -153,6 +156,7 @@ type OrderStatusArg = 'paid' | 'cancelled' | 'refunded' | 'partially_refunded' |
 
 export function buildDefaultWebhookDeps(repos: DefaultWebhookRepos): WebhookDeps {
   return {
+    recoverCheckoutSession,
     async getOrderBySessionId(sessionId) {
       return repos.ordersRepo.getBySessionId(sessionId);
     },

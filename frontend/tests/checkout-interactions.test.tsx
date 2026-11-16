@@ -1,6 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import CheckoutPage from '@/app/checkout/page';
+import { ApiError } from '@/lib/api';
+import { beginCheckoutAttempt, markCheckoutAttemptExpired } from '@/lib/checkout-attempt';
+import { webcrypto } from 'node:crypto';
 
 const mocks = vi.hoisted(() => ({
   clear: vi.fn(),
@@ -34,11 +37,14 @@ vi.mock('@/lib/services/actions', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  sessionStorage.clear();
+  vi.stubGlobal('crypto', webcrypto);
   mocks.user = null;
   mocks.authLoading = false;
   mocks.getMe.mockResolvedValue({ data: { id: 'customer-authenticated' } });
   mocks.validateDiscount.mockResolvedValue({ valid: true, discountCents: 100, message: 'Valide' });
 });
+afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear(); });
 
 describe('checkout : promotion et conservation du panier', () => {
   it('attend la résolution de session initiale avant toute commande invitée', () => {
@@ -56,6 +62,62 @@ describe('checkout : promotion et conservation du panier', () => {
     await waitFor(() => expect(mocks.submitCheckout).toHaveBeenCalledOnce());
     expect(mocks.getMe).toHaveBeenCalledWith('/api/me');
     expect(mocks.getMe.mock.invocationCallOrder[0]).toBeLessThan(mocks.submitCheckout.mock.invocationCallOrder[0]!);
+    expect(mocks.submitCheckout.mock.calls[0][1]).toBe('customer-authenticated');
+  });
+
+  it('ignore deux soumissions synchrones pendant la vérification de session', async () => {
+    mocks.user = { id: 'customer-authenticated', email: 'client@example.fr', firstName: null, lastName: null };
+    let resolveSession!: (value: { data: { id: string } }) => void;
+    mocks.getMe.mockReturnValue(new Promise(resolve => { resolveSession = resolve; }));
+    mocks.submitCheckout.mockResolvedValue({ status: 'preview', message: 'Test isolé' });
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    fireEvent.submit(container.querySelector('form')!);
+    expect(mocks.getMe).toHaveBeenCalledOnce();
+    resolveSession({ data: { id: 'customer-authenticated' } });
+    await waitFor(() => expect(mocks.submitCheckout).toHaveBeenCalledOnce());
+  });
+
+  it('requires the explicit Nouvelle tentative action after verified expiration', async () => {
+    const payload = { items: [{ variantId: 'v1', quantity: 1 }], shippingMethod: 'standard' as const,
+      customer: { email: '', firstName: '', lastName: '', address: { line1: '', postalCode: '', city: '', country: 'FR' } } };
+    const attempt = await beginCheckoutAttempt(payload, null);
+    expect(markCheckoutAttemptExpired(attempt)).toBe(true);
+    mocks.submitCheckout.mockRejectedValueOnce(new ApiError(409, 'checkout_session_expired', 'Session expirée', { expiredAttemptKey: attempt.key }))
+      .mockResolvedValueOnce({ status: 'preview', message: 'Test isolé' });
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    const restart = await screen.findByRole('button', { name: 'Nouvelle tentative' });
+    expect(sessionStorage.getItem('boreale.checkout-attempt.v1')).not.toBeNull();
+    expect(mocks.submitCheckout).toHaveBeenCalledOnce();
+    fireEvent.click(restart);
+    expect(sessionStorage.getItem('boreale.checkout-attempt.v1')).toBeNull();
+    expect(mocks.submitCheckout).toHaveBeenCalledOnce();
+    expect(screen.getByRole('status')).toHaveTextContent('cliquez sur Payer');
+    fireEvent.submit(container.querySelector('form')!);
+    await waitFor(() => expect(mocks.submitCheckout).toHaveBeenCalledTimes(2));
+  });
+
+  it.each(['checkout_already_completed', 'checkout_reconciliation_required'])('offers no reset for %s', async code => {
+    mocks.submitCheckout.mockRejectedValueOnce(new ApiError(409, code, 'Vérification nécessaire'));
+    const { container } = render(<CheckoutPage />);
+    fireEvent.submit(container.querySelector('form')!);
+    await screen.findByRole('alert');
+    expect(screen.queryByRole('button', { name: 'Nouvelle tentative' })).not.toBeInTheDocument();
+  });
+
+  it('restores a known expiration after reload without clearing or submitting automatically', async () => {
+    const attempt = await beginCheckoutAttempt({ items: [{ variantId: 'previous', quantity: 1 }], shippingMethod: 'standard',
+      customer: { email: 'previous@example.fr', firstName: 'Camille', lastName: 'Durand',
+        address: { line1: '12 rue Test', postalCode: '75001', city: 'Paris', country: 'FR' } } }, null);
+    expect(markCheckoutAttemptExpired(attempt)).toBe(true);
+    render(<CheckoutPage />);
+    const restart = await screen.findByRole('button', { name: 'Nouvelle tentative' });
+    expect(sessionStorage.getItem('boreale.checkout-attempt.v1')).not.toBeNull();
+    expect(mocks.submitCheckout).not.toHaveBeenCalled();
+    fireEvent.click(restart);
+    expect(sessionStorage.getItem('boreale.checkout-attempt.v1')).toBeNull();
+    expect(mocks.submitCheckout).not.toHaveBeenCalled();
   });
 
   it.each(['expired', 'changed'])('ne transforme pas une session %s en commande invitée', async (state) => {

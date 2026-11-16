@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { api, ApiError } from '@/lib/api';
 import { submitCheckout, validateDiscount } from '@/lib/services/actions';
+import { expiredCheckoutAttemptKey, restartExpiredCheckoutAttempt } from '@/lib/checkout-attempt';
 import { isPreview } from '@/lib/config';
 import { formatCents } from '@/lib/format';
 import { computeLocalTotals } from '@/lib/totals';
@@ -43,14 +44,20 @@ export default function CheckoutPage() {
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [fatalError, setFatalError] = useState<{ code: string; message: string } | null>(null);
+  const [fatalError, setFatalError] = useState<{ code: string; message: string; expiredAttemptKey?: string } | null>(null);
   const [previewMessage, setPreviewMessage] = useState<string | null>(null);
   const abandonedRegistered = useRef(false);
+  const submittingRef = useRef(false);
 
   // Pré-remplissage pour les clients connectés
   useEffect(() => {
     if (user) {
       setForm((f) => ({ ...f, email: user.email, firstName: user.firstName ?? f.firstName, lastName: user.lastName ?? f.lastName }));
+    }
+    if (!isPreview()) {
+      const expiredAttemptKey = expiredCheckoutAttemptKey();
+      if (expiredAttemptKey) setFatalError({ code: 'checkout_session_expired',
+        message: 'Votre session de paiement est expirée. Vous pouvez préparer une nouvelle tentative.', expiredAttemptKey });
     }
   }, [user]);
 
@@ -93,7 +100,8 @@ export default function CheckoutPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting || authLoading || items.length === 0) return;
+    if (submittingRef.current || authLoading || items.length === 0) return;
+    submittingRef.current = true;
     setSubmitting(true);
     setFatalError(null);
     setPreviewMessage(null);
@@ -123,10 +131,11 @@ export default function CheckoutPage() {
             country: 'FR',
           },
         },
-      });
+      }, user?.id ?? null);
       if (result.status === 'preview') {
         // Aucune commande créée : message honnête, panier conservé, aucun faux succès.
         setPreviewMessage(result.message);
+        submittingRef.current = false;
         setSubmitting(false);
         return;
       }
@@ -134,9 +143,13 @@ export default function CheckoutPage() {
       // pour les annulations, refus et interruptions de navigation.
       window.location.href = result.url;
     } catch (err) {
+      submittingRef.current = false;
       setSubmitting(false);
       if (err instanceof ApiError) {
-        setFatalError({ code: err.code, message: err.message });
+        const details = err.details as { expiredAttemptKey?: unknown } | undefined;
+        setFatalError({ code: err.code, message: err.message,
+          expiredAttemptKey: err.code === 'checkout_session_expired' && typeof details?.expiredAttemptKey === 'string'
+            ? details.expiredAttemptKey : undefined });
         if (err.code === 'insufficient_stock') toast('Un article n’est plus disponible en quantité suffisante.', 'error');
       } else {
         setFatalError({ code: 'unknown', message: 'Erreur inattendue. Réessayez.' });
@@ -301,11 +314,21 @@ export default function CheckoutPage() {
             {fatalError && (
               <p role="alert" className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-xs font-medium text-danger">
                 {fatalError.message}
+                {fatalError.code === 'checkout_session_expired' && fatalError.expiredAttemptKey && (
+                  <button type="button" className="btn-outline btn-sm mt-2" onClick={() => {
+                    if (restartExpiredCheckoutAttempt(fatalError.expiredAttemptKey!)) {
+                      setFatalError(null);
+                      setPreviewMessage('Vérifiez vos informations puis cliquez sur Payer pour lancer une nouvelle tentative.');
+                    } else {
+                      setFatalError({ code: 'checkout_reconciliation_required', message: 'La tentative précédente doit être vérifiée avant de relancer un paiement.' });
+                    }
+                  }}>Nouvelle tentative</button>
+                )}
                 {fatalError.code === 'insufficient_stock' && (
                   <Link href="/cart" className="mt-1 block font-bold underline underline-offset-2">Ajuster mon panier</Link>
                 )}
                 {(fatalError.code === 'network_error' || fatalError.code === 'database_not_configured' || fatalError.code === 'stripe_not_configured') && (
-                  <span className="mt-1 block">Le paiement n’est pas encore disponible sur cet environnement (backend non connecté). Voir docs/DEPLOYMENT.md.</span>
+                  <span className="mt-1 block">La vérification du paiement est indisponible. Si vous avez déjà tenté de payer, contactez le support avant toute nouvelle tentative.</span>
                 )}
               </p>
             )}

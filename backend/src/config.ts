@@ -11,6 +11,8 @@ const envSchema = z.object({
   AUTH_PROVIDER: z.enum(['legacy', 'supabase']).default('legacy'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_ACCOUNT_ID: z.string().regex(/^acct_[A-Za-z0-9]+$/).optional().or(z.literal('')),
+  STRIPE_MODE: z.enum(['test', 'live']).default('test'),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   EMAIL_API_KEY: z.string().optional(),
   ORDER_EMAIL_MODE: z.enum(['off', 'test', 'live']).default('off'),

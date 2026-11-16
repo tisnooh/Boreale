@@ -27,6 +27,8 @@ export const cartItemSchema = z.object({
 export const shippingMethodSchema = z.enum(['standard', 'express']);
 
 export const checkoutSchema = z.object({
+  idempotencyKey: z.string().uuid().optional(),
+  customerMode: z.enum(['guest', 'customer']).optional(),
   items: z.array(cartItemSchema).min(1, 'Le panier est vide.').max(50, 'Trop d’articles différents.'),
   discountCode: emptyToUndefined(z.string().trim().max(32).optional()),
   shippingMethod: shippingMethodSchema.default('standard'),

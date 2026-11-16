@@ -1,68 +1,23 @@
+import type Stripe from 'stripe';
+import { runDurableCheckout, type CheckoutIntentDeps } from './checkout-intents.js';
+import type { CheckoutIntent, CheckoutSnapshot } from '../repositories/checkout-intents.js';
 import { config } from '../config.js';
 import { AppError } from '../lib/errors.js';
-import { logger } from '../lib/logger.js';
-import { stripe } from '../lib/stripe.js';
 import { catalogRepo } from '../repositories/catalog.js';
-import { ordersRepo } from '../repositories/orders.js';
-import { discountsRepo, usersRepo } from '../repositories/users.js';
+import { discountsRepo } from '../repositories/users.js';
 import type { CheckoutInput } from '../validators/checkout.js';
 import { computeTotals, type DiscountSpec } from './pricing.js';
 import type { DbDiscount, PricedItem, TotalsDTO } from '../types/index.js';
 
-export interface StripeSessionResult {
-  id: string;
-  url: string | null;
-}
-
 export interface CheckoutDeps {
+  intents?: CheckoutIntentDeps;
   getVariantsByIds(ids: string[]): Promise<{ id: string; sku: string; title: string; price_cents: number; is_active: boolean; products: { id: string; name: string; procurement_status?: 'unverified' | 'verified'; is_active: boolean; image_url: string | null } | null; inventory: { quantity: number } | null }[]>;
-  findUserByEmail(email: string): Promise<{ id: string } | null>;
-  upsertCustomer(input: { email: string; firstName: string; lastName: string; phone?: string | null; userId?: string | null }): Promise<{ id: string }>;
-  addAddress(customerId: string, address: CheckoutInput['customer']['address'] & { firstName: string; lastName: string; phone?: string | null }): Promise<void>;
   findActiveDiscount(code: string): Promise<DbDiscount | null>;
-  createOrder(input: Parameters<typeof ordersRepo.create>[0]): Promise<{ id: string; number: string }>;
-  createPayment(orderId: string, amountCents: number, currency: string, sessionId: string): Promise<void>;
-  setSessionId(orderId: string, sessionId: string): Promise<void>;
-  createStripeSession(args: {
-    orderNumber: string;
-    orderId: string;
-    email: string;
-    items: PricedItem[];
-    totals: TotalsDTO;
-    discountCode: string | null;
-  }): Promise<StripeSessionResult>;
 }
 
 export const defaultCheckoutDeps: CheckoutDeps = {
-  getVariantsByIds: (ids) => catalogRepo.getVariantsByIds(ids) as never,
-  findUserByEmail: async (email) => {
-    const u = await usersRepo.findByEmail(email);
-    return u ? { id: u.id } : null;
-  },
-  upsertCustomer: (input) => ordersRepo.upsertCustomer(input),
-  addAddress: (customerId, address) => ordersRepo.addAddress(customerId, address),
-  findActiveDiscount: (code) => discountsRepo.findActiveByCode(code) as Promise<DbDiscount | null>,
-  createOrder: (input) => ordersRepo.create(input) as never,
-  createPayment: (orderId, amountCents, currency, sessionId) => ordersRepo.createPayment(orderId, amountCents, currency, sessionId),
-  setSessionId: (orderId, sessionId) => ordersRepo.setSessionId(orderId, sessionId),
-  async createStripeSession({ orderNumber, orderId, email, items, totals, discountCode }) {
-    const site = config().PUBLIC_SITE_URL.replace(/\/+$/, '');
-    const session = await stripe().checkout.sessions.create({
-      mode: 'payment',
-      locale: 'fr',
-      customer_email: email,
-      // Net item prices include the server discount; Stripe rejects negative lines.
-      line_items: buildStripeLineItems(items, totals, discountCode),
-      metadata: { orderId, orderNumber, brand: 'boreale' },
-      payment_intent_data: { metadata: { orderId, orderNumber } },
-      success_url: `${site}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${site}/checkout/cancel?order=${encodeURIComponent(orderNumber)}`,
-      billing_address_collection: 'required',
-      allow_promotion_codes: false,
-      expires_at: Math.floor(Date.now() / 1000) + 60 * 30, // 30 minutes
-    });
-    return { id: session.id, url: session.url };
-  },
+  getVariantsByIds: ids => catalogRepo.getVariantsByIds(ids) as never,
+  findActiveDiscount: code => discountsRepo.findActiveByCode(code) as Promise<DbDiscount | null>,
 };
 
 export interface StripeCheckoutLineItem {
@@ -132,11 +87,7 @@ export interface CheckoutResult {
   totals: TotalsDTO;
 }
 
-export async function createCheckout(
-  input: CheckoutInput,
-  deps: CheckoutDeps = defaultCheckoutDeps,
-  authenticatedUserId: string | null = null
-): Promise<CheckoutResult> {
+async function quoteCheckout(input: CheckoutInput, deps: CheckoutDeps) {
   // 1. Load variants server-side (never trust client prices)
   const uniqueIds = [...new Set(input.items.map((i) => i.variantId))];
   const variants = await deps.getVariantsByIds(uniqueIds);
@@ -212,71 +163,48 @@ export async function createCheckout(
   // Validate the exact Stripe payload before creating any customer or order.
   buildStripeLineItems(priced, totals, discountSpec ? input.discountCode!.toUpperCase() : null);
 
-  // 4. Customer + address
-  // Seule la session authentifiée établit la propriété ; un email saisi n'est pas une preuve.
-  const user = authenticatedUserId ? { id: authenticatedUserId } : null;
-  const customer = await deps.upsertCustomer({
-    email: input.customer.email,
-    firstName: input.customer.firstName,
-    lastName: input.customer.lastName,
-    phone: input.customer.phone ?? null,
-    userId: user?.id ?? null,
-  });
-  await deps.addAddress(customer.id, {
-    ...input.customer.address,
-    firstName: input.customer.firstName,
-    lastName: input.customer.lastName,
-    phone: input.customer.phone ?? null,
-  });
-
-  // 5. Order (pending) + items snapshot
-  const order = await deps.createOrder({
-    customerId: customer.id,
-    userId: user?.id ?? null,
-    email: input.customer.email,
-    currency: totals.currency,
-    subtotalCents: totals.subtotalCents,
-    discountCents: totals.discountCents,
-    shippingCents: totals.shippingCents,
-    totalCents: totals.totalCents,
-    shippingMethod: input.shippingMethod,
-    discountCode: discountSpec ? input.discountCode!.toUpperCase() : null,
-    shippingAddress: {
-      firstName: input.customer.firstName,
-      lastName: input.customer.lastName,
-      phone: input.customer.phone ?? null,
-      ...input.customer.address,
-    },
-    items: priced.map((p) => ({
-      variant_id: p.variantId,
-      sku: p.sku,
-      product_name: p.productName,
-      variant_title: p.variantTitle,
-      unit_price_cents: p.unitPriceCents,
-      quantity: p.quantity,
-      total_cents: p.unitPriceCents * p.quantity,
-      image_url: p.imageUrl,
-    })),
-  });
-
-  // 6. Stripe session
-  const session = await deps.createStripeSession({
-    orderNumber: order.number,
-    orderId: order.id,
-    email: input.customer.email,
-    items: priced,
-    totals,
-    discountCode: discountSpec ? input.discountCode!.toUpperCase() : null,
-  });
-  if (!session.url) {
-    throw new AppError(502, 'stripe_session_failed', 'Stripe n’a pas retourné d’URL de paiement. Réessayez.');
-  }
-  await deps.setSessionId(order.id, session.id);
-  await deps.createPayment(order.id, totals.totalCents, totals.currency, session.id);
-
-  logger.info('checkout_session_created', { orderId: order.id, orderNumber: order.number, totalCents: totals.totalCents });
-  return { url: session.url, orderId: order.id, orderNumber: order.number, totals };
+  return { priced, totals, discountCode: discountSpec ? input.discountCode!.toUpperCase() : null };
 }
 
-/** Exposed for tests — mirrors defaultCheckoutDeps.createStripeSession but with explicit lines. */
+function checkoutSnapshot(input: CheckoutInput, priced: PricedItem[], totals: TotalsDTO, discountCode: string | null): CheckoutSnapshot {
+  return { items: priced, totals, order: {
+    email: input.customer.email.trim().toLowerCase(), currency: totals.currency,
+    subtotalCents: totals.subtotalCents, discountCents: totals.discountCents,
+    shippingCents: totals.shippingCents, totalCents: totals.totalCents,
+    shippingMethod: input.shippingMethod, discountCode,
+    shippingAddress: { firstName: input.customer.firstName, lastName: input.customer.lastName,
+      phone: input.customer.phone ?? null, ...input.customer.address },
+    items: priced.map(p => ({ variant_id: p.variantId, sku: p.sku, product_name: p.productName,
+      variant_title: p.variantTitle, unit_price_cents: p.unitPriceCents, quantity: p.quantity,
+      total_cents: p.unitPriceCents * p.quantity, image_url: p.imageUrl })),
+  } };
+}
+
+export function buildIntentStripeParams(intent: CheckoutIntent): Stripe.Checkout.SessionCreateParams {
+  const cfg = config();
+  const site = cfg.PUBLIC_SITE_URL.replace(/\/+$/, '');
+  const { order, items, totals } = intent.snapshot;
+  return { mode: 'payment', locale: 'fr', customer_email: order.email,
+    line_items: buildStripeLineItems(items, totals, order.discountCode),
+    metadata: { orderId: intent.order_id, orderNumber: intent.order_number, checkoutIntentId: intent.id, brand: 'boreale',
+      stripeAccountId: cfg.STRIPE_ACCOUNT_ID ?? '', stripeMode: cfg.STRIPE_MODE },
+    payment_intent_data: { metadata: { orderId: intent.order_id, checkoutIntentId: intent.id } },
+    success_url: site + '/checkout/success?session_id={CHECKOUT_SESSION_ID}',
+    cancel_url: site + '/checkout/cancel?order=' + encodeURIComponent(intent.order_number),
+    billing_address_collection: 'required', allow_promotion_codes: false,
+    // Stripe default is 24h; no dynamic timestamp can change retry parameters.
+  };
+}
+
+export async function createCheckout(
+  input: CheckoutInput,
+  deps: CheckoutDeps = defaultCheckoutDeps,
+  authenticatedUserId: string | null = null
+): Promise<CheckoutResult> {
+  return runDurableCheckout(input, authenticatedUserId, async () => {
+    const { priced, totals, discountCode } = await quoteCheckout(input, deps);
+    return checkoutSnapshot(input, priced, totals, discountCode);
+  }, buildIntentStripeParams, deps.intents);
+}
+
 export const __testing = { buildStripeLineItems };

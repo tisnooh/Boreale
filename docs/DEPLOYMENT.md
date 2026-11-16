@@ -1,6 +1,6 @@
 # DEPLOYMENT.md — Déploiement Vercel ×2 + Supabase + Stripe + Resend
 
-Objectif atteint par la structure : `git clone` → renseigner les `.env` → déployer `frontend/` et `backend/` comme **2 projets Vercel séparés**, sans restructurer.
+Préparation de deux applications séparées : `frontend/` et `backend/`. Ce document ne prouve aucun déploiement ni ouverture des ventes. Toute production requiert l’autorisation du propriétaire et la recette complète.
 
 ## 0. Prérequis (comptes à créer — propriétaire)
 | Service | Usage | Où |
@@ -12,14 +12,10 @@ Objectif atteint par la structure : `git clone` → renseigner les `.env` → d�
 | Domaine | `domain.com` + `api.domain.com` | registrar au choix |
 
 ## 1. Supabase
-1. Nouveau projet (région **UE**, ex. `eu-west-3` Paris — RGPD).
-2. SQL Editor → exécuter dans l'ordre :
-   - `backend/supabase/migrations/0001_schema.sql`
-   - `backend/supabase/migrations/0002_rls.sql`
-   - `backend/supabase/seed.sql`
-   (ou `supabase link` + `supabase db push` avec le CLI.)
-3. Settings → API : noter `SUPABASE_URL`, `anon key`, `service_role key` (⚠️ secrète).
-4. ⚠️ Ajuster les stocks du seed (`inventory.quantity`) dès réception du stock fournisseur réel.
+1. Utiliser le projet BORÉALE existant `luojeyfznonjnacftxbm` (Paris). Ne pas créer de doublon.
+2. Le schéma courant est déjà appliqué et journalisé ; comparer l’historique Supabase aux fichiers de `backend/supabase/bootstrap/migrations/` avant toute migration supplémentaire. Ne pas rejouer les migrations déjà appliquées.
+3. **Ne pas exécuter les migrations legacy `0001`/`0002`/`0003` ni `backend/supabase/seed.sql`** sur ce projet : le seed contient des données de démonstration et des stocks fictifs.
+4. Configurer les accès dans les variables sécurisées du backend. Le service role reste exclusivement serveur ; aucune clé secrète dans le chat ou Git. Garder les produits non qualifiés inactifs, sans inventaire vendable.
 
 ## 2. Backend → Projet Vercel n°2
 1. Vercel → **Add New Project** → importer le repo → **Root Directory : `backend`**.
@@ -29,14 +25,16 @@ Objectif atteint par la structure : `git clone` → renseigner les `.env` → d�
    FRONTEND_URL=https://domain.com
    SUPABASE_URL=…  SUPABASE_ANON_KEY=…  SUPABASE_SERVICE_ROLE_KEY=…   # service-role : backend uniquement
    STRIPE_SECRET_KEY=sk_test_…        STRIPE_WEBHOOK_SECRET=whsec_…
+   STRIPE_ACCOUNT_ID=acct_1Uc6bxGLTNMkV9aW   STRIPE_MODE=test
+   CHECKOUT_ENABLED=false   ORDER_EMAIL_MODE=off
    EMAIL_API_KEY=re_…                 EMAIL_FROM=BORÉALE <bonjour@domain.com>
    NOTIFY_EMAIL=commandes@domain.com
    JWT_SECRET=<openssl rand -hex 32>  CRON_SECRET=<openssl rand -hex 32>
    NODE_ENV=production  BRAND_NAME=BORÉALE  PUBLIC_SITE_URL=https://domain.com
    ```
-4. Deployer. Vérifier `https://api.domain.com/api/health` → `"status":"ok"` et tous les services `configured`.
+4. Préparer une prévisualisation isolée après configuration sécurisée ; une réponse health configurée ne valide pas le paiement. Vérifier le compte/mode Stripe côté serveur, les signatures et le parcours complet. Ne pas activer les ventes sur ce seul contrôle.
 5. **Domaine** : Settings → Domains → ajouter `api.domain.com` (CNAME `cname.vercel-dns.com` chez le registrar).
-6. **Cron** : `vercel.json` déclare déjà `/api/cron/abandoned-carts` hourly (plan Hobby : 1 cron daily max — ajuster la fréquence ou passer au plan Pro ; l'endpoint accepte aussi un appel manuel authentifié).
+6. **Aucun cron automatique n’est déclaré.** La relance commerciale des paniers nécessite une validation séparée du consentement et de l’autorisation d’envoi. Le traitement des confirmations reste désactivé jusqu’à la recette prestataire ; ne pas activer de campagne en configurant simplement la clé email.
 
 ## 3. Frontend → Projet Vercel n°1
 1. Vercel → **Add New Project** → même repo → **Root Directory : `frontend`**.

@@ -1,0 +1,30 @@
+{
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/css/f7bca3e1c852ee4c.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3105/_next/static/chunks/webpack-87dccef3a5314b9b.js",
+      "method": "GET"
+    }
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+      "status": 200
+    }
+  ],
+  "failed": [],
+  "console": [],
+  "errors": [],
+  "dom": {
+    "evaluationTimedOut": true
+  },
+  "url": "http://127.0.0.1:3105/checkout/success?session_id=cs_test_QASimulated",
+  "screenshotError": "page.screenshot: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+}

@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createCheckout, type CheckoutDeps } from '../src/services/checkout.js';
+import type { CheckoutIntentDeps } from '../src/services/checkout-intents.js';
+import type { CheckoutIntent } from '../src/repositories/checkout-intents.js';
 import type { CheckoutInput } from '../src/validators/checkout.js';
 
 const VAR_A = '550e8400-e29b-41d4-a716-446655440001';
@@ -28,27 +30,38 @@ const variants = [
 
 function makeDeps(overrides: Partial<CheckoutDeps> = {}) {
   const created: Record<string, unknown> = {};
-  const deps: CheckoutDeps = {
-    getVariantsByIds: vi.fn(async (ids: string[]) => variants.filter((v) => ids.includes(v.id)) as never),
-    findUserByEmail: vi.fn(async () => null),
-    upsertCustomer: vi.fn(async () => ({ id: 'cust-1' })),
-    addAddress: vi.fn(async () => undefined),
-    findActiveDiscount: vi.fn(async () => null),
-    createOrder: vi.fn(async (input) => {
-      created.order = input;
-      return { id: 'order-1', number: 'BOR-2026-000001' };
+  let current: CheckoutIntent | null = null;
+  const now = Date.now();
+  const intents: CheckoutIntentDeps = {
+    begin: vi.fn(async (identity, snapshot) => {
+      if (!current && snapshot) {
+        created.order = { ...snapshot.order, userId: identity.actor };
+        current = { id: '550e8400-e29b-41d4-a716-446655440010', order_id: '550e8400-e29b-41d4-a716-446655440011',
+          order_number: 'BOR-2026-000001', request_hash: identity.requestHash, state: 'prepared', snapshot,
+          stripe_params: null, stripe_key: 'stable-test-key', session_id: null, lease_token: null,
+          first_attempt_at: null, retry_deadline: null };
+      }
+      return current;
     }),
-    createPayment: vi.fn(async () => {
-      created.payment = true;
-    }),
-    setSessionId: vi.fn(async () => undefined),
-    createStripeSession: vi.fn(async () => ({ id: 'cs_test_1', url: 'https://checkout.stripe.com/cs_test_1' })),
-    ...overrides,
+    freeze: vi.fn(async (_id, body) => { current = { ...current!, stripe_params: body }; return current; }),
+    claim: vi.fn(async () => { current = { ...current!, state: 'creating', lease_token: 'fixture-lease', retry_deadline: new Date(now + 23 * 3600000).toISOString() }; return current; }),
+    bind: vi.fn(async (_id, _token, session) => { created.payment = true; current = { ...current!, state: 'bound', session_id: session.id }; return current; }),
+    fail: vi.fn(async () => undefined),
+    create: vi.fn(async () => ({ id: 'cs_test_1', url: 'https://checkout.stripe.com/cs_test_1', status: 'open', expires_at: Math.floor(now / 1000) + 86400,
+      amount_total: current!.snapshot.totals.totalCents, currency: 'eur',
+      metadata: { orderId: current!.order_id, checkoutIntentId: current!.id, brand: 'boreale' } })),
+    retrieve: vi.fn(async () => { throw new Error('Unexpected retrieve'); }), now: () => now,
   };
-  return { deps, created };
+  const deps: CheckoutDeps = {
+    intents,
+    getVariantsByIds: vi.fn(async (ids: string[]) => variants.filter(v => ids.includes(v.id)) as never),
+    findActiveDiscount: vi.fn(async () => null), ...overrides,
+  };
+  return { deps, created, intents };
 }
 
 const baseInput: CheckoutInput = {
+  idempotencyKey: '550e8400-e29b-41d4-a716-446655440020', customerMode: 'guest',
   items: [{ variantId: VAR_A, quantity: 2 }],
   discountCode: undefined,
   shippingMethod: 'standard',
@@ -67,28 +80,28 @@ describe('createCheckout', () => {
       ...variants[0]!.products, procurement_status: status,
     } }] as never) });
     await expect(createCheckout(baseInput, deps)).rejects.toMatchObject({ code: 'procurement_unverified' });
-    for (const method of ['findUserByEmail', 'upsertCustomer', 'addAddress', 'findActiveDiscount', 'createOrder', 'createPayment', 'setSessionId', 'createStripeSession'] as const) {
-      expect(deps[method]).not.toHaveBeenCalled();
-    }
+    expect(deps.intents!.claim).not.toHaveBeenCalled();
+    expect(deps.findActiveDiscount).not.toHaveBeenCalled();
   });
 
   it('rejette les doublons dont le cumul dépasse le stock avant création', async () => {
     const { deps } = makeDeps();
     await expect(createCheckout({ ...baseInput, items: [{ variantId: VAR_B, quantity: 1 }, { variantId: VAR_B, quantity: 1 }] }, deps)).rejects.toMatchObject({ code: 'insufficient_stock' });
-    expect(deps.createOrder).not.toHaveBeenCalled();
-    expect(deps.createStripeSession).not.toHaveBeenCalled();
+    expect(deps.intents!.claim).not.toHaveBeenCalled();
+    expect(deps.intents!.create).not.toHaveBeenCalled();
   });
 
   it('rejette une quantité cumulée supérieure à 20', async () => {
     const { deps } = makeDeps();
     await expect(createCheckout({ ...baseInput, items: [{ variantId: VAR_A, quantity: 11 }, { variantId: VAR_A, quantity: 10 }] }, deps)).rejects.toMatchObject({ code: 'invalid_quantity' });
-    expect(deps.upsertCustomer).not.toHaveBeenCalled();
+    expect(deps.intents!.claim).not.toHaveBeenCalled();
   });
 
   it('ne retourne aucune URL si la liaison session-commande échoue', async () => {
-    const { deps } = makeDeps({ setSessionId: vi.fn(async () => { throw new Error('persistence failed'); }) });
+    const { deps, intents } = makeDeps();
+    vi.mocked(intents.bind).mockRejectedValue(new Error('persistence failed'));
     await expect(createCheckout(baseInput, deps)).rejects.toThrow('persistence failed');
-    expect(deps.createPayment).not.toHaveBeenCalled();
+    expect(intents.fail).not.toHaveBeenCalled();
   });
   it('happy path : totaux serveur, commande créée, URL Stripe retournée', async () => {
     const { deps, created } = makeDeps();
@@ -183,21 +196,24 @@ describe('createCheckout', () => {
     expect(result.totals.totalCents).toBe(4980 - 498 + 490);
   });
 
-  it('session Stripe sans URL → 502', async () => {
-    const { deps } = makeDeps({ createStripeSession: vi.fn(async () => ({ id: 'cs_x', url: null })) });
-    await expect(createCheckout(baseInput, deps)).rejects.toMatchObject({ status: 502 });
+  it('session Stripe sans URL → refus sans bind', async () => {
+    const { deps, intents } = makeDeps();
+    const original = vi.mocked(intents.create).getMockImplementation()!;
+    vi.mocked(intents.create).mockImplementation(async (body, key) => ({ ...await original(body, key), url: null }));
+    await expect(createCheckout(baseInput, deps)).rejects.toMatchObject({ status: 503 });
+    expect(intents.bind).not.toHaveBeenCalled();
   });
 
   it('email connu sans session ne confère pas la propriété de la commande', async () => {
-    const { deps, created } = makeDeps({ findUserByEmail: vi.fn(async () => ({ id: 'user-9' })) });
+    const { deps, created } = makeDeps();
     await createCheckout(baseInput, deps);
     expect((created.order as { userId: string | null }).userId).toBeNull();
-    expect(deps.findUserByEmail).not.toHaveBeenCalled();
+    expect(vi.mocked(deps.intents!.begin).mock.calls[0]![0].actor).toBeNull();
   });
 
   it('lie uniquement la session authentifiée à la commande', async () => {
     const { deps, created } = makeDeps();
-    await createCheckout(baseInput, deps, 'user-authenticated');
+    await createCheckout({ ...baseInput, customerMode: 'customer' }, deps, 'user-authenticated');
     expect((created.order as { userId: string }).userId).toBe('user-authenticated');
   });
 });

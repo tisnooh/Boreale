@@ -121,6 +121,17 @@ describe('webhook paid checkout transaction', () => {
 });
 
 describe('webhook expiration / refund (existing paths)', () => {
+  it('keeps an early expiration retryable instead of silently losing it', async () => {
+    const deps = makeDeps(null);
+    await expect(handleWebhookEvent({ type: 'checkout.session.expired', data: { object: { id: 'cs_test_1' } } }, deps))
+      .rejects.toMatchObject({ status: 503, code: 'payment_order_unresolved' });
+    expect(deps.cancelOrder).not.toHaveBeenCalled();
+  });
+  it('recovers early binding before settling a paid order', async () => {
+    const deps = makeDeps(null); deps.recoverCheckoutSession = vi.fn().mockResolvedValue(paidOrder);
+    await expect(handleWebhookEvent(paidEvent(), deps)).resolves.toMatchObject({ handled: true });
+    expect(deps.recoverCheckoutSession).toHaveBeenCalledOnce(); expect(deps.settlePayment).toHaveBeenCalledOnce();
+  });
   it('expires a pending order', async () => {
     const deps = makeDeps();
     await handleWebhookEvent({ type: 'checkout.session.expired', data: { object: { id: 'cs_test_1' } } }, deps);
