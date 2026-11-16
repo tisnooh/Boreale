@@ -4,6 +4,7 @@ import { AppError } from '../lib/errors.js';
 import { config } from '../config.js';
 import { supabaseAuth } from '../lib/supabase-auth.js';
 import type { User } from '@supabase/supabase-js';
+import { adminUsersRepo } from '../repositories/users.js';
 
 export const USER_COOKIE = 'boreale_token';
 export const ADMIN_COOKIE = 'boreale_admin';
@@ -59,12 +60,19 @@ export function requireUser(req: AuthedRequest, _res: Response, next: NextFuncti
 }
 
 export function requireAdmin(req: AuthedRequest, _res: Response, next: NextFunction) {
+  delete req.admin;
   const token = readToken(req, ADMIN_COOKIE);
   if (!token) return next(AppError.unauthorized('admin_auth_required', 'Authentification admin requise.'));
   const payload = verifyToken(token);
   if (!payload || payload.kind !== 'admin') {
     return next(AppError.unauthorized('admin_auth_invalid', 'Session admin invalide ou expirée.'));
   }
-  req.admin = payload;
-  next();
+  // Revocation and role changes apply on the next request, not 12h later.
+  void adminUsersRepo.findById(payload.sub).then((admin) => {
+    if (!admin?.is_active || !['admin', 'staff'].includes(admin.role)) {
+      return next(AppError.unauthorized('admin_auth_invalid', 'Compte administrateur inactif ou introuvable.'));
+    }
+    req.admin = { sub: admin.id, email: admin.email, role: admin.role, kind: 'admin' };
+    next();
+  }).catch(() => next(AppError.serviceUnavailable('admin_access_unavailable', 'La vérification de votre accès administrateur est indisponible. Réessayez.')));
 }

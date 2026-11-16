@@ -7,6 +7,7 @@ import { sourcingRepo } from '../src/repositories/sourcing.js';
 import { sourcingService } from '../src/services/sourcing.js';
 import { createApp } from '../src/app.js';
 import { signAdminToken, signUserToken } from '../src/lib/jwt.js';
+import { adminUsersRepo } from '../src/repositories/users.js';
 
 const input = { candidateKey: 'BOR-ALI-20261114-01', title: 'Candidat test', supplierName: 'Supplier test',
   supplierUrl: 'https://supplier.en.alibaba.com', sourcePlatform: 'alibaba' as const,
@@ -65,6 +66,7 @@ describe('sourcing HTTP admin boundary', () => {
     expect(save).not.toHaveBeenCalled(); expect(list).not.toHaveBeenCalled(); expect(get).not.toHaveBeenCalled();
   });
   it('allows admin reads, validates writes and returns snakecase draft', async () => {
+    vi.spyOn(adminUsersRepo, 'findById').mockResolvedValue({ id: 'admin', email: 'admin@example.invalid', role: 'admin', name: null, is_active: true });
     const row = { candidate_key: input.candidateKey, supplier_name: input.supplierName };
     vi.spyOn(sourcingRepo, 'list').mockResolvedValue([row] as never);
     const upsert = vi.spyOn(sourcingRepo, 'upsert').mockResolvedValue({ candidate: row, product: { is_active: false }, created: true } as never);

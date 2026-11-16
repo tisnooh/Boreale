@@ -1,9 +1,9 @@
 // Loopback integration QA. Requires the existing dedicated project in secure env.
-// No real admin login, payment, email, sale, stock or new product fixture is created.
+// Temporary private QA admin is removed in finally; no owner login, payment or sale.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath, URL } from 'node:url';
 import process from 'node:process';
@@ -21,16 +21,20 @@ delete process.env.STRIPE_WEBHOOK_SECRET;
 delete process.env.EMAIL_API_KEY;
 const { createApp } = await import('../dist/src/app.js');
 const { signAdminToken, signUserToken } = await import('../dist/src/lib/jwt.js');
+const { db } = await import('../dist/src/lib/supabase.js');
+const { hashPassword } = await import('../dist/src/lib/password.js');
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const registry = JSON.parse(await fs.readFile(path.join(repoRoot, 'sourcing/alibaba-candidates.json'), 'utf8'));
 const output = process.env.BOREALE_QA_OUTPUT || path.join(repoRoot, 'outputs/sourcing');
 await fs.mkdir(output, { recursive: true });
-const report = { scope: 'real database and local API; optional local UI', authFixture: 'ephemeral signed admin token, not owner login', realPaymentTested: false, checks: [], pageErrors: [] };
+const report = { scope: 'real database and local API; optional local UI', authFixture: 'temporary active QA admin and ephemeral token, not owner login', realPaymentTested: false, checks: [], pageErrors: [] };
 function check(name, condition) {
   report.checks.push({ name, passed: Boolean(condition) });
   if (!condition) throw new Error(`QA failed: ${name}`);
 }
-const admin = signAdminToken({ sub: '00000000-0000-4000-8000-000000000099', email: 'qa-sourcing@example.invalid', role: 'admin' });
+const fixtureId = randomUUID();
+const fixtureEmail = `qa-sourcing-${fixtureId}@example.invalid`;
+const admin = signAdminToken({ sub: fixtureId, email: fixtureEmail, role: 'admin' });
 const customerKind = signUserToken({ sub: '00000000-0000-4000-8000-000000000098', email: 'qa-sourcing@example.invalid' });
 const server = createApp().listen(4001, '127.0.0.1');
 await new Promise((resolve, reject) => { server.once('listening', resolve); server.once('error', reject); });
@@ -43,6 +47,8 @@ async function request(route, { method = 'GET', body, token = admin } = {}) {
 }
 let browser;
 try {
+  const fixture = await db().from('admin_users').insert({ id: fixtureId, email: fixtureEmail, password_hash: hashPassword(randomBytes(32).toString('hex')), role: 'admin', is_active: true });
+  assert.ifError(fixture.error);
   check('anonymous_admin_api_denied', (await request('/api/admin/sourcing-candidates', { token: null })).status === 401);
   check('user_kind_cannot_be_admin', (await request('/api/admin/sourcing-candidates', { token: customerKind })).status === 401);
   const list = await request('/api/admin/sourcing-candidates');
@@ -123,6 +129,8 @@ try {
 } finally {
   if (browser) await browser.close();
   await new Promise(resolve => server.close(resolve));
+  const cleanup = await db().from('admin_users').delete().eq('id', fixtureId).eq('email', fixtureEmail);
+  if (cleanup.error) { report.failure = 'Temporary QA administrator cleanup failed'; process.exitCode = 1; }
   await fs.writeFile(path.join(output, process.env.BOREALE_ADMIN_UI_URL ? 'live-ui-results.json' : 'live-api-results.json'), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ checks: report.checks.length, failures: report.checks.filter(c => !c.passed).length, completed: !report.failure, output }));
   if (report.failure) console.error(report.failure);

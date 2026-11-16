@@ -125,14 +125,45 @@ export const ordersRepo = {
     return (data ?? []) as never;
   },
 
-  async adminList(opts: { page: number; limit: number; q?: string; status?: string }): Promise<{ rows: (DbOrder & { order_items: DbOrderItem[] })[]; total: number }> {
-    let query = db().from('orders').select('*, order_items(*)', { count: 'exact' }).order('placed_at', { ascending: false });
+  async adminList(opts: { page: number; limit: number; q?: string; status?: string; fulfillmentStatus?: string }): Promise<{ rows: (DbOrder & { order_items: DbOrderItem[] })[]; total: number }> {
+    let query = db().from('orders').select('*, order_items(*)', { count: 'exact' }).order('placed_at', { ascending: false }).order('id', { ascending: false });
     if (opts.status) query = query.eq('status', opts.status);
-    if (opts.q) query = query.or(`number.ilike.%${opts.q}%,email.ilike.%${opts.q}%`);
+    if (opts.fulfillmentStatus) query = query.eq('fulfillment_status', opts.fulfillmentStatus);
+    if (opts.q) {
+      // ILIKE aliases every '*' to '%'; escaped IMATCH keeps all input literal.
+      const pattern = opts.q.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
+      const literal = pattern.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      query = query.or('number.imatch."' + literal + '",email.imatch."' + literal + '"');
+    }
     const from = (opts.page - 1) * opts.limit;
     const { data, error, count } = await query.range(from, from + opts.limit - 1);
     if (error) throw error;
     return { rows: (data ?? []) as never, total: count ?? 0 };
+  },
+
+  async getOperations(id: string) {
+    const [incidents, notifications] = await Promise.all([
+      db().from('order_operational_incidents').select('*').eq('order_id', id).order('created_at'),
+      db().from('order_notification_outbox').select('id,type,status,attempts,last_error,created_at,sent_at,next_attempt_at').eq('order_id', id).order('created_at'),
+    ]);
+    if (incidents.error) throw incidents.error;
+    if (notifications.error) throw notifications.error;
+    return { incidents: incidents.data ?? [], notifications: notifications.data ?? [] };
+  },
+
+  async adminOperation(id: string, input: { action: 'advance' | 'tracking' | 'note'; expectedStatus?: OrderStatus; status?: OrderStatus; tracking?: Record<string, unknown>; expectedTracking?: Record<string, unknown>; note?: string; actor: string }): Promise<DbOrder & { order_items: DbOrderItem[] }> {
+    const { data, error } = await db().rpc('admin_update_order_operation', {
+      p_order_id: id, p_action: input.action, p_expected_status: input.expectedStatus ?? null,
+      p_status: input.status ?? null, p_tracking: input.tracking ?? {}, p_expected_tracking: input.expectedTracking ?? null,
+      p_note: input.note ?? null, p_actor: input.actor,
+    });
+    if (error) {
+      if (error.code === 'P0002') throw AppError.notFound('order_not_found', 'Commande introuvable.');
+      if (error.code === '23514') throw AppError.conflict('order_operation_conflict', 'La commande a changé ou cette action est indisponible ; rechargez-la avant de poursuivre.');
+      throw AppError.serviceUnavailable('order_operation_unconfirmed', 'L’opération n’a pas été confirmée ; rechargez la commande.');
+    }
+    if (!data || typeof data !== 'object' || !data.id) throw AppError.serviceUnavailable('order_operation_unconfirmed', 'L’opération n’a pas été confirmée.');
+    return data as DbOrder & { order_items: DbOrderItem[] };
   },
 
   async setStatus(

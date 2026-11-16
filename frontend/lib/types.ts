@@ -101,6 +101,7 @@ export interface OrderDTO {
   number: string;
   email: string;
   status: OrderStatus;
+  fulfillmentStatus?: 'pending' | 'ready' | 'blocked';
   currency: string;
   subtotalCents: number;
   discountCents: number;

@@ -22,6 +22,8 @@ import {
   productUpsertSchema,
   discountUpsertSchema,
   orderStatusSchema,
+  orderTrackingSchema,
+  orderNoteSchema,
   refundSchema,
   campaignSchema,
   settingsSchema,
@@ -94,6 +96,8 @@ export function buildRouter(): Router {
   r.get('/api/admin/orders', requireAdmin, validateQuery(adminListQuerySchema), adminController.listOrders);
   r.get('/api/admin/orders/:id', requireAdmin, adminController.getOrder);
   r.post('/api/admin/orders/:id/status', requireAdmin, validateBody(orderStatusSchema), adminController.setOrderStatus);
+  r.post('/api/admin/orders/:id/tracking', requireAdmin, validateBody(orderTrackingSchema), adminController.setOrderTracking);
+  r.post('/api/admin/orders/:id/notes', requireAdmin, validateBody(orderNoteSchema), adminController.addOrderNote);
   r.post('/api/admin/orders/:id/refund', requireAdmin, validateBody(refundSchema), adminController.refundOrder);
 
   r.get('/api/admin/customers', requireAdmin, validateQuery(adminListQuerySchema), adminController.listCustomers);

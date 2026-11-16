@@ -32,7 +32,9 @@ export function verifyToken(token: string): TokenPayload | null {
     const decoded = jwt.verify(token, config().JWT_SECRET, { algorithms: ['HS256'] });
     if (typeof decoded === 'string') return null;
     const p = decoded as Partial<TokenPayload>;
-    if (!p.sub || !p.email || (p.kind !== 'user' && p.kind !== 'admin')) return null;
+    if (typeof p.sub !== 'string' || !p.sub || typeof p.email !== 'string' || !p.email
+      || (p.kind !== 'user' && p.kind !== 'admin')) return null;
+    if (p.kind === 'admin' && p.role !== 'admin' && p.role !== 'staff') return null;
     return p as TokenPayload;
   } catch {
     return null;

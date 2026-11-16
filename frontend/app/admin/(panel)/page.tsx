@@ -16,20 +16,25 @@ interface Stats {
   lowStock: { sku: string; product: string; quantity: number; threshold: number }[];
   newsletterSubscribers: number;
   recentOrders: { id: string; number: string; status: OrderStatus; totalCents: number; placedAt: string }[];
+  operations: { openIncidents: number; blockedOrders: number; pendingNotifications: number; failedNotifications: number };
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    let current = true;
+    setStats(null); setError(null);
     api
       .get<{ data: Stats }>('/api/admin/stats')
-      .then((r) => setStats(r.data))
-      .catch((e) => setError(e instanceof Error ? e.message : 'Erreur'));
-  }, []);
+      .then((r) => { if (current) setStats(r.data); })
+      .catch((e) => { if (current) setError(e instanceof Error ? e.message : 'Erreur'); });
+    return () => { current = false; };
+  }, [attempt]);
 
-  if (error) return <p className="rounded-xl bg-danger/10 p-4 text-sm text-danger">{error}</p>;
+  if (error) return <div role="alert" className="rounded-xl bg-danger/10 p-4"><p className="text-sm text-danger">{error}</p><button type="button" className="btn-outline btn-sm mt-3" onClick={() => setAttempt((n) => n + 1)}>Réessayer</button></div>;
   if (!stats) return <Spinner label="Chargement des statistiques…" />;
 
   const maxSeries = Math.max(1, ...stats.series.map((s) => s.revenueCents));
@@ -46,6 +51,17 @@ export default function AdminDashboard() {
         <Kpi label="Newsletter" value={String(stats.newsletterSubscribers)} sub="abonnés actifs" />
       </div>
 
+      <section className="card mt-6 p-6" aria-label="Opérations à suivre">
+        <h2 className="mb-4 text-sm font-bold tracking-wide text-muted uppercase">Opérations à suivre</h2>
+        <dl className="grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div><dt>Incidents ouverts</dt><dd className="font-semibold">{stats.operations.openIncidents}</dd></div>
+          <div><dt>Préparations bloquées</dt><dd className="font-semibold">{stats.operations.blockedOrders}</dd></div>
+          <div><dt>Notifications en attente</dt><dd className="font-semibold">{stats.operations.pendingNotifications}</dd></div>
+          <div><dt>Notifications en échec</dt><dd className="font-semibold">{stats.operations.failedNotifications}</dd></div>
+        </dl>
+        <Link href="/admin/commandes" className="btn-outline btn-sm mt-4">Gérer les commandes</Link>
+      </section>
+
       {/* Série 14 jours */}
       <section className="card mt-6 p-6" aria-label="Chiffre d'affaires sur 14 jours">
         <h2 className="mb-4 text-sm font-bold tracking-wide text-muted uppercase">CA — 14 derniers jours</h2>
@@ -54,7 +70,7 @@ export default function AdminDashboard() {
             <div key={s.date} className="group relative flex-1">
               <div
                 className="w-full rounded-t bg-glacier/80 transition group-hover:bg-ember"
-                style={{ height: `${Math.max(2, (s.revenueCents / maxSeries) * 120)}px` }}
+                style={{ height: `${Math.max(0, (s.revenueCents / maxSeries) * 120)}px` }}
                 title={`${s.date} : ${formatCents(s.revenueCents)} (${s.orders} commande${s.orders > 1 ? 's' : ''})`}
               />
             </div>
@@ -93,7 +109,7 @@ export default function AdminDashboard() {
         <section className="card p-6" aria-label="Alertes stock">
           <h2 className="mb-4 text-sm font-bold tracking-wide text-muted uppercase">Alertes stock bas</h2>
           {stats.lowStock.length === 0 ? (
-            <p className="text-sm text-muted">Aucune alerte — tous les stocks sont au-dessus du seuil.</p>
+            <p className="text-sm text-muted">Aucune alerte de stock enregistrée.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {stats.lowStock.map((v) => (

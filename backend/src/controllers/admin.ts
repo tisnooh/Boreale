@@ -1,17 +1,16 @@
+import { orderCapabilities, REFUND_UNAVAILABLE, NOTIFICATIONS_UNAVAILABLE } from '../services/admin-orders.js';
 import type { Response } from 'express';
 import type { AuthedRequest } from '../middleware/auth.js';
 import { asyncHandler, AppError } from '../lib/errors.js';
-import { stripe } from '../lib/stripe.js';
 import { catalogRepo } from '../repositories/catalog.js';
 import { ordersRepo } from '../repositories/orders.js';
 import { discountsRepo } from '../repositories/users.js';
 import { newsletterRepo, settingsRepo, contactRepo } from '../repositories/misc.js';
-import { toOrderDTO, canTransition, toOrderDTO as mapOrder } from '../services/orders.js';
+import { toOrderDTO, toOrderDTO as mapOrder } from '../services/orders.js';
 import { emailTemplates, sendEmail } from '../services/email.js';
 import { getStatsOverview } from '../services/stats.js';
 import { settingsService } from '../services/settings.js';
 import type { ProductUpsertInput } from '../validators/catalog.js';
-import type { OrderStatus } from '../types/index.js';
 
 /* ---------- products ---------- */
 
@@ -116,8 +115,8 @@ export const adminController = {
   /* ---------- orders ---------- */
 
   listOrders: asyncHandler(async (req: AuthedRequest, res: Response) => {
-    const { page, limit, q, status } = req.query as unknown as { page: number; limit: number; q?: string; status?: string };
-    const { rows, total } = await ordersRepo.adminList({ page, limit, q, status });
+    const { page, limit, q, status, fulfillmentStatus } = req.query as unknown as { page: number; limit: number; q?: string; status?: string; fulfillmentStatus?: string };
+    const { rows, total } = await ordersRepo.adminList({ page, limit, q, status, fulfillmentStatus });
     res.json({ data: rows.map(mapOrder), page, limit, total });
   }),
 
@@ -126,88 +125,38 @@ export const adminController = {
     if (!order) throw AppError.notFound('order_not_found', 'Commande introuvable.');
     const events = await ordersRepo.listEvents(order.id);
     const payment = await ordersRepo.getPaymentByOrderId(order.id);
-    res.json({ data: { ...toOrderDTO(order), events, payment } });
+    const { incidents, notifications } = await ordersRepo.getOperations(order.id);
+    res.json({ data: { ...toOrderDTO(order), events, payment, incidents, notifications, capabilities: orderCapabilities(order) } });
   }),
 
   setOrderStatus: asyncHandler(async (req: AuthedRequest, res: Response) => {
     const order = await ordersRepo.getById(req.params.id!);
     if (!order) throw AppError.notFound('order_not_found', 'Commande introuvable.');
-    const { status, trackingCarrier, trackingNumber, trackingUrl, notify } = req.body as {
-      status: OrderStatus;
-      trackingCarrier?: string | null;
-      trackingNumber?: string | null;
-      trackingUrl?: string | null;
-      notify?: boolean;
-    };
-    if (!canTransition(order.status, status)) {
-      throw AppError.conflict('invalid_transition', `Transition impossible : ${order.status} → ${status}.`);
-    }
-    if (['paid', 'refunded', 'partially_refunded'].includes(status)) {
-      throw AppError.conflict('provider_confirmation_required', 'Le paiement doit être confirmé par le prestataire.');
-    }
-    if (['processing', 'shipped', 'delivered'].includes(status) && order.fulfillment_status !== 'ready') {
-      throw AppError.conflict('fulfillment_blocked', 'Le stock de cette commande n’est pas alloué ; traiter son incident avant préparation.');
-    }
-    if (status === 'cancelled') {
-      // Paid cancellation/restocking requires a separate atomic workflow. In
-      // particular a paid shortage has never consumed stock and must not add it.
-      if (order.status !== 'pending' || order.paid_at) {
-        throw AppError.conflict('paid_cancellation_requires_review', 'Une commande encaissée nécessite un traitement de remboursement et de stock contrôlé.');
-      }
-      const cancelled = await ordersRepo.cancelPending(order.id, `admin:${req.admin?.email ?? 'admin'}`);
-      if (!cancelled) throw AppError.conflict('order_state_changed', 'La commande a changé ; rechargez-la avant de poursuivre.');
-      const updated = await ordersRepo.getById(order.id);
-      if (!updated) throw AppError.notFound('order_not_found', 'Commande introuvable.');
-      res.json({ data: toOrderDTO(updated) });
-      return;
-    }
-    if (status === 'shipped' && (!(trackingCarrier ?? order.tracking_carrier)?.trim() || !(trackingNumber ?? order.tracking_number)?.trim())) {
-      throw AppError.conflict('tracking_required', 'Le transporteur et le numéro de suivi sont nécessaires pour déclarer l’expédition.');
-    }
-    const extra: Record<string, unknown> = {};
-    if (trackingCarrier !== undefined) extra.tracking_carrier = trackingCarrier;
-    if (trackingNumber !== undefined) extra.tracking_number = trackingNumber;
-    if (trackingUrl !== undefined) extra.tracking_url = trackingUrl;
-    if (status === 'shipped') extra.shipped_at = new Date().toISOString();
-    if (status === 'delivered') extra.delivered_at = new Date().toISOString();
-
-    const updated = await ordersRepo.setStatus(order.id, status, extra as never);
-    await ordersRepo.addEvent(order.id, `status_${status}`, { from: order.status, by: req.admin?.email ?? 'admin' });
-
-    if (notify && status === 'shipped') {
-      const dto = { ...toOrderDTO({ ...order, ...updated, order_items: order.order_items } as never) };
-      await sendEmail(emailTemplates.shipping(dto)).catch(() => undefined);
-    }
-    res.json({ data: toOrderDTO({ ...updated, order_items: order.order_items } as never) });
+    const { status, expectedStatus, notify, ...tracking } = req.body;
+    if (notify) throw AppError.serviceUnavailable('notifications_unavailable', NOTIFICATIONS_UNAVAILABLE);
+    if (['paid', 'refunded', 'partially_refunded'].includes(status)) throw AppError.conflict('provider_confirmation_required', 'Le paiement doit être confirmé par le prestataire.');
+    if (order.status !== expectedStatus) throw AppError.conflict('order_state_changed', 'La commande a changé ; rechargez-la.');
+    if (status === 'cancelled' && (order.status !== 'pending' || order.paid_at)) throw AppError.conflict('paid_cancellation_requires_review', 'Une commande encaissée nécessite un traitement contrôlé.');
+    if (['processing', 'shipped', 'delivered'].includes(status) && order.fulfillment_status !== 'ready') throw AppError.conflict('fulfillment_blocked', 'Traitez l’incident de cette commande avant sa préparation.');
+    if (!orderCapabilities(order).allowedStatuses.includes(status)) throw AppError.conflict('invalid_transition', 'Cette transition n’est pas disponible.');
+    if (status === 'shipped' && (!(tracking.trackingCarrier ?? order.tracking_carrier)?.trim() || !(tracking.trackingNumber ?? order.tracking_number)?.trim())) throw AppError.conflict('tracking_required', 'Transporteur et numéro de suivi requis.');
+    const updated = await ordersRepo.adminOperation(order.id, { action: 'advance', expectedStatus, status, tracking, actor: req.admin!.email });
+    res.json({ data: toOrderDTO(updated) });
   }),
 
-  refundOrder: asyncHandler(async (req: AuthedRequest, res: Response) => {
-    const order = await ordersRepo.getById(req.params.id!);
-    if (!order) throw AppError.notFound('order_not_found', 'Commande introuvable.');
-    const payment = await ordersRepo.getPaymentByOrderId(order.id);
-    if (!payment || !payment.stripe_payment_intent_id) {
-      throw AppError.conflict('no_payment', 'Aucun paiement Stripe réussi sur cette commande.');
-    }
-    const remaining = payment.amount_cents - (payment.refunded_cents ?? 0);
-    if (remaining <= 0) throw AppError.conflict('already_refunded', 'Cette commande est déjà intégralement remboursée.');
-    const requested = (req.body as { amountCents?: number }).amountCents;
-    const amount = requested === undefined ? remaining : Math.min(requested, remaining);
-    if (amount <= 0) throw AppError.badRequest('invalid_amount', 'Montant de remboursement invalide.');
+  setOrderTracking: asyncHandler(async (req: AuthedRequest, res: Response) => {
+    const { expectedStatus, expectedTracking, ...tracking } = req.body;
+    const updated = await ordersRepo.adminOperation(req.params.id!, { action: 'tracking', expectedStatus, expectedTracking, tracking, actor: req.admin!.email });
+    res.json({ data: toOrderDTO(updated) });
+  }),
 
-    const refund = await stripe().refunds.create({
-      payment_intent: payment.stripe_payment_intent_id,
-      amount,
-      reason: 'requested_by_customer',
-      metadata: { orderId: order.id, orderNumber: order.number, by: req.admin?.email ?? 'admin' },
-    });
-    await ordersRepo.addEvent(order.id, amount >= remaining ? 'refund_full_requested' : 'refund_partial_requested', {
-      amountCents: amount,
-      stripeRefundId: refund.id,
-      by: req.admin?.email ?? 'admin',
-    });
-    // Order/payment statuses + customer email are updated by the `charge.refunded`
-    // webhook (single source of truth). Requires STRIPE_WEBHOOK_SECRET configured.
-    res.json({ data: { stripeRefundId: refund.id, amountCents: amount, status: refund.status } });
+  addOrderNote: asyncHandler(async (req: AuthedRequest, res: Response) => {
+    const updated = await ordersRepo.adminOperation(req.params.id!, { action: 'note', note: req.body.note, actor: req.admin!.email });
+    res.json({ data: toOrderDTO(updated) });
+  }),
+
+  refundOrder: asyncHandler(async (_req: AuthedRequest, _res: Response) => {
+    throw AppError.serviceUnavailable('refund_unavailable', REFUND_UNAVAILABLE);
   }),
 
   /* ---------- customers ---------- */

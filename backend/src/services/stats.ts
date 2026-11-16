@@ -1,3 +1,4 @@
+import { AppError } from '../lib/errors.js';
 import { db } from '../lib/supabase.js';
 import { catalogRepo } from '../repositories/catalog.js';
 import { newsletterRepo } from '../repositories/misc.js';
@@ -5,6 +6,7 @@ import { PAID_STATUSES, toOrderDTO } from './orders.js';
 import type { DbOrder, OrderStatus } from '../types/index.js';
 
 export interface StatsOverview {
+  operations: { openIncidents: number; blockedOrders: number; pendingNotifications: number; failedNotifications: number };
   revenue: { grossCents: number; refundedCents: number; netCents: number; last30dCents: number };
   orders: { total: number; byStatus: Record<string, number>; aovCents: number };
   series: { date: string; revenueCents: number; orders: number }[];
@@ -18,13 +20,25 @@ export interface StatsOverview {
 export async function getStatsOverview(): Promise<StatsOverview> {
   const c = db();
 
-  const [{ data: ordersData }, { data: itemsData }, { data: paymentsData }, lowStock, newsletterSubscribers] = await Promise.all([
-    c.from('orders').select('id,number,status,total_cents,placed_at').order('placed_at', { ascending: false }).limit(5000),
-    c.from('order_items').select('product_name,quantity,total_cents,orders!inner(status)').in('orders.status', PAID_STATUSES).limit(5000),
-    c.from('payments').select('refunded_cents'),
-    catalogRepo.adminListLowStock(),
-    newsletterRepo.countSubscribed(),
+  const [ordersResult, itemsResult, paymentsResult, lowStock, newsletterSubscribers, ...operationCounts] = await Promise.all([
+    c.from('orders').select('id,number,status,total_cents,placed_at', { count: 'exact' }).order('placed_at', { ascending: false }).limit(5000),
+    c.from('order_items').select('product_name,quantity,total_cents,orders!inner(status)', { count: 'exact' }).in('orders.status', PAID_STATUSES).limit(5000),
+    c.from('payments').select('refunded_cents', { count: 'exact' }).limit(5000),
+    catalogRepo.adminListLowStock(), newsletterRepo.countSubscribed(),
+    c.from('order_operational_incidents').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+    c.from('orders').select('id', { count: 'exact', head: true }).eq('fulfillment_status', 'blocked'),
+    c.from('order_notification_outbox').select('id', { count: 'exact', head: true }).in('status', ['pending', 'sending']),
+    c.from('order_notification_outbox').select('id', { count: 'exact', head: true }).eq('status', 'failed'),
   ]);
+  for (const result of [ordersResult, itemsResult, paymentsResult]) {
+    if (result.error || result.count === null || result.count > (result.data?.length ?? 0)) {
+      throw AppError.serviceUnavailable('stats_incomplete', 'Les statistiques complètes ne sont pas disponibles ; aucune estimation n’est affichée.');
+    }
+  }
+  if (operationCounts.some((result) => result.error || result.count === null)) throw AppError.serviceUnavailable('stats_unavailable', 'Les indicateurs opérationnels sont indisponibles.');
+  const ordersData = ordersResult.data;
+  const itemsData = itemsResult.data;
+  const paymentsData = paymentsResult.data;
 
   const orders = (ordersData ?? []) as Pick<DbOrder, 'id' | 'number' | 'status' | 'total_cents' | 'placed_at'>[];
   const items = (itemsData ?? []) as unknown as { product_name: string; quantity: number; total_cents: number }[];
@@ -62,6 +76,7 @@ export async function getStatsOverview(): Promise<StatsOverview> {
     .slice(0, 5);
 
   return {
+    operations: { openIncidents: operationCounts[0]!.count!, blockedOrders: operationCounts[1]!.count!, pendingNotifications: operationCounts[2]!.count!, failedNotifications: operationCounts[3]!.count! },
     revenue: { grossCents, refundedCents, netCents: grossCents - refundedCents, last30dCents },
     orders: { total: orders.length, byStatus, aovCents: paid.length > 0 ? Math.round(grossCents / paid.length) : 0 },
     series,

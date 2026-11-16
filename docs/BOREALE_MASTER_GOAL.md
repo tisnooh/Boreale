@@ -1,5 +1,11 @@
 # BORÉALE — mandat d’exploitation
 
+## 16 novembre — administration des commandes
+
+Mission ajoutée : compléter l’administration existante pour l’exploitation des commandes, sans refonte, paiement, email réel ni production. Les pages dashboard/liste/détail, incidents, notes et suivi sont reliées au backend privé. Migration additive d’opérations appliquée après revue indépendante et recette SQL annulée. La vérification d’un compte admin actif et de son rôle actuel est désormais effective à chaque requête ; les anciennes mentions « durcissement admin non réalisé » sont historiques sur ces points précis.
+
+Tranche locale **APPROVED** : 77/77 contrôles API/navigateur, zéro exception JS et neuf captures finales revues indépendamment après correction de la recherche tablette initialement rejetée. Le GOAL commercial reste ouvert : compte propriétaire, approvisionnement, transport, prestataire de paiement, notifications, remboursements et conformité ne sont pas validés. Voir [livraison administration](BOREALE_ADMIN_ORDERS_DELIVERY.md).
+
 ## 16 novembre — liaison sourcing privée
 
 Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.

@@ -4,6 +4,7 @@ import type { AddressInfo } from 'node:net';
 import { createApp } from '../src/app.js';
 import { ordersRepo } from '../src/repositories/orders.js';
 import { signAdminToken, signUserToken } from '../src/lib/jwt.js';
+import { adminUsersRepo } from '../src/repositories/users.js';
 
 // HTTP/auth are real; all persistence is replaced. No database or provider is contacted.
 const order = {
@@ -56,6 +57,7 @@ describe('isolation HTTP des commandes', { timeout: 30000 }, () => {
     expect((await res.json() as { data: { id: string } }).data.id).toBe(order.id);
   });
   it('conserve l’accès administrateur', async () => {
+    vi.spyOn(adminUsersRepo, 'findById').mockResolvedValue({ id: 'admin-id', email: 'admin@example.fr', role: 'admin', name: null, is_active: true });
     const token = signAdminToken({ sub: 'admin-id', email: 'admin@example.fr', role: 'admin' });
     expect((await request(`${base}/api/orders/${order.id}`, { headers: { Authorization: `Bearer ${token}` } })).status).toBe(200);
   });

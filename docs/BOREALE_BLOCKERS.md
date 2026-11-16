@@ -1,5 +1,16 @@
 # Blocages et décisions
 
+## 16 novembre — exploitation de l’administration
+
+| Origine | Impact | Responsable | Action attendue / dépendance |
+|---|---|---|---|
+| Compte propriétaire non configuré | Aucun accès exploitant personnel livré | Propriétaire + agent | Adresse email attendue ; mot de passe à définir uniquement dans un canal sécurisé, jamais dans le chat |
+| Remboursement prestataire insuffisamment fiable | Route volontairement indisponible (503) | Agent + accès prestataire | Construire la reprise/idempotence et valider en environnement de test |
+| Aucun worker d’envoi validé | File visible mais confirmations non envoyées | Agent + prestataire email | Connecter, tester et contrôler la délivrabilité sans envoi non autorisé |
+| Approvisionnement/transport non confirmés | Les commandes bloquées ne peuvent avancer | Propriétaire + agent/fournisseurs | Devis, destination et mode de traitement réels ; pas de résolution artificielle de stock |
+
+La connexion Supabase, les opérations atomiques et la révocation d’accès admin sont réalisées ; elles ne sont plus des blocages de développement. Recherche tablette corrigée, recette finale77/77 et neuf captures acceptées indépendamment ; aucun blocage restant dans la tranche locale livrée. Droits `staff` inchangés, MFA et matrice fine non validés. Limites détaillées dans [la livraison admin](BOREALE_ADMIN_ORDERS_DELIVERY.md).
+
 ## 16 novembre — liaison sourcing privée
 
 Résolu techniquement : persistance/liaison dossiers-produits, administration privée et protections de publication, preuves dans BOREALE_SOURCING_DELIVERY.md.

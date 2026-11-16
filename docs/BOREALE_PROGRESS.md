@@ -1,5 +1,13 @@
 # Progression
 
+## 16 novembre — administration des commandes
+
+Développé : pages admin existantes, recherche/tri/filtres et erreurs, actions opérationnelles atomiques, suivi avec contrôle de concurrence, notes, incidents/notifications et compteurs réels, contrôle de compte admin actif. Aucun écran parallèle ni changement d’identité graphique. Fichiers : `frontend/app/admin/(panel)/` (dashboard/commandes), types/tests ; contrôleur/repository/services/validators/routes backend, middleware Auth/JWT, scripts de recette et migration bootstrap `20261115233647`.
+
+Preuves obtenues : 242 tests backend, 127 frontend ; après corrections, 9 tests backend et 8 frontend ciblés repris, types/builds et lints sans erreur. Revue indépendante et SQL réel PASS avec rollback. La recette initiale 71/71 a été rejetée par l’audit visuel : champ/bouton de recherche masqués à 768 px. Grille responsive corrigée, contrôles de visibilité/clic ajoutés, nouveau build puis **77/77** contrôles finaux réussis (25 HTTP/base/accès/nettoyage +52 navigateur). Neuf captures finales revues indépendamment ; verdict chef **APPROVED pour cette tranche**. Résultats dans [la livraison](BOREALE_ADMIN_ORDERS_DELIVERY.md).
+
+Prochaines actions : configurer le compte propriétaire via un canal sécurisé, puis reprendre les blocages commerciaux existants. Nettoyage vérifié : zéro administrateur QA, commande, paiement, client ou événement conservé ; les trois produits privés restent inactifs sans stock/variante. Branche de livraison autorisée conservée. Aucun achat, publication produit, message externe ou déploiement en production.
+
 ## 16 novembre — liaison sourcing privée
 
 Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.

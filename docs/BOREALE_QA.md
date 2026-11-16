@@ -1,5 +1,11 @@
 # Qualité et preuves
 
+## 16 novembre — contrôle indépendant des commandes admin
+
+SQL et code revus indépendamment : corrections imposées sur les emails administrateurs longs, l’échappement de recherche (dont `*`), le tri stable, les libellés et la touche Entrée du suivi. SQL réel PASS : verrouillage/CAS, transitions non financières, suivi, notes/historique et rollback, droits RPC privés. Comptes désactivés/rôles actuels contrôlés à chaque requête.
+
+Suites 242/242 backend et 127/127 frontend ; reprises ciblées 9/9 backend et 8/8 frontend après les derniers changements. Lints sans erreur (27 avertissements frontend au global), types/builds passés. Recette initiale71/71 avec vrai login QA et commandes d’interface simulées ; verdict visuel **REJECTED** car la recherche disparaît à 768 px malgré l’absence de débordement racine. Correction en grille, nouvelles assertions de largeur/visibilité/clic, nouveau build et recette finale **77/77**, zéro exception JS. Neuf nouvelles captures et reçu relus indépendamment : **APPROVED**, blocage tablette résolu. Suppression du compte QA et absence de données commerciales de recette confirmées en base. Voir [rapport détaillé](BOREALE_ADMIN_ORDERS_DELIVERY.md).
+
 ## 16 novembre — liaison sourcing privée
 
 Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.

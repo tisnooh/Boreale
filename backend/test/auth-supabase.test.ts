@@ -26,6 +26,7 @@ import { publicAuthClient, supabaseAuth, supabaseProfiles, userDataClient } from
 import type { User } from '@supabase/supabase-js';
 import { optionalUser, requireUser, requireAdmin } from '../src/middleware/auth.js';
 import { signUserToken, signAdminToken } from '../src/lib/jwt.js';
+import { adminUsersRepo } from '../src/repositories/users.js';
 
 const user = { id: 'user-auth-1', email: 'test@example.fr', created_at: '2026-01-01',
   app_metadata: {}, aud: 'authenticated', user_metadata: { first_name: 'Test', role: 'admin' } } satisfies User;
@@ -125,12 +126,14 @@ describe('Supabase Auth opt-in', () => {
     expect(res.status).toBe(401);
   });
   it('conserve le contrat legacy et admin séparé', async () => {
+    const access = vi.spyOn(adminUsersRepo, 'findById').mockResolvedValue({ id: 'admin-id', email: user.email, role: 'admin', name: null, is_active: true });
     state.provider = 'legacy';
     const res = await request('/identity', { headers: { Authorization: `Bearer ${signUserToken({ sub: 'legacy-id', email: user.email })}` } });
     expect(res.status).toBe(200); expect(auth.getUser).not.toHaveBeenCalled();
     state.provider = 'supabase';
     const admin = await request('/admin', { headers: { Authorization: `Bearer ${signAdminToken({ sub: 'admin-id', email: user.email, role: 'admin' })}` } });
     expect(admin.status).toBe(200);
+    access.mockRestore();
   });
   it('refresh explicite fait tourner les deux cookies', async () => {
     const res = await request('/refresh', { method: 'POST', headers: { Cookie: 'boreale_refresh=refresh-1' } });

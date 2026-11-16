@@ -10,6 +10,7 @@ const order = { id: 'order-qa', number: 'QA', status: 'paid', paid_at: '2026-11-
 beforeEach(() => {
   vi.spyOn(ordersRepo, 'getById').mockResolvedValue(order as never);
   vi.spyOn(ordersRepo, 'setStatus').mockResolvedValue(order as never);
+  vi.spyOn(ordersRepo, 'adminOperation').mockResolvedValue(order as never);
   vi.spyOn(ordersRepo, 'addEvent').mockResolvedValue(undefined);
   vi.spyOn(ordersRepo, 'cancelPending').mockResolvedValue(true);
   vi.spyOn(catalogRepo, 'restoreInventory').mockResolvedValue(undefined);
@@ -17,7 +18,7 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks());
 function update(status: string, extra: Record<string, unknown> = {}) {
   return new Promise<unknown>((resolve, reject) => {
-    (adminController.setOrderStatus as RequestHandler)({ params: { id: order.id }, body: { status, ...extra },
+    (adminController.setOrderStatus as RequestHandler)({ params: { id: order.id }, body: { status, expectedStatus: status === 'cancelled' || status === 'paid' ? 'pending' : 'paid', ...extra },
       admin: { email: 'qa@example.invalid' } } as never, { json: resolve } as never, reject);
   });
 }
@@ -36,7 +37,7 @@ describe('administration des commandes : preuves paiement et stock', () => {
     expect(ordersRepo.setStatus).not.toHaveBeenCalled();
   });
   it('ne recrée pas du stock en annulant une commande payée bloquée', async () => {
-    await expect(update('cancelled')).rejects.toMatchObject({ code: 'paid_cancellation_requires_review' });
+    await expect(update('cancelled', { expectedStatus: 'paid' })).rejects.toMatchObject({ code: 'paid_cancellation_requires_review' });
     expect(ordersRepo.setStatus).not.toHaveBeenCalled();
     expect(catalogRepo.restoreInventory).not.toHaveBeenCalled();
   });
@@ -48,19 +49,21 @@ describe('administration des commandes : preuves paiement et stock', () => {
   it('prépare seulement une commande dont le stock est alloué', async () => {
     vi.mocked(ordersRepo.getById).mockResolvedValue({ ...order, fulfillment_status: 'ready' } as never);
     await update('processing');
-    expect(ordersRepo.setStatus).toHaveBeenCalledWith(order.id, 'processing', {});
+    expect(ordersRepo.adminOperation).toHaveBeenCalledWith(order.id, expect.objectContaining({ action: 'advance', expectedStatus: 'paid', status: 'processing' }));
   });
-  it('annule pending via transaction et expose le statut de traitement', async () => {
-    vi.mocked(ordersRepo.getById).mockResolvedValueOnce({ ...order, status: 'pending', paid_at: null } as never)
-      .mockResolvedValueOnce({ ...order, status: 'cancelled', fulfillment_status: 'pending' } as never);
-    await expect(update('cancelled')).resolves.toMatchObject({ data: { status: 'cancelled', fulfillmentStatus: 'pending' } });
-    expect(ordersRepo.cancelPending).toHaveBeenCalledWith(order.id, 'admin:qa@example.invalid');
-    expect(ordersRepo.setStatus).not.toHaveBeenCalled();
-  });
-  it('ne confirme pas une annulation perdue face au paiement', async () => {
+  it('annule pending via une opération atomique', async () => {
     vi.mocked(ordersRepo.getById).mockResolvedValue({ ...order, status: 'pending', paid_at: null } as never);
-    vi.mocked(ordersRepo.cancelPending).mockResolvedValue(false);
-    await expect(update('cancelled')).rejects.toMatchObject({ code: 'order_state_changed' });
+    vi.mocked(ordersRepo.adminOperation).mockResolvedValue({ ...order, status: 'cancelled', fulfillment_status: 'pending' } as never);
+    await expect(update('cancelled')).resolves.toMatchObject({ data: { status: 'cancelled', fulfillmentStatus: 'pending' } });
+    expect(ordersRepo.adminOperation).toHaveBeenCalledWith(order.id, expect.objectContaining({ action: 'advance', status: 'cancelled', expectedStatus: 'pending' }));
     expect(ordersRepo.setStatus).not.toHaveBeenCalled();
+  });
+  it('refuse un statut périmé sans mutation', async () => {
+    await expect(update('processing', { expectedStatus: 'shipped' })).rejects.toMatchObject({ code: 'order_state_changed' });
+    expect(ordersRepo.adminOperation).not.toHaveBeenCalled();
+  });
+  it('refuse les notifications avant toute mutation', async () => {
+    await expect(update('processing', { notify: true })).rejects.toMatchObject({ code: 'notifications_unavailable' });
+    expect(ordersRepo.adminOperation).not.toHaveBeenCalled();
   });
 });

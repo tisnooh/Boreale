@@ -1,5 +1,11 @@
 # Décision de lancement
 
+## 16 novembre — administration des commandes
+
+**Ouverture commerciale : BLOCKED. Tranche locale admin : APPROVED.** Les écrans et actions opérationnelles sont vérifiés : recette finale77/77, zéro exception JS et neuf captures acceptées indépendamment sur320/768/1440px. La précédente recette71/71 n’avait pas suffi : recherche tablette masquée, corrigée et maintenant contrôlée par sa largeur exploitable et un clic réel HTTP200.
+
+Les transitions opérationnelles, notes et historique sont testés en base avec rollback ; le login QA est réel, puis révoqué et supprimé. Les commandes peuplées du navigateur restent simulées. Le compte propriétaire n’existe pas encore. Aucun paiement/remboursement réel, email, envoi fournisseur ou vente validé par ces preuves. Le statut et les limites des quinze modules sont actualisés dans [la livraison administration](BOREALE_ADMIN_ORDERS_DELIVERY.md) ; les anciennes sections sont historiques. Aucun déploiement en production autorisé.
+
 ## 16 novembre — liaison sourcing privée
 
 Tranche sourcing privée APPROVED : trois BOR-ALI reliés à trois produits inactifs dans le projet Supabase existant, sans variante ni inventaire. Migration20261115052055 appliquée après revue indépendante ; RLS/droits/rollback vérifiés réellement. Backend219/219, frontend119/119, lints et types/build réussis. Recette finale42 contrôles API+UI réussis (26 API +16 interface), quatre captures examinées. Voir BOREALE_SOURCING_DELIVERY.md et ses reçus. Aucun paiement réel, message fournisseur, publication ou déploiement en production.
