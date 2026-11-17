@@ -1,5 +1,9 @@
 # Progression
 
+## 17 novembre — signaux de remboursement et protection des expéditions
+
+Tranche backend : journal transactionnel privé, déduplication événement/charge/cumul, incident support et suspension de préparation sur nouveau signal. Aucun état financier final déduit du seul événement Charge ; aucune régression du design. Modifications : repository commandes, service webhooks, tests, nouvelle migration et recette SQL ; détail dans [le rapport](BOREALE_REFUND_OBSERVATIONS_20261117.md). Tests ciblés 77/77 inclus dans la suite globale fraîche **394/394**. Migration réelle 20261117035632 appliquée après revue ; recette SQL PASS et neuf résidus QA à zéro. Prochaine tranche : cycle Refund et parcours réel, dépendances Stripe reportées. Historique ci-dessous conservé.
+
 ## 17 novembre — reprise autonome : contrôle Stripe et suivi fournisseur
 
 Compte Stripe isolé confirmé accessible. Ajout du préflight serveur en lecture seule : npm run stripe:verify-test. Contrôle de syntaxe réussi ; exécution actuelle : BLOCKED/runtime_key_missing, zéro mutation. La revue indépendante a demandé de placer aussi la lecture du fichier privé dans le traitement des erreurs génériques ; correction appliquée. Aucun paiement ni secret créé/exposé. La recherche des opérations disponibles du connecteur ne propose pas de création de clé serveur utilisable ; les options Dashboard et clés gérées sont documentées dans [le dossier Stripe](BOREALE_STRIPE_SETUP_20261117.md).

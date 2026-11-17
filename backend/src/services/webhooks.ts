@@ -1,8 +1,6 @@
 import { AppError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
-import { emailTemplates, sendEmail } from './email.js';
-import { toOrderDTO } from './orders.js';
-import type { PaymentSettlement, SettlePaymentInput } from '../repositories/orders.js';
+import type { PaymentSettlement, SettlePaymentInput, RecordRefundInput, RecordedRefund } from '../repositories/orders.js';
 import { recoverCheckoutSession } from './checkout-recovery.js';
 
 /**
@@ -42,7 +40,7 @@ export interface WebhookDeps {
   recoverCheckoutSession?(event: StripeEventLike): Promise<OrderRowLike | null>;
   settlePayment(input: SettlePaymentInput): Promise<PaymentSettlement>;
   cancelOrder(orderId: string, reason: string): Promise<boolean>;
-  handleRefund(paymentIntentId: string, amountRefundedCents: number, amountCents: number): Promise<void>;
+  handleRefund(input: RecordRefundInput): Promise<RecordedRefund>;
   markPaymentFailed(orderId: string, sessionId: string | null): Promise<void>;
 }
 
@@ -114,10 +112,20 @@ export async function handleWebhookEvent(event: StripeEventLike, deps: WebhookDe
 
     case 'charge.refunded': {
       const intent = paymentIntentId(obj);
-      if (!intent) return { handled: false, type: event.type };
-      const amount = typeof obj.amount === 'number' ? obj.amount : 0;
-      const refunded = typeof obj.amount_refunded === 'number' ? obj.amount_refunded : amount;
-      await deps.handleRefund(intent, refunded, amount);
+      if (typeof event.id !== 'string' || !/^evt_[A-Za-z0-9_]{1,196}$/.test(event.id)
+        || typeof obj.id !== 'string' || !/^ch_[A-Za-z0-9_]{1,197}$/.test(obj.id)
+        || typeof intent !== 'string' || !/^pi_[A-Za-z0-9_]{1,197}$/.test(intent)) {
+        throw AppError.badRequest('refund_identity_missing', 'Identifiants d’événement, de charge et de paiement requis.');
+      }
+      if (!Number.isSafeInteger(obj.amount) || (obj.amount as number) <= 0 || (obj.amount as number) > 2147483647
+        || !Number.isSafeInteger(obj.amount_refunded) || (obj.amount_refunded as number) <= 0
+        || (obj.amount_refunded as number) > (obj.amount as number)
+        || typeof obj.currency !== 'string' || !/^[a-z]{3}$/i.test(obj.currency)) {
+        throw AppError.conflict('refund_amount_mismatch', 'Montant ou devise de remboursement invalide.');
+      }
+      const result = await deps.handleRefund({ eventId: event.id, chargeId: obj.id, paymentIntentId: intent,
+        amountCents: obj.amount as number, refundedCents: obj.amount_refunded as number, currency: obj.currency.toUpperCase() });
+      logger.info('refund_observation_recorded', { orderId: result.order_id, duplicate: result.duplicate, changed: result.changed, reconciliationRequired: true });
       return { handled: true, type: event.type };
     }
 
@@ -143,16 +151,11 @@ export interface DefaultWebhookRepos {
     getBySessionId(sessionId: string): Promise<OrderRowLike | null>;
     settlePayment(input: SettlePaymentInput): Promise<PaymentSettlement>;
     cancelPending(id: string, reason: string): Promise<boolean>;
-    setStatus(id: string, status: OrderStatusArg, extra?: Record<string, unknown>): Promise<unknown>;
     addEvent(orderId: string, type: string, data?: Record<string, unknown>): Promise<void>;
     updatePaymentBySession(sessionId: string, patch: Record<string, unknown>): Promise<void>;
-    getPaymentByIntentId(intentId: string): Promise<{ order_id: string; refunded_cents: number; amount_cents: number } | null>;
-    markPaymentRefunded(orderId: string, refundedCents: number, totalRefundedCents: number, amountCents: number): Promise<void>;
-    getById(id: string): Promise<OrderRowLike | null>;
+    recordRefund(input: RecordRefundInput): Promise<RecordedRefund>;
   };
 }
-
-type OrderStatusArg = 'paid' | 'cancelled' | 'refunded' | 'partially_refunded' | string;
 
 export function buildDefaultWebhookDeps(repos: DefaultWebhookRepos): WebhookDeps {
   return {
@@ -162,25 +165,7 @@ export function buildDefaultWebhookDeps(repos: DefaultWebhookRepos): WebhookDeps
     },
     settlePayment: (input) => repos.ordersRepo.settlePayment(input),
     cancelOrder: (orderId, reason) => repos.ordersRepo.cancelPending(orderId, reason),
-    async handleRefund(paymentIntentId, amountRefundedCents, amountCents) {
-      const payment = await repos.ordersRepo.getPaymentByIntentId(paymentIntentId);
-      if (!payment) {
-        logger.warn('refund_payment_not_found', { paymentIntentId });
-        throw AppError.serviceUnavailable('refund_payment_unresolved', 'Remboursement reçu sans paiement associé ; une nouvelle tentative est nécessaire.');
-      }
-      const full = amountRefundedCents >= amountCents;
-      const totalRefunded = amountRefundedCents; // charge.amount_refunded is cumulative
-      await repos.ordersRepo.markPaymentRefunded(payment.order_id, totalRefunded, totalRefunded, amountCents);
-      await repos.ordersRepo.setStatus(payment.order_id, full ? 'refunded' : 'partially_refunded');
-      await repos.ordersRepo.addEvent(payment.order_id, full ? 'refund_full' : 'refund_partial', {
-        amountRefundedCents,
-      });
-      const order = await repos.ordersRepo.getById(payment.order_id);
-      if (order) {
-        const dto = toOrderDTO(order as never);
-        await sendEmail(emailTemplates.refund(dto, totalRefunded, full)).catch(() => undefined);
-      }
-    },
+    handleRefund: input => repos.ordersRepo.recordRefund(input),
     async markPaymentFailed(orderId, sessionId) {
       if (sessionId) await repos.ordersRepo.updatePaymentBySession(sessionId, { status: 'failed' });
       await repos.ordersRepo.addEvent(orderId, 'payment_failed', {});

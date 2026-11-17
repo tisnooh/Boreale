@@ -1,5 +1,9 @@
 # Décision de lancement
 
+## 17 novembre — protection SAV validée, lancement toujours BLOCKED
+
+Le journal des signaux de remboursement et le blocage logistique passent leurs contrôles backend/SQL ; cette validation bornée n'autorise pas l'encaissement public. La configuration Stripe est reportée sur instruction propriétaire. Produits qualifiés, prix/coûts rendus, livraison, identité du vendeur, notifications, cycle complet des remboursements et achat de test prestataire restent à terminer/vérifier. Aucun produit actif ni commande réelle en base ; aucun déploiement du site. Le [rapport courant](BOREALE_REFUND_OBSERVATIONS_20261117.md) fournit les quinze modules, les preuves et les dépendances restantes. Le checkpoint reste local tant que la validation UI attendue n'est pas obtenue.
+
 ## 17 novembre — reprise autonome : contrôle Stripe et suivi fournisseur
 
 Compte Stripe isolé confirmé accessible. Ajout du préflight serveur en lecture seule : npm run stripe:verify-test. Contrôle de syntaxe réussi ; exécution actuelle : BLOCKED/runtime_key_missing, zéro mutation. La revue indépendante a demandé de placer aussi la lecture du fichier privé dans le traitement des erreurs génériques ; correction appliquée. Aucun paiement ni secret créé/exposé. La recherche des opérations disponibles du connecteur ne propose pas de création de clé serveur utilisable ; les options Dashboard et clés gérées sont documentées dans [le dossier Stripe](BOREALE_STRIPE_SETUP_20261117.md).

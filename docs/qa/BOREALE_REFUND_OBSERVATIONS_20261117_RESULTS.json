@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-17",
+  "scope": "Refund charge observations and fulfillment hold only",
+  "technicalVerdict": "APPROVED_SCOPED",
+  "launchVerdict": "BLOCKED",
+  "stripeConfiguration": "DEFERRED_BY_OWNER",
+  "independentReview": {
+    "agent": "/root/checkout_independent_audit",
+    "initialVerdict": "REJECTED_HIGH_FINANCIAL_PROJECTION",
+    "finalVerdict": "APPROVED_STATIC_CODE_SQL",
+    "remainingHighFindingsIdentified": 0
+  },
+  "backend": {
+    "targetedTests": { "passed": 77, "failed": 0, "includedInGlobal": true },
+    "globalTests": { "passed": 394, "failed": 0, "filesPassed": 31, "exitCode": 0, "workers": 1 },
+    "typecheck": { "exitCode": 0 },
+    "lint": { "exitCode": 0 },
+    "build": { "exitCode": 0 }
+  },
+  "database": {
+    "projectId": "luojeyfznonjnacftxbm",
+    "migration": "20261117035632_boreale_refund_webhook_atomic",
+    "migrationApplied": true,
+    "migrationSha256": "FCC786BF7DD25DE15F590A7B4B9C2D445755630AF3F16036E08517B844BD823D",
+    "qaScript": "backend/scripts/verify-refund-observations.sql",
+    "qaVerdict": "PASS_ACTUAL_POSTGRES_SYNTHETIC_EVENTS",
+    "rollbackExecuted": true,
+    "postRollback": {
+      "remaining_customers": 0,
+      "remaining_orders": 0,
+      "remaining_payments": 0,
+      "remaining_charge_ledgers": 0,
+      "remaining_observations": 0,
+      "remaining_refund_events": 0,
+      "remaining_incidents": 0,
+      "remaining_settlements": 0,
+      "remaining_payment_events": 0
+    },
+    "separateRead": { "orders": 0, "payments": 0, "customers": 0, "authUsers": 0, "products": 3, "activeProducts": 0, "refundChargeLedgers": 0, "refundObservations": 0, "refundEvents": 0 },
+    "securityAdvisors": { "info": 23, "warn": 0, "error": 0, "infoType": "rls_enabled_no_policy_private_backend_tables" },
+    "concurrency": "NOT_TESTED_SINGLE_CONNECTION"
+  },
+  "semantics": {
+    "maximumIsHistoricalObservationOnly": true,
+    "financialStatusAndAmountsUnchanged": true,
+    "unshippedPaidProcessingOrdersHeld": true,
+    "alreadyShippedOrDeliveredStatusPreserved": true,
+    "exactEventReplayDoesNotReopenResolvedIncident": true,
+    "newEventSameCumulativeReopensReconciliation": true,
+    "providerRefundLifecycleComplete": false
+  },
+  "validationGaps": [
+    "Refund object lifecycle and successful/failed/canceled reconciliation remain to implement",
+    "No Stripe provider refund or complete provider purchase test",
+    "No bank receipt verification",
+    "No new browser QA; existing checkout UI blocker remains",
+    "No email delivery or supplier fulfillment verified"
+  ],
+  "sideEffects": { "stripeMutations": 0, "emailsSent": 0, "productsActivated": 0, "productionSiteDeployments": 0, "realPayments": 0 },
+  "publication": "LOCAL_CHECKPOINT_ONLY_UI_VALIDATION_PENDING"
+}

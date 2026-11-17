@@ -4,9 +4,11 @@ vi.mock('../src/services/email.js', async (importOriginal) => ({
   sendEmail: vi.fn(),
 }));
 import { buildDefaultWebhookDeps, handleWebhookEvent, type DefaultWebhookRepos, type StripeEventLike, type WebhookDeps } from '../src/services/webhooks.js';
-import type { PaymentSettlement } from '../src/repositories/orders.js';
+import { AppError } from '../src/lib/errors.js';
+import type { PaymentSettlement, RecordedRefund } from '../src/repositories/orders.js';
 import { sendEmail } from '../src/services/email.js';
 
+const refund: RecordedRefund = { order_id: 'order-1', payment_id: 'payment-1', observed_refunded_cents: 6760, reconciliation_required: true as const, duplicate: false, changed: true };
 const settlement: PaymentSettlement = { order_id: 'order-1', duplicate: false, fulfillment_status: 'ready', incident_code: null };
 const paidOrder = { id: 'order-1', number: 'BOR-2026-000001', status: 'pending', email: 'client@example.fr', total_cents: 6760, currency: 'EUR', discount_code: 'WELCOME10' };
 
@@ -15,7 +17,7 @@ function makeDeps(order: Record<string, unknown> | null = paidOrder) {
     getOrderBySessionId: vi.fn(async () => order as never),
     settlePayment: vi.fn(async () => settlement),
     cancelOrder: vi.fn(async () => true),
-    handleRefund: vi.fn(async () => undefined),
+    handleRefund: vi.fn(async () => refund),
     markPaymentFailed: vi.fn(async () => undefined),
   };
   return deps;
@@ -109,11 +111,10 @@ describe('webhook paid checkout transaction', () => {
   it('default wiring invokes only settlement for success, with no separate writes or email', async () => {
     const repos = { ordersRepo: {
       getBySessionId: vi.fn(async () => paidOrder), settlePayment: vi.fn(async () => settlement), cancelPending: vi.fn(),
-      setStatus: vi.fn(), addEvent: vi.fn(), updatePaymentBySession: vi.fn(), getPaymentByIntentId: vi.fn(), markPaymentRefunded: vi.fn(), getById: vi.fn(),
+      addEvent: vi.fn(), updatePaymentBySession: vi.fn(), recordRefund: vi.fn(async () => refund),
     } } satisfies DefaultWebhookRepos;
     await handleWebhookEvent(paidEvent(), buildDefaultWebhookDeps(repos));
     expect(repos.ordersRepo.settlePayment).toHaveBeenCalledTimes(1);
-    expect(repos.ordersRepo.setStatus).not.toHaveBeenCalled();
     expect(repos.ordersRepo.addEvent).not.toHaveBeenCalled();
     expect(repos.ordersRepo.updatePaymentBySession).not.toHaveBeenCalled();
     expect(sendEmail).not.toHaveBeenCalled();
@@ -147,28 +148,26 @@ describe('webhook expiration / refund (existing paths)', () => {
   it('uses atomic pending cancellation when lookup becomes stale', async () => {
     const repos = { ordersRepo: {
       getBySessionId: vi.fn(async () => paidOrder), settlePayment: vi.fn(), cancelPending: vi.fn(async () => false),
-      setStatus: vi.fn(), addEvent: vi.fn(), updatePaymentBySession: vi.fn(), getPaymentByIntentId: vi.fn(), markPaymentRefunded: vi.fn(), getById: vi.fn(),
+      addEvent: vi.fn(), updatePaymentBySession: vi.fn(), recordRefund: vi.fn(async () => refund),
     } } satisfies DefaultWebhookRepos;
     await expect(handleWebhookEvent({ type: 'checkout.session.expired', data: { object: { id: 'cs_test_1' } } }, buildDefaultWebhookDeps(repos))).resolves.toMatchObject({ handled: true });
     expect(repos.ordersRepo.cancelPending).toHaveBeenCalledWith('order-1', 'checkout.session.expired');
-    expect(repos.ordersRepo.setStatus).not.toHaveBeenCalled();
     expect(repos.ordersRepo.addEvent).not.toHaveBeenCalled();
   });
 
-  it('passes cumulative refund amounts to existing handler', async () => {
+  it('passes validated cumulative refund identity to the atomic handler', async () => {
     const deps = makeDeps(null);
-    await handleWebhookEvent({ type: 'charge.refunded', data: { object: { id: 'ch_1', payment_intent: 'pi_1', amount: 6760, amount_refunded: 6760 } } }, deps);
-    expect(deps.handleRefund).toHaveBeenCalledWith('pi_1', 6760, 6760);
+    await handleWebhookEvent({ id: 'evt_refund_1', type: 'charge.refunded', data: { object: { id: 'ch_1', payment_intent: 'pi_1', amount: 6760, amount_refunded: 6760, currency: 'eur' } } }, deps);
+    expect(deps.handleRefund).toHaveBeenCalledWith({ eventId: 'evt_refund_1', chargeId: 'ch_1', paymentIntentId: 'pi_1', amountCents: 6760, refundedCents: 6760, currency: 'EUR' });
   });
 
   it('keeps an early refund retryable until payment is associated', async () => {
     const repos = { ordersRepo: {
       getBySessionId: vi.fn(), settlePayment: vi.fn(), cancelPending: vi.fn(),
-      setStatus: vi.fn(), addEvent: vi.fn(), updatePaymentBySession: vi.fn(), getPaymentByIntentId: vi.fn(async () => null), markPaymentRefunded: vi.fn(), getById: vi.fn(),
+      addEvent: vi.fn(), updatePaymentBySession: vi.fn(), recordRefund: vi.fn(async () => { throw AppError.serviceUnavailable('refund_payment_unresolved'); }),
     } } satisfies DefaultWebhookRepos;
-    await expect(handleWebhookEvent({ type: 'charge.refunded', data: { object: { id: 'ch_1', payment_intent: 'pi_1', amount: 6760, amount_refunded: 6760 } } }, buildDefaultWebhookDeps(repos))).rejects.toMatchObject({ status: 503, code: 'refund_payment_unresolved' });
-    expect(repos.ordersRepo.markPaymentRefunded).not.toHaveBeenCalled();
-    expect(repos.ordersRepo.setStatus).not.toHaveBeenCalled();
+    await expect(handleWebhookEvent({ id: 'evt_refund_1', type: 'charge.refunded', data: { object: { id: 'ch_1', payment_intent: 'pi_1', amount: 6760, amount_refunded: 6760, currency: 'eur' } } }, buildDefaultWebhookDeps(repos))).rejects.toMatchObject({ status: 503, code: 'refund_payment_unresolved' });
+    expect(repos.ordersRepo.recordRefund).toHaveBeenCalledOnce();
   });
 
   it('retains payment failure event handling', async () => {

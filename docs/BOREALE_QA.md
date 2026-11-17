@@ -1,5 +1,11 @@
 # Qualité et preuves
 
+## 17 novembre — contrôle indépendant des observations de remboursement
+
+Contrôles globaux complémentaires terminés : typecheck, lint et build backend réussis (code 0). Aucun nouveau contrôle navigateur ni remboursement prestataire. Les résultats ci-dessous portent sur la protection des observations, pas sur une boutique ouverte.
+
+REJECTED initial : projection financière irréversible depuis un simple cumul Charge. Correction acceptée après revue indépendante : observations séparées, aucune mutation des montants/statuts financiers, préparation bloquée et incident support pour tout nouvel événement ; rejeu exact sans effet. Ciblés 77/77, suite backend fraîche **394/394** ; assertions SQL réelles exécutées avec rollback, neuf résidus à zéro. Migration 20261117035632, SHA-256 FCC786BF7DD25DE15F590A7B4B9C2D445755630AF3F16036E08517B844BD823D ; advisors 23 INFO RLS privées, zéro WARN/ERROR. Pas de concurrence, achat Stripe, remboursement prestataire, email ou recette navigateur revendiqués. [Rapport](BOREALE_REFUND_OBSERVATIONS_20261117.md) et [reçu structuré](qa/BOREALE_REFUND_OBSERVATIONS_20261117_RESULTS.json).
+
 ## 17 novembre — reprise autonome : contrôle Stripe et suivi fournisseur
 
 Compte Stripe isolé confirmé accessible. Ajout du préflight serveur en lecture seule : npm run stripe:verify-test. Contrôle de syntaxe réussi ; exécution actuelle : BLOCKED/runtime_key_missing, zéro mutation. La revue indépendante a demandé de placer aussi la lecture du fichier privé dans le traitement des erreurs génériques ; correction appliquée. Aucun paiement ni secret créé/exposé. La recherche des opérations disponibles du connecteur ne propose pas de création de clé serveur utilisable ; les options Dashboard et clés gérées sont documentées dans [le dossier Stripe](BOREALE_STRIPE_SETUP_20261117.md).

@@ -33,6 +33,24 @@ export interface PaymentSettlement {
   incident_code: string | null;
 }
 
+export interface RecordRefundInput {
+  eventId: string;
+  chargeId: string;
+  paymentIntentId: string;
+  amountCents: number;
+  refundedCents: number;
+  currency: string;
+}
+
+export interface RecordedRefund {
+  order_id: string;
+  payment_id: string;
+  observed_refunded_cents: number;
+  reconciliation_required: true;
+  duplicate: boolean;
+  changed: boolean;
+}
+
 export const ordersRepo = {
   async create(input: NewOrderInput): Promise<DbOrder> {
     // One database transaction owns the order, its item snapshots and its event.
@@ -212,13 +230,24 @@ export const ordersRepo = {
     if (error) throw error;
   },
 
-  async markPaymentRefunded(orderId: string, refundedCents: number, totalRefundedCents: number, amountCents: number): Promise<void> {
-    const status = totalRefundedCents >= amountCents ? 'refunded' : 'partially_refunded';
-    const { error } = await db()
-      .from('payments')
-      .update({ status, refunded_cents: totalRefundedCents, updated_at: new Date().toISOString() })
-      .eq('order_id', orderId);
-    if (error) throw error;
+  async recordRefund(input: RecordRefundInput): Promise<RecordedRefund> {
+    const { data, error } = await db().rpc('record_order_refund', {
+      p_event_id: input.eventId, p_charge_id: input.chargeId, p_payment_intent_id: input.paymentIntentId,
+      p_amount_cents: input.amountCents, p_refunded_cents: input.refundedCents, p_currency: input.currency,
+    });
+    if (error) {
+      if (error.code === 'P0002') throw AppError.serviceUnavailable('refund_payment_unresolved', 'Le paiement doit être rapproché avant de traiter le remboursement.');
+      if (error.code === '23514' || error.code === '23505') throw AppError.conflict('refund_conflict', 'Le remboursement ne correspond pas au paiement enregistré.');
+      throw AppError.serviceUnavailable('refund_recording_unconfirmed', 'Le remboursement doit être repris ; son enregistrement n’est pas confirmé.');
+    }
+    const result = data as RecordedRefund | null;
+    if (!result || typeof result.order_id !== 'string' || typeof result.payment_id !== 'string'
+      || !Number.isSafeInteger(result.observed_refunded_cents) || result.observed_refunded_cents <= 0 || result.observed_refunded_cents > input.amountCents
+      || result.reconciliation_required !== true
+      || typeof result.duplicate !== 'boolean' || typeof result.changed !== 'boolean') {
+      throw AppError.serviceUnavailable('refund_recording_unconfirmed', 'L’enregistrement du remboursement n’est pas confirmé.');
+    }
+    return result;
   },
 
   /* ---------- customers ---------- */

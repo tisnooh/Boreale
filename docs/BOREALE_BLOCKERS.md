@@ -1,5 +1,9 @@
 # Blocages et décisions
 
+## 17 novembre — étapes propriétaire reportées, protection SAV livrée
+
+Le propriétaire reporte la configuration Stripe ; aucune relance de clé ni autorisation déjà donnée n'est redemandée. L'agent a poursuivi la protection des observations de remboursement et des expéditions, testée en SQL réel. L'agent reste responsable du ledger des objets Refund et de leur rapprochement réussi/échoué/annulé, des emails et de la recette complète ; ces travaux ne sont pas déclarés réalisés par le nouveau journal. Compte administrateur exploitant, informations légales, devis fournisseurs et livraison vérifiée restent nécessaires. Les contraintes navigateur documentées précédemment ne sont pas levées ici. Les ventes restent fermées, trois produits privés/zéro actif relus après recette. [État et matrice des modules](BOREALE_REFUND_OBSERVATIONS_20261117.md).
+
 ## 17 novembre — reprise autonome : contrôle Stripe et suivi fournisseur
 
 Compte Stripe isolé confirmé accessible. Ajout du préflight serveur en lecture seule : npm run stripe:verify-test. Contrôle de syntaxe réussi ; exécution actuelle : BLOCKED/runtime_key_missing, zéro mutation. La revue indépendante a demandé de placer aussi la lecture du fichier privé dans le traitement des erreurs génériques ; correction appliquée. Aucun paiement ni secret créé/exposé. La recherche des opérations disponibles du connecteur ne propose pas de création de clé serveur utilisable ; les options Dashboard et clés gérées sont documentées dans [le dossier Stripe](BOREALE_STRIPE_SETUP_20261117.md).
