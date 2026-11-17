@@ -1,5 +1,12 @@
 # BORÉALE — mandat d’exploitation
 
+## 17 novembre — reprise autonome : contrôle Stripe et suivi fournisseur
+
+Compte Stripe isolé confirmé accessible. Ajout du préflight serveur en lecture seule : npm run stripe:verify-test. Contrôle de syntaxe réussi ; exécution actuelle : BLOCKED/runtime_key_missing, zéro mutation. La revue indépendante a demandé de placer aussi la lecture du fichier privé dans le traitement des erreurs génériques ; correction appliquée. Aucun paiement ni secret créé/exposé. La recherche des opérations disponibles du connecteur ne propose pas de création de clé serveur utilisable ; les options Dashboard et clés gérées sont documentées dans [le dossier Stripe](BOREALE_STRIPE_SETUP_20261117.md).
+
+Le [suivi Wordans](BOREALE_SUPPLIER_FOLLOWUP_20261117.md) confirme un seul message sortant dans le fil contrôlé, sans réponse ni devis visible. Aucun renvoi ou produit activé. La configuration serveur reste absente ; la mémoire libre mesurée à la reprise reste critique (environ 0,03 Go). L’achat complet, la recette UI et le lancement restent bloqués. Checkpoint local uniquement, aucune production.
+
+
 ## 17 novembre — checkpoint local, parcours client non validé
 
 **Code et SQL revus ; ouverture commerciale BLOCKED.** Les 351 tests backend et 165 tests frontend passent. Builds backend et frontend webpack réussis (34 pages générées côté frontend). Lint backend : zéro erreur/avertissement ; frontend global : zéro erreur et 27 avertissements existants, dont deux dans les fichiers ciblés. La recette SQL est exécutée et nettoyée ; les deux connexions observées sont en série, sans preuve de concurrence.

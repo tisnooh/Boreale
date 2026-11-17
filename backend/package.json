@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "admin:create": "tsx scripts/create-admin.ts"
+    "admin:create": "tsx scripts/create-admin.ts",
+    "stripe:verify-test": "node scripts/verify-stripe-test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
