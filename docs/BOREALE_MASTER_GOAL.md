@@ -1,5 +1,9 @@
 # BORÉALE — mandat d’exploitation
 
+## 21 novembre — précision du mandat produits
+
+Le propriétaire demande une sélection Alibaba hiver réellement différenciante, maison et extérieur. Gants, couvertures et gels sont des exemples et non une liste fermée. Rééquilibrer vers les produits non électriques ; ne pas assimiler cette absence d'électricité à une preuve de sécurité. Les anciennes propositions génériques sont rejetées. Tri des onze annonces réalisé, qualification commerciale toujours bloquée ; continuer la recherche de petits lots disponibles sans achat ou nouveau message externe non autorisé.
+
 ## 17 novembre — configuration Stripe différée, poursuite des commandes/SAV
 
 Instruction courante : « Continue on fera plus tard ». La configuration Stripe et les étapes d'accès propriétaire restent reportées ; aucune nouvelle demande de clé ni ouverture commerciale déduite. Tranche observations de remboursement développée par un agent, corrigée après rejet du chef et revue indépendante, puis recettée en base. Le [rapport courant](BOREALE_REFUND_OBSERVATIONS_20261117.md) distingue cette protection testée du remboursement prestataire et du parcours client encore incomplets. Le mandat général reste IN PROGRESS ; le lancement reste BLOCKED.

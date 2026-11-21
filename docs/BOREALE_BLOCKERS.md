@@ -1,5 +1,9 @@
 # Blocages et décisions
 
+## 21 novembre — sourcing, décisions et dépendances actuelles
+
+Les annonces non électriques gel actuelles exigent 1 000 pièces et 31–40 jours de fabrication ; la bouillotte-ceinture identifiée annonce 60 jours avec kit/MOQ contradictoires. Ces offres sont écartées pour lancement rapide. Six offres électriques restent en réserve, faute de qualification et suivant la préférence propriétaire. Coûts rendus, stock immédiat, documents du modèle et traitement logistique manquent : zéro produit qualifié par cette recherche. La lecture Gmail confirme une réponse Wordans du 19 novembre ; l'absence de réponse constatée le 17 est historique. [Réponse et refus des anciens produits](BOREALE_SOURCING_OWNER_UPDATE_20261121.md). Le disque reconnecté n'est plus un blocage à cette étape.
+
 ## 17 novembre — étapes propriétaire reportées, protection SAV livrée
 
 Le propriétaire reporte la configuration Stripe ; aucune relance de clé ni autorisation déjà donnée n'est redemandée. L'agent a poursuivi la protection des observations de remboursement et des expéditions, testée en SQL réel. L'agent reste responsable du ledger des objets Refund et de leur rapprochement réussi/échoué/annulé, des emails et de la recette complète ; ces travaux ne sont pas déclarés réalisés par le nouveau journal. Compte administrateur exploitant, informations légales, devis fournisseurs et livraison vérifiée restent nécessaires. Les contraintes navigateur documentées précédemment ne sont pas levées ici. Les ventes restent fermées, trois produits privés/zéro actif relus après recette. [État et matrice des modules](BOREALE_REFUND_OBSERVATIONS_20261117.md).

@@ -1,5 +1,9 @@
 # Qualité et preuves
 
+## 21 novembre — preuves de sourcing et tri de lancement
+
+Quatre dossiers de recherche distinguent cartes de catalogue, index et fiches lisibles ; aucune de ces preuves n'est assimilée à un devis rendu ou un certificat. Le tri du chef porte sur onze annonces : cinq écartées, six en réserve et zéro approbation commerciale. Les deux gels sont une seule famille ; les deux modèles de chaque catégorie ne sont pas présentés comme des innovations distinctes. Contrôle du diff réussi ; aucune nouvelle recette commerce, sécurité produit ou paiement revendiquée. [Document soumis au contrôle indépendant](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md).
+
 ## 17 novembre — contrôle indépendant des observations de remboursement
 
 Contrôles globaux complémentaires terminés : typecheck, lint et build backend réussis (code 0). Aucun nouveau contrôle navigateur ni remboursement prestataire. Les résultats ci-dessous portent sur la protection des observations, pas sur une boutique ouverte.

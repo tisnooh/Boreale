@@ -1,5 +1,9 @@
 # Décision de lancement
 
+## 21 novembre — lancement toujours BLOCKED, tri des offres effectué
+
+Aucune des onze annonces Alibaba examinées n'est retenue pour vente. Le tri élimine les offres inadaptées au lancement rapide et réserve les modèles électriques non qualifiés ; il ne vaut pas validation fournisseur. Les idées à poursuivre sont distinctes des offres trouvées. Aucun achat, activation catalogue ou production. [Tri et motifs](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md).
+
 ## 17 novembre — protection SAV validée, lancement toujours BLOCKED
 
 Le journal des signaux de remboursement et le blocage logistique passent leurs contrôles backend/SQL ; cette validation bornée n'autorise pas l'encaissement public. La configuration Stripe est reportée sur instruction propriétaire. Produits qualifiés, prix/coûts rendus, livraison, identité du vendeur, notifications, cycle complet des remboursements et achat de test prestataire restent à terminer/vérifier. Aucun produit actif ni commande réelle en base ; aucun déploiement du site. Le [rapport courant](BOREALE_REFUND_OBSERVATIONS_20261117.md) fournit les quinze modules, les preuves et les dépendances restantes. Le checkpoint reste local tant que la validation UI attendue n'est pas obtenue.

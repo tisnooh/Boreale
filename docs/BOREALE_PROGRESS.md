@@ -1,5 +1,9 @@
 # Progression
 
+## 21 novembre — nouvelle sélection hiver et tri du chef
+
+Le disque D est de nouveau accessible ; HEAD local 139e169 retrouvé, nouveaux travaux non écrasés. Propriétaire : rejet des cinq propositions génériques, recherche Alibaba d'articles hiver utiles et différenciants, sans priorité imposée à l'électrique. Onze annonces documentées ; tri de lancement : cinq écartées, six électriques en réserve, aucune retenue pour vente. Les petites séries non électriques restent à rechercher. [Tri détaillé](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md). Aucun achat, message supplémentaire, produit publié ou lancement. Les outils finance/emails non suivis restent des travaux distincts à auditer et intégrer.
+
 ## 17 novembre — signaux de remboursement et protection des expéditions
 
 Tranche backend : journal transactionnel privé, déduplication événement/charge/cumul, incident support et suspension de préparation sur nouveau signal. Aucun état financier final déduit du seul événement Charge ; aucune régression du design. Modifications : repository commandes, service webhooks, tests, nouvelle migration et recette SQL ; détail dans [le rapport](BOREALE_REFUND_OBSERVATIONS_20261117.md). Tests ciblés 77/77 inclus dans la suite globale fraîche **394/394**. Migration réelle 20261117035632 appliquée après revue ; recette SQL PASS et neuf résidus QA à zéro. Prochaine tranche : cycle Refund et parcours réel, dépendances Stripe reportées. Historique ci-dessous conservé.
