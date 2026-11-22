@@ -9,7 +9,7 @@ import type { ProductDTO } from '@/lib/types';
  */
 export function ProductCard({ product, priority = false }: { product: ProductDTO; priority?: boolean }) {
   const pending = product.selection?.priceVerified === false;
-  const statusLabel = product.selection?.status === 'deferred' ? 'En attente' : 'Sélection en préparation';
+  const statusLabel = product.selection?.status === 'deferred' ? 'En attente' : 'En cours de préparation';
   return (
     <Link
       href={`/products/${product.slug}`}

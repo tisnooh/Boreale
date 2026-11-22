@@ -13,7 +13,7 @@ describe('priority draft product boundary', () => {
   it('shows pending content instead of a free price, false scarcity or unrelated photo', () => {
     render(<ProductCard product={PRIORITY_PRODUCTS[0]!} />);
     expect(screen.getByText('Prix à confirmer')).toBeInTheDocument();
-    expect(screen.getByText('Sélection en préparation')).toBeInTheDocument();
+    expect(screen.getByText('En cours de préparation')).toBeInTheDocument();
     expect(screen.getByText('Visuel en préparation')).toBeInTheDocument();
     expect(screen.queryByText(/0,00/)).not.toBeInTheDocument();
     expect(screen.queryByText('Rupture de stock')).not.toBeInTheDocument();

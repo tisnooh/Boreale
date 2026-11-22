@@ -35,7 +35,7 @@ export function ProductPurchase({ product }: Props) {
   if (product.selection) {
     return (
       <div className="flex flex-col gap-4 text-sm text-muted">
-        <p className="font-semibold text-ink">{product.selection.status === 'deferred' ? 'Référence en attente' : 'Sélection en préparation'}</p>
+        <p className="font-semibold text-ink">{product.selection.status === 'deferred' ? 'Référence en attente' : 'En cours de préparation'}</p>
         <p>Le modèle, les variantes et le prix restent à confirmer. Ce produit n’est pas proposé à la vente.</p>
         <p>Référence de préparation : {product.selection.referenceSku}</p>
       </div>
