@@ -82,7 +82,6 @@ const liveSource: CatalogSource = {
     return res?.data ?? null;
   },
   async categories(season) {
-    if (SITE_MODE === 'showcase') return season === 'winter' ? [] : SUMMER_CATEGORIES;
     const res = await apiGetServer<{ data: CategoryDTO[] }>(`/api/categories${season ? `?season=${season}` : ''}`);
     return res?.data ?? [];
   },
@@ -101,7 +100,37 @@ const liveSource: CatalogSource = {
   },
 };
 
+const showcaseSource: CatalogSource = {
+  ...liveSource,
+  mode: 'showcase',
+  async products(season) {
+    if (season === 'summer') return [];
+    return (await import('./priority-products')).PRIORITY_PRODUCTS;
+  },
+  async product(slug) {
+    const products = await showcaseSource.products('winter');
+    const product = products.find((entry) => entry.slug === slug);
+    return product ? withRelated(product, products) : null;
+  },
+  async categories(season) {
+    if (season === 'summer') return SUMMER_CATEGORIES;
+    const products = await showcaseSource.products('winter');
+    const winter = [...new Map(products.flatMap((product) => product.categories.map((category) => [
+      category.slug, {
+        ...category,
+        id: category.slug,
+        season: 'winter' as const,
+        tagline: null,
+        description: null,
+        imageUrl: null,
+      },
+    ] as const))).values()];
+    return season === 'winter' ? winter : [...winter, ...SUMMER_CATEGORIES];
+  },
+};
+
 export function getCatalogSource(): CatalogSource {
+  if (SITE_MODE === 'showcase') return showcaseSource;
   return isPreview() ? previewSource : liveSource;
 }
 
