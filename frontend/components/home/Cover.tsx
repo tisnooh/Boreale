@@ -78,7 +78,7 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
               </span>
             </span>
           </h1>
-          <p className="mt-8 max-w-md text-base leading-relaxed text-ice/80">{hero.subtitle}</p>
+          <p className="mt-8 w-full max-w-md wrap-break-word text-base leading-relaxed text-ice/80">{hero.subtitle}</p>
           <div className="mt-10 flex flex-wrap items-center gap-5">
             <Link href={hero.ctaHref} className="btn bg-ember text-white hover:bg-ember-dark">
               {hero.ctaLabel} <ArrowRightIcon width={16} height={16} />
@@ -89,7 +89,7 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
           </div>
 
           {/* Polaroids mobile : rangée scrollable */}
-          <div className="rail -mx-4 mt-12 flex gap-4 overflow-x-auto px-4 pb-2 lg:hidden">
+          <div className="rail -mx-4 mt-12 flex min-w-0 gap-4 overflow-x-auto px-4 pb-2 lg:hidden">
             {PIECES.map((p, i) => (
               <PieceCard key={p.caption} src={p.src} caption={p.caption} width={150} tilt={i % 2 ? '2.5deg' : '-2.5deg'} delay={`${i * 0.7}s`} className="shrink-0" />
             ))}
@@ -110,18 +110,18 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
 
       {/* Sommaire + méta */}
       <div className="container-x relative pb-8">
-        <div className="flex flex-wrap items-end justify-between gap-6 border-t border-white/15 pt-6">
-          <nav aria-label="Sommaire de la page" className="grid flex-1 grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
+        <div className="grid min-w-0 gap-6 border-t border-white/15 pt-6 lg:flex lg:items-end lg:justify-between">
+          <nav aria-label="Sommaire de la page" className="grid min-w-0 flex-1 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-4 lg:gap-x-8">
             {CHAPTERS.map(([href, n, label]) => (
-              <Link key={href} href={href} className="group flex items-baseline gap-3">
+              <Link key={href} href={href} className="group flex min-w-0 items-baseline gap-2 lg:gap-3">
                 <span className="font-display text-xs text-ember tabular-nums">{n}</span>
-                <span className="text-[11px] font-semibold tracking-[0.2em] text-ice/75 uppercase transition-colors group-hover:text-white">
+                <span className="min-w-0 wrap-break-word text-[11px] font-semibold tracking-[0.2em] text-ice/75 uppercase transition-colors group-hover:text-white">
                   {label}
                 </span>
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-6 text-[10px] tracking-[0.2em] text-ice/60 uppercase">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] tracking-[0.2em] text-ice/60 uppercase">
             <span>48 h expédition</span>
             <span>30 j retours</span>
             <span className="hidden h-8 w-px overflow-hidden bg-white/25 sm:block">
