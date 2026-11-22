@@ -80,7 +80,7 @@ it('affiche la vitrine publique sans activer le catalogue ni les transactions', 
   const products = await source.products('winter');
   expect(products).toHaveLength(5);
   expect(products.every((product) => product.selection?.status === 'draft' &&
-    product.selection.priceVerified === false && !product.inStock && product.variants.length === 0)).toBe(true);
+    product.selection.priceVerified === false && !product.inStock && product.variants?.length === 0)).toBe(true);
   expect(await source.product('chaussettes-polaires-nuage')).toMatchObject({ inStock: false });
   expect(await source.product('chaussons-bouillotte-foyer')).toBeNull();
   expect(await source.products('summer')).toEqual([]);
