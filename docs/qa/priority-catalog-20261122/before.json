@@ -1,0 +1,10 @@
+{
+  "phase": "before",
+  "baseline": "Working tree before merchandising edits; other agents may already have changed catalog data",
+  "physicalDevices": false,
+  "checks": [],
+  "screenshots": [],
+  "pageErrors": [],
+  "status": "BLOCKED",
+  "error": "page.goto: Timeout 35000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3112/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+}

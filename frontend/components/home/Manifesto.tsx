@@ -11,7 +11,7 @@ const COPY = {
   winter: {
     statement: ['Nous ne vendons', 'pas de l’hiver.', 'Nous vendons des raisons de l’aimer.'],
     journal:
-      'BORÉALE est née d’une conviction simple : avec les bons essentiels, l’hiver devient la saison la plus confortable de l’année. Alors nous cherchons, nous testons, nous écartons. Quatorze pièces seulement, choisies pour ce qu’elles résolvent — un carrelage glacé, un pare-brise givré, un cou exposé au vent — et pour ce qu’elles durent. Rien de plus ne rentrerait sans affaiblir le reste.',
+      'BORÉALE prépare une sélection courte autour du confort des mains et des pieds. Contact, Refuge, Braise et Nuage en sont les premières directions, complétées par des semelles isolantes. Nous recherchons des formes sobres, des teintes douces et des références sans logo visible. Les modèles, les matières et les conditions seront vérifiés avant de proposer ces pièces à la vente.',
   },
   summer: {
     statement: ['Nous ne vendons', 'pas de l’été.', 'Nous vendons des raisons de l’aimer.'],
@@ -23,7 +23,7 @@ const COPY = {
 export function Manifesto({ benefits, season = 'winter' }: { benefits: HomepageSettings['benefits']; season?: 'winter' | 'summer' }) {
   const copy = COPY[season];
   return (
-    <section aria-label="Manifeste" className="bg-ink py-24 text-white lg:py-32">
+    <section id="manifeste" aria-label="Manifeste" className="bg-ink py-24 text-white lg:py-32">
       <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-10">
         {/* Statement */}
         <div className="lg:col-span-5">

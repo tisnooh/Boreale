@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "researchedAt": "2026-11-13",
+  "purpose": "research_drafts_only_not_a_database_seed",
+  "importAuthorized": false,
+  "publicationAuthorized": false,
+  "purchaseAuthorized": false,
+  "fulfillmentModel": null,
+  "reportPath": "docs/BOREALE_PRODUCT_RESEARCH_CURRENT.md",
+  "commonMissingEvidence": [
+    "written_quote_for_exact_variant_and_quantity",
+    "landed_cost_and_shipping_destination",
+    "contractual_delivery_and_returns",
+    "reliable_variant_stock",
+    "sample_quality_and_measurements",
+    "applicable_safety_and_compliance_documents",
+    "manufacturer_and_responsible_operator",
+    "image_license_and_resale_or_branding_rights",
+    "approved_selling_price_and_full_cost_margin",
+    "tested_order_and_fulfillment"
+  ],
+  "candidates": [
+    {
+      "candidateId": "BOR-CAND-20261113-001",
+      "priority": 1,
+      "proposedTitle": "Plaid double face polaire et sherpa 150 x 125 cm",
+      "season": "winter",
+      "categorySlug": "maison-cocooning",
+      "status": "draft",
+      "orderable": false,
+      "published": false,
+      "sellingPriceCents": null,
+      "inventoryQuantity": null,
+      "imageUrl": null,
+      "existingProductMapping": null,
+      "variantDrafts": [
+        { "candidateVariantId": "BOR-CAND-20261113-001-V01", "supplierLabel": "Marine/Blanc Casse", "supplierVariantId": null, "barcode": null },
+        { "candidateVariantId": "BOR-CAND-20261113-001-V02", "supplierLabel": "Gris/Blanc Casse", "supplierVariantId": null, "barcode": null }
+      ],
+      "offers": [
+        {
+          "supplier": "StockEtik",
+          "supplierReference": "04-12565",
+          "manufacturerReferenceObserved": "112809",
+          "url": "https://www.stocketik.com/couverture-polaire/plaid-en-polaire-sherpa-douce/12565/828225/",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_supplier_claim_conflicting_dynamic_display",
+          "publishedPriceTier": { "amount": 11.85, "currency": "EUR", "taxBasis": "HT", "minimumUnitsForTier": 20, "confirmedQuote": false },
+          "usableStock": null,
+          "confirmedShippingCost": null,
+          "contractualDeliveryDate": null,
+          "notes": ["Same page includes contradictory stock and calculator values; written quote required."]
+        },
+        {
+          "supplier": "Vegea",
+          "supplierReference": "00011V0090243",
+          "url": "https://www.vegea.com/objets-publicitaires/textiles-et-vetements/sherpa/couvertures-en-sherpa-20-487-4052.html",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_category_starting_price_not_variant_quote",
+          "independentBackupSupplier": false,
+          "notes": ["StockEtik identifies Groupe Vegea; independence and exact equivalence are not established."]
+        }
+      ],
+      "selectionStatus": "investigate_sample_and_quote_first_not_approved"
+    },
+    {
+      "candidateId": "BOR-CAND-20261113-002",
+      "priority": 2,
+      "proposedTitle": "Chaussettes maison antiderapantes — modele a figer",
+      "season": "winter",
+      "categorySlug": "confort-textile",
+      "status": "draft",
+      "orderable": false,
+      "published": false,
+      "sellingPriceCents": null,
+      "inventoryQuantity": null,
+      "imageUrl": null,
+      "existingProductMapping": null,
+      "variantDrafts": [],
+      "variantBlocker": "Assorted lot does not prove exact model-size-color allocation; alternatives are not interchangeable.",
+      "offers": [
+        {
+          "supplier": "CAMALEX / grossiste-lingerie.fr",
+          "supplierReference": "72ch26",
+          "url": "https://www.grossiste-lingerie.fr/produit.php?id=11888",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_supplier_tier_not_confirmed_quote",
+          "publishedPriceTier": { "amount": 3.29, "currency": "EUR", "taxBasis": "HT_excluding_shipping", "minimumUnitsForTier": 12, "confirmedQuote": false },
+          "supplierMinimumOrderAmountHT": 50,
+          "usableStock": null,
+          "confirmedShippingCost": null,
+          "contractualDeliveryDate": null,
+          "shippingPolicyUrl": "https://www.grossiste-lingerie.fr/frais-de-transport.php",
+          "termsUrl": "https://www.grossiste-lingerie.fr/cgv.php"
+        },
+        {
+          "supplier": "StockEtik",
+          "supplierReference": "10-18889",
+          "manufacturerReferenceObserved": "5507 Molbik",
+          "url": "https://www.stocketik.com/chaussette-de-noel/chaussette-de-noel/18889/810774/",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_supplier_claim_conflicting_dynamic_display",
+          "publishedPriceTier": { "amount": 7.66, "currency": "EUR", "taxBasis": "HT", "minimumUnitsForTier": 8, "confirmedQuote": false },
+          "exactEquivalentToOtherOffer": false,
+          "usableStock": null,
+          "confirmedShippingCost": null,
+          "contractualDeliveryDate": null
+        }
+      ],
+      "selectionStatus": "hold_until_exact_variants_and_quote_not_approved"
+    },
+    {
+      "candidateId": "BOR-CAND-20261113-003",
+      "priority": 3,
+      "proposedTitle": "Cache-cou polaire Beechfield BF280R — revente a verifier",
+      "season": "winter",
+      "categorySlug": "confort-textile",
+      "status": "draft",
+      "orderable": false,
+      "published": false,
+      "sellingPriceCents": null,
+      "inventoryQuantity": null,
+      "imageUrl": null,
+      "existingProductMapping": null,
+      "variantDrafts": [
+        { "candidateVariantId": "BOR-CAND-20261113-003-V01", "supplierLabel": "Noir", "supplierVariantId": null, "barcode": null },
+        { "candidateVariantId": "BOR-CAND-20261113-003-V02", "supplierLabel": "Bleu Marine", "supplierVariantId": null, "barcode": null }
+      ],
+      "offers": [
+        {
+          "supplier": "Wordans",
+          "supplierReference": "BF280R / 517040",
+          "url": "https://www.wordans.fr/beechfield-bf280r-cache-cou-polaire-en-polyester-recycle-517040",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_supplier_tier_with_ambiguous_variant_stock",
+          "publishedPriceTier": { "amount": 2.46, "currency": "EUR", "taxBasis": "HT", "minimumUnitsForTier": 288, "confirmedQuote": false },
+          "usableStock": null,
+          "confirmedShippingCost": null,
+          "contractualDeliveryDate": null,
+          "notes": ["Starting price is not a small-order quote; variant stock requires confirmation."]
+        },
+        {
+          "supplier": "BOBET Materiel",
+          "supplierReference": "17598",
+          "url": "https://www.bobet-materiel.com/magasin/produit/cache-cou-polaire",
+          "observedAt": "2026-11-13",
+          "evidenceType": "public_supplier_price_not_confirmed_quote",
+          "publishedPriceTier": { "amount": 7.70, "currency": "EUR", "taxBasis": "HT", "minimumUnitsForTier": 1, "confirmedQuote": false },
+          "exactEquivalentToOtherOffer": false,
+          "usableStock": null,
+          "confirmedShippingCost": null,
+          "contractualDeliveryDate": null
+        }
+      ],
+      "selectionStatus": "addon_candidate_only_unproven_margin_not_approved"
+    }
+  ]
+}

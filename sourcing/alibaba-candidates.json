@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "purpose": "private_sourcing_draft_import_only",
+  "publicationAuthorized": false,
+  "purchaseAuthorized": false,
+  "commercialDataVerified": false,
+  "candidates": [
+    {
+      "candidateKey": "BOR-ALI-20261114-01",
+      "title": "Piste plaid tartan sherpa — non vérifiée",
+      "supplierName": "Yiwu Topchums Textile Co., Ltd.",
+      "supplierUrl": "https://topchums.en.alibaba.com/",
+      "sourcePlatform": "alibaba",
+      "sourceProductId": "1601619873272",
+      "sourceUrl": "https://www.alibaba.com/product-detail/Premium-Red-Tartan-Plaid-Throw-Blanket_1601619873272.html",
+      "observedAt": "2026-11-14",
+      "observedFacts": {
+        "evidenceLevel": "public_listing_only",
+        "priceEvidenceUrl": "https://www.alibaba.com/pla/Premium-Red-Tartan-Plaid-Throw-Blanket_1601619873272.html?biz=pla&mark=google_shopping&pcy=gb_en&product_id=1601619873272&searchText=coral+fleece+blankets",
+        "displayedPrice": { "currency": "USD", "min": 2.5, "max": 4, "confirmedQuote": false },
+        "displayedMinimumOrder": { "quantity": 30, "unit": null, "confirmed": false },
+        "displayedDescription": "Tartan rouge, 150 × 200 cm, flanelle/sherpa selon titre public",
+        "confirmedVariants": [],
+        "confirmedStock": null,
+        "confirmedLandedCost": null,
+        "approvedRetailPrice": null,
+        "usableImageRights": null,
+        "equivalenceWithExistingBorealeProduct": null
+      },
+      "missingEvidence": ["Variante exacte et composition", "Devis daté et palier exact", "Stock ou production confirmés", "Coût et délai livré France", "Conditions de retour et défaut", "Conformité applicable et droits images", "Prix de vente approuvé et coût complet", "Parcours commande et fulfillment testés"],
+      "notes": "Source PLA lisible ; fiche détaillée sans contenu exploitable. Le motif tartan n’est pas validé pour BORÉALE. Aucun remplacement du produit de démonstration Nid, aucune équivalence confirmée. Les prix affichés ne sont pas des coûts rendus France."
+    },
+    {
+      "candidateKey": "BOR-ALI-20261114-02",
+      "title": "Piste chaussettes douillettes — non vérifiée",
+      "supplierName": "Haining Jinhu Sport Socks Co., Ltd.",
+      "supplierUrl": "https://goldenswan.en.alibaba.com/",
+      "sourcePlatform": "alibaba",
+      "sourceProductId": "1600562253833",
+      "sourceUrl": "https://www.alibaba.com/product-detail/Wholesale-Women-High-Quality-Fluffy-Sleep_1600562253833.html",
+      "observedAt": "2026-11-14",
+      "observedFacts": {
+        "evidenceLevel": "public_supplier_directory_only",
+        "priceEvidenceUrl": "https://www.alibaba.com/supplier/ladies-fuzzy-socks-wholesale.html",
+        "displayedPrice": { "currency": "USD", "min": 1.29, "max": 2.09, "confirmedQuote": false },
+        "displayedMinimumOrder": { "quantity": 10, "unit": "pairs", "confirmed": false },
+        "confirmedVariants": [],
+        "confirmedStock": null,
+        "confirmedLandedCost": null,
+        "approvedRetailPrice": null,
+        "usableImageRights": null,
+        "equivalenceWithExistingBorealeProduct": null
+      },
+      "missingEvidence": ["Tailles, couleurs, matière, épaisseur et antidérapant", "Devis daté pour variante et quantité", "Disponibilité réelle", "Frais et délai France et capacité de livraison unitaire", "Conditions de retour et défaut", "Conformité et droits images", "Prix de vente approuvé et coût complet", "Parcours commande et fulfillment testés"],
+      "notes": "Lien produit exact issu du bloc Haining Jinhu de l’annuaire ; détail produit sans contenu lisible. MOQ faible affiché, sans preuve de dropshipping ni de rentabilité. Aucun remplacement de Nuage ni réutilisation de ses variantes de démonstration."
+    },
+    {
+      "candidateKey": "BOR-ALI-20261114-03",
+      "title": "Piste cache-cou polaire — non vérifiée",
+      "supplierName": "Henan Zhenbang Textile Company Ltd",
+      "supplierUrl": "https://zhenbang.m.en.alibaba.com/",
+      "sourcePlatform": "alibaba",
+      "sourceProductId": "1601693375789",
+      "sourceUrl": "https://www.alibaba.co.uk/product-detail/Custom-Polar-Fleece-Neck-Gaiter-Winter_1601693375789.html",
+      "observedAt": "2026-11-14",
+      "observedFacts": {
+        "evidenceLevel": "public_product_page_only",
+        "displayedModel": "ZB260130",
+        "displayedPriceTiers": [{ "minimumQuantity": 500, "maximumQuantity": 4999, "unitPrice": 1.68 }, { "minimumQuantity": 5000, "maximumQuantity": 9999, "unitPrice": 1.65 }, { "minimumQuantity": 10000, "maximumQuantity": null, "unitPrice": 1.5 }],
+        "currency": "USD",
+        "confirmedQuote": false,
+        "displayedSamplePriceUsd": 50,
+        "displayedProductionLeadDays": 31,
+        "deliveredFranceLeadDays": null,
+        "confirmedVariants": [],
+        "confirmedStock": null,
+        "confirmedLandedCost": null,
+        "approvedRetailPrice": null,
+        "usableImageRights": null,
+        "equivalenceWithExistingBorealeProduct": null
+      },
+      "missingEvidence": ["Composition, grammage, mesures et variantes exactes", "Devis contractuel daté et minimum exact", "Disponibilité ou production contractuelle", "Transport livré France et responsabilités import", "Conditions de retour et défaut", "Conformité et droits images", "Prix de vente approuvé et coût complet", "Parcours commande et fulfillment testés"],
+      "notes": "Candidat secondaire : premier palier produit affiché 500 pièces, distinct du minimum personnalisation 200. Délai affiché hors livraison France ; volume peu adapté à un démarrage rapide. Aucune variante ni stock généré."
+    }
+  ]
+}

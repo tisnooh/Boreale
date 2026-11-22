@@ -7,9 +7,14 @@ import { emailTemplates, sendEmail } from './email.js';
 import type { AdminUserDTO, UserDTO } from '../types/index.js';
 import { z } from 'zod';
 import { registerSchema } from '../validators/auth.js';
+import { config } from '../config.js';
+import { supabaseAuth } from '../lib/supabase-auth.js';
+
+export interface AuthResult { token: string; user: UserDTO; refreshToken?: string; expiresIn?: number }
 
 export const authService = {
-  async register(input: z.infer<typeof registerSchema>): Promise<{ token: string; user: UserDTO }> {
+  async register(input: z.infer<typeof registerSchema>): Promise<AuthResult> {
+    if (config().AUTH_PROVIDER === 'supabase') return supabaseAuth.register(input);
     const existing = await usersRepo.findByEmail(input.email);
     if (existing) {
       throw AppError.conflict('email_taken', 'Un compte existe déjà avec cet email.');
@@ -37,7 +42,8 @@ export const authService = {
     return { token: signUserToken({ sub: user.id, email: user.email }), user };
   },
 
-  async login(email: string, password: string): Promise<{ token: string; user: UserDTO }> {
+  async login(email: string, password: string): Promise<AuthResult> {
+    if (config().AUTH_PROVIDER === 'supabase') return supabaseAuth.login(email, password);
     const row = await usersRepo.findByEmail(email);
     // Same error for unknown email / wrong password (no account enumeration)
     if (!row || !verifyPassword(password, row.password_hash)) {

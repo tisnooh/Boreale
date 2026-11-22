@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import '@/styles/globals.css';
 import { BRAND, SITE_URL } from '@/lib/constants';
 import { apiGetServer } from '@/lib/api-server';
-import { isPreview } from '@/lib/config';
+import { isLaunch, isPreview } from '@/lib/config';
+import { ComingSoon } from '@/components/ComingSoon';
 import { headers } from 'next/headers';
 import { getSeasonFromPath } from '@/lib/season/config';
 import { CartProvider } from '@/hooks/use-cart';
@@ -18,15 +19,18 @@ import { ScrollProgress } from '@/components/layout/ScrollProgress';
 import { SeasonScope } from '@/components/layout/SeasonScopeSync';
 import type { HomepageSettings } from '@/lib/types';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
+const fraunces = localFont({
+  src: './fonts/fraunces-latin.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-fraunces',
   display: 'swap',
-  axes: ['SOFT', 'WONK', 'opsz'],
 });
 
-const inter = Inter({
-  subsets: ['latin'],
+const inter = localFont({
+  src: './fonts/inter-latin.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-inter',
   display: 'swap',
 });
@@ -38,7 +42,7 @@ export const metadata: Metadata = {
     template: `%s — ${BRAND.name}`,
   },
   description:
-    'Essentiels d’hiver sélectionnés et testés : chaussettes polaires, gants tactiles, bouillottes, housses pare-brise, plaids et packs cadeaux. Expédié depuis la France, retours 30 jours.',
+    'BORÉALE propose une sélection saisonnière pour le confort à la maison et dehors.',
   keywords: ['hiver', 'chaussettes polaires', 'bouillotte', 'plaid', 'gants tactiles', 'pare-brise antigivre', 'cocooning'],
   openGraph: {
     type: 'website',
@@ -46,10 +50,10 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: BRAND.name,
     title: `${BRAND.name} — ${BRAND.slogan}`,
-    description: 'Des essentiels chauds, beaux et durables pour affronter l’hiver. Expédié depuis la France.',
+    description: 'Des essentiels de saison pour la maison et le plein air.',
     images: [{ url: '/og/og-default.jpg', width: 1200, height: 630, alt: BRAND.name }],
   },
-  robots: { index: true, follow: true },
+  robots: { index: !isPreview(), follow: !isPreview() },
 };
 
 export const viewport: Viewport = {
@@ -59,6 +63,13 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  if (isLaunch()) {
+    return (
+      <html lang="fr" className={`${fraunces.variable} ${inter.variable} h-full`}>
+        <body><ComingSoon /></body>
+      </html>
+    );
+  }
   // Saison courante (SSR via middleware x-pathname) → scope de tokens thème
   const pathname = (await headers()).get('x-pathname') ?? '/';
   const season = getSeasonFromPath(pathname);

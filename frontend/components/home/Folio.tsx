@@ -12,10 +12,10 @@ export function Folio({ season = 'winter' }: { season?: 'winter' | 'summer' }) {
         <span>Maison BORÉALE — édition {season === 'summer' ? 'été' : 'hiver'}</span>
         <span className="hidden items-center gap-2.5 md:flex">
           <SnowflakeIcon width={11} height={11} className="text-ember-dark" aria-hidden />
-          14 pièces · 4 univers · 0 superflu
+          {season === 'winter' ? '5 essentiels · sélection en préparation' : 'Une collection · des essentiels'}
           <SnowflakeIcon width={11} height={11} className="text-ember-dark" aria-hidden />
         </span>
-        <span>Expédition France — retours 30 j</span>
+        <span>Conditions précisées avant ouverture</span>
       </div>
     </div>
   );

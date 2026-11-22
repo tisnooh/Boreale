@@ -1,0 +1,57 @@
+{
+  "observedAt": "2026-11-16",
+  "branch": "master/operational-readiness",
+  "gitDelivery": {
+    "codeCommit": "3d7d87e1ae9105913218e5a244ffd3e9b60fceac",
+    "pushVerifiedWithLsRemote": true,
+    "mainUnchangedAt": "0a4428bb5d9fcdd8ef4f31afdf4b0462aee937bc",
+    "unrelatedUntrackedFrontendGuidanceExcluded": true
+  },
+  "scope": "confirmation worker, checkout prerequisites, private supplier qualification",
+  "backend": {
+    "tests": { "total": 273, "passed": 273, "failed": 0 },
+    "independentNotificationTests": { "total": 26, "passed": 26 },
+    "typecheckExitCode": 0,
+    "lint": { "files": 81, "errors": 0, "warnings": 0 },
+    "buildExitCode": 0,
+    "disabledHttpSmoke": { "checks": 5, "passed": 5, "externalRequests": 0 }
+  },
+  "database": {
+    "projectRef": "luojeyfznonjnacftxbm",
+    "migration": "20261116051026_boreale_notification_delivery",
+    "migrationApplied": true,
+    "migrationSha256": "EF7BCF279C6D9B70C8C93C9B486C0E11E4B3D00F040536E15B7DE1AC8A7FCAE3",
+    "singleSessionSqlQaExecuted": true,
+    "syntheticProviderAcknowledgementsOnly": true,
+    "postRollback": { "customers": 0, "orders": 0, "notifications": 0, "incidents": 0 },
+    "secondQueryConfirmedZeroBusinessFixtures": true,
+    "activeProducts": 0,
+    "twoConnectionConcurrencyTested": false,
+    "securityAdvisors": { "infoRlsEnabledNoPolicyPrivateTables": 19, "warnings": 0, "errors": 0 }
+  },
+  "independentReview": {
+    "reviewer": "launch_notification_outbox",
+    "verdict": "APPROVED scoped code and static SQL",
+    "foundAndFixed": "prevent original confirmation for pending, cancelled, refunded and partially_refunded orders",
+    "chiefSqlQaAccepted": true
+  },
+  "supplierRequests": {
+    "explicitlyAuthorizedCount": 3,
+    "wordans": {
+      "status": "SENT",
+      "gmailMessageId": "1a1e2b5102560167",
+      "sentMetadataReverified": true,
+      "deliveryOrReplyConfirmed": false,
+      "orderOrReservationCreated": false
+    },
+    "fuying": { "status": "NOT_SENT", "blocker": "Alibaba account login required" },
+    "hainingJinhu": { "status": "NOT_SENT", "blocker": "Alibaba account login required" }
+  },
+  "emailProviderCalled": false,
+  "emailDeliveryVerified": false,
+  "orderEmailMode": "off",
+  "stripeSandboxPurchaseTested": false,
+  "newProductsImported": false,
+  "productionDeployed": false,
+  "commercialLaunchApproved": false
+}

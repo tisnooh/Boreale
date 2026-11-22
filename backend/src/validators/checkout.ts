@@ -14,6 +14,9 @@ export const addressSchema = z.object({
     .regex(/^\d{5}$/, 'Code postal français invalide (5 chiffres).'),
   city: z.string().trim().min(1, 'Ville requise.').max(120),
   country: z.string().trim().length(2, 'Code pays invalide.').toUpperCase().default('FR'),
+}).refine((address) => address.country === 'FR' && /^(?:0[1-9]|[1-8]\d|9[0-5])\d{3}$/.test(address.postalCode), {
+  message: 'Destination hors du périmètre France métropolitaine prévu ; livraison non disponible.',
+  path: ['postalCode'],
 });
 
 export const cartItemSchema = z.object({
@@ -24,6 +27,8 @@ export const cartItemSchema = z.object({
 export const shippingMethodSchema = z.enum(['standard', 'express']);
 
 export const checkoutSchema = z.object({
+  idempotencyKey: z.string().uuid().optional(),
+  customerMode: z.enum(['guest', 'customer']).optional(),
   items: z.array(cartItemSchema).min(1, 'Le panier est vide.').max(50, 'Trop d’articles différents.'),
   discountCode: emptyToUndefined(z.string().trim().max(32).optional()),
   shippingMethod: shippingMethodSchema.default('standard'),

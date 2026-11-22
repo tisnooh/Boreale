@@ -69,6 +69,12 @@ export interface DbAdminRow {
 }
 
 export const adminUsersRepo = {
+  async findById(id: string): Promise<Omit<DbAdminRow, 'password_hash'> | null> {
+    const { data, error } = await db().from('admin_users').select('id,email,name,role,is_active').eq('id', id).maybeSingle();
+    if (error) throw error;
+    return data as Omit<DbAdminRow, 'password_hash'> | null;
+  },
+
   async findByEmail(email: string): Promise<DbAdminRow | null> {
     const { data, error } = await db().from('admin_users').select('*').eq('email', email.toLowerCase()).maybeSingle();
     if (error) throw error;

@@ -8,14 +8,15 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
+    "dev": "tsx watch src/start.ts",
+    "start": "node dist/src/start.js",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "admin:create": "tsx scripts/create-admin.ts"
+    "admin:create": "tsx scripts/create-admin.ts",
+    "stripe:verify-test": "node scripts/verify-stripe-test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

@@ -1,0 +1,37 @@
+# Qualification produits — recherche complémentaire du 16 novembre 2026
+
+Statut : **recherché et documenté ; aucun produit qualifié pour la vente**. Les trois anciens dossiers privés sont conservés, sans écrasement, prix public ni stock fictif. Recherche initiale effectuée par le chef après une limite d’usage des missions natives ; revue indépendante ciblée des sources et des contacts achevée le 16 novembre 2026 après reprise. Les corrections documentaires ont été relues et acceptées par le chef comme recherche provisoire ; cette relecture ne valide aucun produit pour la vente.
+
+## Résultat utile au lancement
+
+| Priorité de qualification | Référence et fournisseur | Observation publique | Manque avant toute vente |
+|---|---|---|---|
+| 1 — alternative locale à examiner | Beechfield BF280R noir, Wordans 517040 | Fiche : 4,72 € TTC au palier1–7 ; 4,44 € pour8–35 ; 2,95 € à288+. La catégorie affiche1,50 €, écart conservé | Disponibilité immédiate, référence exacte, devis/destination, livraison unitaire/revente, retours, droits images |
+| 2 — plaid, minimum contradictoire | Shenzhen Fuying Gifts, Alibaba1601588927352 | Annuaire : 3–4,50 USD et minimum 1 pièce ; FAQ société : 100 unités par modèle | Minimum applicable à résoudre ; détail illisible, variante/matière/taille, devis, stock, transport, conformité et images |
+| 3 — chaussettes, piste de comparaison | Zhuji Tms, Alibaba1601304235838 | Annuaire : 0,80–0,92 USD, minimum 10 paires ; lien individuel recoupé le 16 novembre | Détail illisible ; taille/couleur/composition, coût livré et conditions contractuelles |
+| Maintenu pour comparaison | Haining Jinhu, ancien Alibaba1600562253833 | Historique du 14 novembre : 1,29–2,09 USD, minimum 10 paires ; FAQ société relue le 16 novembre : 500 paires par design | Tarif actuel et rattachement des conditions au produit non reconfirmés ; devis complet indispensable |
+| Écarté du premier assortiment, réexaminable ensuite | Henan Zhenbang Alibaba1601693375789 | Fiche relue :1,68 USD à500–4999pièces ; échantillon50 USD. Personnalisation dès200 n’est pas le minimum du produit | Volume élevé pour un démarrage, aucun transport livré confirmé |
+
+Sources principales : [Wordans produit](https://www.wordans.fr/beechfield-bf280r-cache-cou-polaire-en-polyester-recycle-517040), [catégorie Wordans](https://www.wordans.fr/vetements-unis-c37029/tours-de-cou-s44822), [plaid annuaire Alibaba](https://www.alibaba.com/category/throws_100000407.html), [plaid individuel — sans contenu lisible](https://www.alibaba.com/product-detail/MOQ-1-Custom-Winter-Warm-Cozy_1601588927352.html), [chaussettes annuaire](https://www.alibaba.com/category/Socks-Hosiery_201754603.html), [chaussettes TMS individuelles — sans contenu lisible](https://www.alibaba.com/product-detail/Warm-Winter-Women-s-Fluffy-Crew_1601304235838.html), [cache-cou500pièces](https://www.alibaba.co.uk/product-detail/Custom-Polar-Fleece-Neck-Gaiter-Winter_1601693375789.html). Les clics sur les blocs exacts Fuying et TMS ont confirmé leurs liens individuels le 16 novembre ; cela ne valide ni les variantes ni les conditions d’achat. Aucun SKU de variante n’est déduit d’un titre.
+
+## Contradictions et transport
+
+Wordans affiche698 sous une rubrique « Stock dans30jours » et des mentions d’indisponibilité : ce n’est pas une preuve de stock immédiat. W1 est annoncé à Pluguffan. Le [barème transport](https://www.wordans.fr/informations-de-livraison), relu le 16 novembre, distingue relais dès2,99€ (franco59€) et domicile DPD dès4,99€ (franco79€), avec24–48h ouvrées indicatives, **plus 1–2 jours ouvrables de traitement en entrepôt**. Les produits personnalisés nécessitent encore 5–10 jours ouvrables de traitement supplémentaire. Aucun tarif rendu à un code postal du propriétaire n’a été obtenu. La page de retours renvoie vers un espace commandes : aucune politique de retour exploitable validée.
+
+La [page société Fuying](https://suppliers.alibaba.com/shenzhen-fuying-gifts-co-ltd_2212495395080), relue le 16 novembre, annonce un minimum générique de 100 unités par modèle, incompatible sans explication avec la pièce unique du bloc produit. Le rapport sur site 477618216_T y est indiqué expiré le **10 novembre 2026**. Son résumé IA et ses mentions de certificats ne qualifient pas cette référence textile. La [page société Haining Jinhu](https://suppliers.alibaba.com/haining-jinhu-sport-socks-co-ltd_2208177347921) annonce 500 paires par design dans sa FAQ : demander si cette règle concerne la personnalisation ou aussi le produit historique à 10 paires. Aucun de ces minimums génériques n’est substitué silencieusement au minimum produit.
+
+Le [fabricant Beechfield B280R](https://beechfield.com/products/b280r-recycled-fleece-snood) indique46g,28×29,5cm, polyester recyclé certifiéGRS, plusieurs couleurs et conditionnement18/carton144. Une quantité de conditionnement ne prouve pas un minimum d’achat distributeur. La correspondance B280R/BF280R et les variantes vendables restent à confirmer par le fournisseur. Aucun certificat ni droit image n’est déclaré acquis sur cette seule description.
+
+## Coûts et concurrence
+
+Calcul indicatif, **pas un devis** : une unité Wordans au palier4,72€ avec le minimum transport domicile4,99€ donnerait un débours minimal9,71€ TTC, avant réexpédition client/emballage/frais/retours. Un tarif « dès » n’est pas un coût complet confirmé. Budget, régime fiscal, récupération deTVA et destination inconnus : marge contributive et prix de vente approuvé restent non calculables.
+
+[IKEA France](https://www.ikea.com/fr/fr/cat/couvertures-et-plaids-20528/) affiche notamment VITMOSSA1,99€, HORNMAL9,99€ et VALLKRASSING19,99€. Ce sont des repères de catégorie, avec dimensions/matières différentes, pas des équivalents validés des produits BORÉALE. Conclusion de travail : un simple plaid générique devra justifier son prix par une qualité et un service vérifiables. Les compteurs « vendus »/avis des vendeurs ne prouvent ni une demande française, ni des ventes futures, ni une marge.
+
+## Intégration à la boutique
+
+Les trois anciens dossiers sont déjà liés à trois produits privés inactifs. Ces nouvelles pistes restent dans [le registre de qualification](../sourcing/qualification-20261116.json), **sans import en base** : pas de fournisseur connecté, variante/stock généré, image copiée ou publication. L’activation exigera référence fournisseur exacte, preuve datée, coût complet, disponibilité/destination/retours, conformité et parcours de commande testé.
+
+L’utilisateur a autorisé exactement trois demandes non engageantes : Fuying, Haining Jinhu et Wordans. **Wordans envoyé** via Gmail, identifiant `1a1e2b5102560167`, label `SENT`. Le chef a revérifié les métadonnées : destinataire `ventes@wordans.fr`, objet relatif au BF280R ; aucun nouvel envoi. Réception, lecture et réponse restent non confirmées.
+
+Les deux demandes Alibaba restent **non envoyées, en attente d’authentification**. Les boutiques sont reliées aux boutons « Contact Supplier » des pages société primaires ci-dessus. Le chef a observé que le contact officiel Fuying redirige vers `login.alibaba.com` et demande « Sign in / create account » ; la connexion utilisateur a été demandée. Cette observation porte sur Fuying, sans prétendre à un second test d’authentification distinct chez Haining Jinhu. Aucun envoi par un autre canal, aucune commande, réservation ou paiement. [Textes et suivi des demandes](BOREALE_QUALIFICATION_RFQS_20261116.md).

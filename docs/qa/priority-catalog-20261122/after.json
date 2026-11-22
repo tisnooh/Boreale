@@ -1,0 +1,10 @@
+{
+  "phase": "after",
+  "baseline": "Working tree before merchandising edits; other agents may already have changed catalog data",
+  "physicalDevices": false,
+  "checks": [],
+  "screenshots": [],
+  "pageErrors": [],
+  "status": "BLOCKED",
+  "error": "Browser deadline exceeded"
+}

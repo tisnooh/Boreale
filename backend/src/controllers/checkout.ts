@@ -11,12 +11,36 @@ import { computeDiscountCents, type DiscountSpec } from '../services/pricing.js'
 import { toOrderDTO } from '../services/orders.js';
 import type { AuthedRequest } from '../middleware/auth.js';
 import { buildDefaultWebhookDeps, handleWebhookEvent } from '../services/webhooks.js';
-import { catalogRepo } from '../repositories/catalog.js';
+import { verifyCheckoutSession } from '../services/checkout-verification.js';
+import { ensureStripeEnvironment } from '../lib/stripe-environment.js';
+import { isOrderEmailSenderValid } from '../services/order-notifications.js';
 
 export const checkoutController = {
   /** POST /api/stripe/checkout — creates a pending order + Stripe Checkout Session. */
   createCheckout: asyncHandler(async (req: AuthedRequest, res: Response) => {
-    const result = await createCheckout(req.body);
+    const settings = config();
+    if (settings.CHECKOUT_ENABLED !== 'true') {
+      throw AppError.serviceUnavailable('checkout_closed', 'Les commandes ne sont pas encore ouvertes.');
+    }
+    if (!features.database() || !features.stripe() || !features.stripeWebhook()) {
+      throw AppError.serviceUnavailable('checkout_dependencies_unavailable', 'Le paiement et sa confirmation sécurisée ne sont pas encore configurés.');
+    }
+    if (settings.STRIPE_MODE === 'live') {
+      if (settings.LIVE_CHECKOUT_APPROVED !== 'true') {
+        throw AppError.serviceUnavailable('checkout_live_not_approved', 'Les paiements réels ne sont pas encore ouverts.');
+      }
+      if (settings.ORDER_EMAIL_MODE !== 'live' || !features.email() || !isOrderEmailSenderValid(settings.EMAIL_FROM)) {
+        throw AppError.serviceUnavailable('checkout_email_unavailable', 'Les confirmations de commande ne sont pas encore disponibles.');
+      }
+    }
+    if (!req.body.idempotencyKey || !['guest', 'customer'].includes(req.body.customerMode)) {
+      throw AppError.badRequest('checkout_attempt_required', 'Rechargez le panier avant de reprendre votre paiement.');
+    }
+    if ((req.body.customerMode === 'customer') !== Boolean(req.user)) {
+      throw AppError.unauthorized('checkout_identity_changed', 'Votre session a changé. Reconnectez-vous avant de reprendre le paiement.');
+    }
+    await ensureStripeEnvironment();
+    const result = await createCheckout(req.body, undefined, req.user?.sub ?? null);
     // If a logged-in user checks out, remember their cart may convert: mark abandoned carts
     res.status(201).json({
       data: { url: result.url, orderId: result.orderId, orderNumber: result.orderNumber, totals: result.totals },
@@ -25,19 +49,10 @@ export const checkoutController = {
 
   /** GET /api/stripe/session/:id — success-page verification (no secrets exposed). */
   getSession: asyncHandler(async (req: Request, res: Response) => {
-    const session = await stripe().checkout.sessions.retrieve(req.params.id!);
-    const meta = session.metadata ?? {};
-    res.json({
-      data: {
-        paymentStatus: session.payment_status,
-        status: session.status,
-        amountTotal: session.amount_total,
-        currency: session.currency,
-        customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
-        orderNumber: meta.orderNumber ?? null,
-        orderId: meta.orderId ?? null,
-      },
-    });
+    const environment = await ensureStripeEnvironment();
+    const session = await stripe().checkout.sessions.retrieve(req.params.id!, { timeout: 10000, maxNetworkRetries: 0 });
+    if (session.livemode !== environment.livemode) throw AppError.conflict('stripe_session_mode_mismatch', 'La session ne correspond pas à l’environnement de paiement.');
+    res.json({ data: await verifyCheckoutSession(session) });
   }),
 
   /** POST /api/discounts/validate — live feedback in the cart. */
@@ -85,11 +100,12 @@ export const checkoutController = {
       logger.warn('webhook_signature_invalid', { err: err instanceof Error ? err.message : String(err) });
       throw AppError.badRequest('invalid_signature', 'Signature de webhook invalide.');
     }
+    const environment = await ensureStripeEnvironment();
+    if (event.livemode !== environment.livemode || (event.account && event.account !== environment.accountId)) {
+      throw AppError.conflict('stripe_event_scope_mismatch', 'L’événement ne correspond pas au compte et au mode attendus.');
+    }
     const deps = buildDefaultWebhookDeps({
       ordersRepo: ordersRepo as never,
-      catalogRepo: catalogRepo as never,
-      discountsRepo: discountsRepo as never,
-      abandonedCartsRepo: abandonedCartsRepo as never,
     });
     await handleWebhookEvent(event as never, deps);
     res.json({ received: true });
@@ -110,7 +126,8 @@ export const ordersController = {
     const order = await ordersRepo.getById(req.params.id!);
     if (!order) throw AppError.notFound('order_not_found', 'Commande introuvable.');
     const isAdmin = Boolean(req.admin);
-    const isOwner = req.user && (order.user_id === req.user.sub || order.email === req.user.email);
+    // Email ownership is not verified by registration: only the persisted user ID grants access.
+    const isOwner = req.user && order.user_id === req.user.sub;
     if (!isAdmin && !isOwner) throw AppError.forbidden('not_your_order', 'Cette commande ne vous appartient pas.');
     res.json({ data: toOrderDTO(order) });
   }),
@@ -118,11 +135,8 @@ export const ordersController = {
   /** GET /api/me/orders — orders of the authenticated user. */
   myOrders: asyncHandler(async (req: AuthedRequest, res: Response) => {
     const orders = await ordersRepo.listByUserId(req.user!.sub);
-    // Also include guest orders placed with the same email before account creation
-    const byEmail = await ordersRepo.listByEmail(req.user!.email);
-    const seen = new Set(orders.map((o) => o.id));
-    const merged = [...orders, ...byEmail.filter((o) => !seen.has(o.id))];
-    merged.sort((a, b) => b.placed_at.localeCompare(a.placed_at));
-    res.json({ data: merged.map(toOrderDTO) });
+    // Guest orders require a future verified claim flow, never an email-string match.
+    orders.sort((a, b) => b.placed_at.localeCompare(a.placed_at));
+    res.json({ data: orders.map(toOrderDTO) });
   }),
 };

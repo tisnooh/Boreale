@@ -15,29 +15,50 @@ export function CartDrawer() {
   const panelRef = useRef<HTMLDivElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
 
-  // Accessibilité : focus entrant sur le panneau, restoration à la fermeture
-  useEffect(() => {
-    if (drawerOpen) {
-      lastFocused.current = document.activeElement as HTMLElement;
-      panelRef.current?.focus();
-    } else if (lastFocused.current) {
-      lastFocused.current.focus();
-      lastFocused.current = null;
-    }
-  }, [drawerOpen]);
-
+  // Keep keyboard focus and scrolling inside the open modal, then restore both.
   useEffect(() => {
     if (!drawerOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && closeDrawer();
+    lastFocused.current = document.activeElement as HTMLElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const panel = panelRef.current;
+    panel?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeDrawer();
+      }
+      if (e.key !== 'Tab' || !panel) return;
+      const controls = Array.from(panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter((element) => !element.hidden && getComputedStyle(element).display !== 'none');
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (!first || (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) ||
+          (!e.shiftKey && document.activeElement === last)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first)?.focus();
+      }
+    };
+    const onFocus = (e: FocusEvent) => {
+      if (panel && !panel.contains(e.target as Node)) panel.focus();
+    };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocus);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocus);
+      document.body.style.overflow = previousOverflow;
+      lastFocused.current?.focus();
+      lastFocused.current = null;
+    };
   }, [drawerOpen, closeDrawer]);
 
   const progress = freeShippingProgress(subtotalCents, SHIPPING.standard.freeAboveCents);
   const remaining = SHIPPING.standard.freeAboveCents - subtotalCents;
 
   return (
-    <div className={`fixed inset-0 z-[90] ${drawerOpen ? '' : 'pointer-events-none'}`} aria-hidden={!drawerOpen}>
+    <div className={`fixed inset-0 z-[90] ${drawerOpen ? '' : 'pointer-events-none'}`} aria-hidden={!drawerOpen} inert={!drawerOpen}>
       {/* Overlay */}
       <div
         className={`absolute inset-0 bg-ink/50 transition-opacity duration-300 ${drawerOpen ? 'opacity-100' : 'opacity-0'}`}

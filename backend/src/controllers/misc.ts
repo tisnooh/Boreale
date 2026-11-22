@@ -57,7 +57,7 @@ export const contactController = {
     await contactRepo.create(input);
     const notification = emailTemplates.contactNotification(input);
     if (notification) await sendEmail(notification).catch(() => undefined);
-    res.status(201).json({ ok: true, message: 'Message envoyé. Nous répondons sous 24-48 h ouvrées.' });
+    res.status(201).json({ ok: true, message: 'Votre message a été enregistré.' });
   }),
 };
 

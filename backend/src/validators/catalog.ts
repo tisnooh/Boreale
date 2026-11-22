@@ -46,7 +46,7 @@ const variantInputSchema = z.object({
   weightG: z.number().int().min(0).max(100_000).nullable().optional(),
   stock: z.number().int().min(0).max(1_000_000).optional(),
   lowStockThreshold: z.number().int().min(0).max(10_000).optional(),
-  isActive: z.boolean().optional().default(true),
+  isActive: z.boolean().optional().default(false),
   position: z.number().int().min(0).optional().default(0),
 });
 
@@ -62,7 +62,7 @@ export const productUpsertSchema = z.object({
   description: z.string().trim().min(10).max(5000),
   longDescription: z.string().trim().max(20000).optional().nullable(),
   type: z.enum(['product', 'bundle']).default('product'),
-  isActive: z.boolean().optional().default(true),
+  isActive: z.boolean().optional().default(false),
   isFeatured: z.boolean().optional().default(false),
   imageUrl: z.string().trim().max(500).optional().nullable(),
   images: z.array(z.string().trim().max(500)).max(10).optional().default([]),
@@ -109,13 +109,28 @@ export const discountUpsertSchema = z
     path: ['endsAt'],
   });
 
+const orderState = z.enum(['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'partially_refunded', 'refunded']);
+const trackingUrlSchema = z.string().trim().max(500).refine((value) => {
+  if (!value) return true;
+  try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
+}, 'URL de suivi HTTP(S) invalide.');
 export const orderStatusSchema = z.object({
+  expectedStatus: orderState,
   status: z.enum(['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'partially_refunded', 'refunded']),
   trackingCarrier: z.string().trim().max(80).optional().nullable(),
   trackingNumber: z.string().trim().max(120).optional().nullable(),
-  trackingUrl: z.string().trim().max(500).optional().nullable(),
-  notify: z.boolean().optional().default(true),
+  trackingUrl: trackingUrlSchema.optional().nullable(),
+  notify: z.boolean().optional().default(false),
 });
+
+export const orderTrackingSchema = z.object({
+  expectedStatus: orderState,
+  expectedTracking: z.object({ carrier: z.string().nullable(), number: z.string().nullable(), url: z.string().nullable() }),
+  trackingCarrier: z.string().trim().min(1).max(80),
+  trackingNumber: z.string().trim().min(1).max(120),
+  trackingUrl: trackingUrlSchema.nullable(),
+});
+export const orderNoteSchema = z.object({ note: z.string().trim().min(1).max(2000) });
 
 export const refundSchema = z.object({
   amountCents: z.number().int().min(1).max(100_000_00).optional(), // undefined = full refund
@@ -150,4 +165,5 @@ export const adminListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
   q: z.string().trim().max(160).optional(),
   status: z.string().trim().max(40).optional(),
+  fulfillmentStatus: z.enum(['pending', 'ready', 'blocked']).optional(),
 });

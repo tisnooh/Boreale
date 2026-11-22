@@ -1,0 +1,56 @@
+{
+  "observedAt": "2026-11-16",
+  "status": "unapproved_research_only",
+  "documentReview": { "reviewedBy": "root", "reviewedAt": "2026-11-16", "status": "accepted_as_provisional_research", "productSaleApproval": false },
+  "databaseImported": false,
+  "qualificationRequests": {
+    "authorisedSuppliers": ["Shenzhen Fuying Gifts Co., Ltd.", "Haining Jinhu Sport Socks Co., Ltd.", "Wordans"],
+    "authorisedCount": 3,
+    "purchaseAuthorised": false,
+    "wordans": { "status": "sent", "channel": "Gmail", "messageId": "1a1e2b5102560167", "label": "SENT", "recipient": "ventes@wordans.fr", "subjectReference": "BF280R", "metadataReverifiedBy": "root", "metadataReverifiedAt": "2026-11-16", "additionalSendPerformed": false, "receiptConfirmed": false, "replyConfirmed": false },
+    "alibaba": { "suppliers": ["Shenzhen Fuying Gifts Co., Ltd.", "Haining Jinhu Sport Socks Co., Ltd."], "status": "not_sent_authentication_pending", "authenticationObservation": { "observedBy": "root", "observedAt": "2026-11-16", "testedSupplier": "Shenzhen Fuying Gifts Co., Ltd.", "redirectHost": "login.alibaba.com", "prompt": "Sign in / create account", "hainingSeparateAuthenticationTestConfirmed": false }, "userLoginRequested": true, "alternativeChannelSendPerformed": false }
+  },
+  "candidates": [
+    {
+      "candidateKey": "BOR-QUAL-20261116-01",
+      "supplier": "Wordans",
+      "sourceProductId": "517040",
+      "supplierReference": "BF280R",
+      "sourceUrl": "https://www.wordans.fr/beechfield-bf280r-cache-cou-polaire-en-polyester-recycle-517040",
+      "observations": { "currency": "EUR", "taxIncluded": true, "priceTier1to7": 4.72, "categoryStartingPrice": 1.5, "detailStartingPrice": 2.95, "stockCounter": 698, "stockCounterContext": "Stock dans 30 jours; availability not verified" },
+      "shippingObservation": { "sourceUrl": "https://www.wordans.fr/informations-de-livraison", "observedAt": "2026-11-16", "warehouse": "W1 FR Pluguffan", "displayedTransportHours": [24, 48], "additionalProcessingBusinessDays": [1, 2], "customisedAdditionalProcessingBusinessDays": [5, 10], "deliveryConfirmed": false },
+      "confirmedStock": null,
+      "confirmedLandedCost": null,
+      "approvedRetailPrice": null,
+      "contributionMargin": null,
+      "sellable": false
+    },
+    {
+      "candidateKey": "BOR-QUAL-20261116-02",
+      "supplier": "Shenzhen Fuying Gifts Co., Ltd.",
+      "sourceProductId": "1601588927352",
+      "sourceUrl": "https://www.alibaba.com/product-detail/MOQ-1-Custom-Winter-Warm-Cozy_1601588927352.html",
+      "evidenceUrl": "https://www.alibaba.com/category/throws_100000407.html",
+      "observations": { "currency": "USD", "displayedMinPrice": 3, "displayedMaxPrice": 4.5, "displayedMinimumQuantity": 1, "unit": "piece", "evidence": "exact directory link resolved on 2026-11-16; detail unreadable; variants unverified" },
+      "supplierPageObservation": { "sourceUrl": "https://suppliers.alibaba.com/shenzhen-fuying-gifts-co-ltd_2212495395080", "observedAt": "2026-11-16", "displayedGenericMinimumQuantity": 100, "minimumQuantityScope": "units per model in company FAQ; applicability to this item unknown", "minimumQuantityConflict": true, "onsiteReportId": "477618216_T", "onsiteReportExpiresAt": "2026-11-10", "onsiteReportExpiredAtObservation": true, "productComplianceConfirmed": false },
+      "confirmedStock": null,
+      "confirmedLandedCost": null,
+      "approvedRetailPrice": null,
+      "contributionMargin": null,
+      "sellable": false
+    },
+    {
+      "candidateKey": "BOR-QUAL-20261116-03",
+      "supplier": "Zhuji Tms Import & Export Co., Ltd.",
+      "sourceProductId": "1601304235838",
+      "sourceUrl": "https://www.alibaba.com/product-detail/Warm-Winter-Women-s-Fluffy-Crew_1601304235838.html",
+      "evidenceUrl": "https://www.alibaba.com/category/Socks-Hosiery_201754603.html",
+      "observations": { "currency": "USD", "displayedMinPrice": 0.8, "displayedMaxPrice": 0.92, "displayedMinimumQuantity": 10, "unit": "pairs", "evidence": "exact directory link resolved on 2026-11-16; detail unreadable; variants unverified" },
+      "confirmedStock": null,
+      "confirmedLandedCost": null,
+      "approvedRetailPrice": null,
+      "contributionMargin": null,
+      "sellable": false
+    }
+  ]
+}

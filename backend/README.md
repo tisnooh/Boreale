@@ -3,6 +3,33 @@
 API e-commerce serverless : Express sur Vercel Functions + Supabase (Postgres + RLS) + Stripe + Resend. Application **indépendante** : projet Vercel n°2 avec `Root Directory = backend`.
 
 ## Démarrage local
+
+Le projet Boréale créé utilise Supabase Auth (`AUTH_PROVIDER=supabase`) et le bootstrap séparé
+`supabase/bootstrap/migrations/20261113193043_boreale_initial_auth.sql`. Ne pas lui appliquer
+en plus la chaîne legacy ni son seed. Les accès locaux sont dans `.env.local`, ignoré par Git.
+`npm run dev` et `npm start` chargent ce fichier avant l'application (Node20.12+ requis pour
+ce chargement natif) ; les variables déjà définies par l'environnement gardent priorité.
+
+Recettes réelles sans email ni paiement :
+
+```bash
+node --env-file=.env.local scripts/verify-supabase-bootstrap.mjs
+# Avec npm start actif dans un autre terminal :
+node --env-file=.env.local scripts/verify-boreale-auth-http.mjs
+```
+
+Ces scripts sont limités à la référence Boréale et créent puis suppriment uniquement leurs
+comptes QA identifiés. Ils ne constituent pas un test de commande Stripe ou de fulfillment.
+
+La migration additive suivante est `supabase/bootstrap/migrations/20261114033519_boreale_order_payment_atomic.sql`,
+appliquée au même projet après revue. Elle ajoute les RPC commande/règlement/annulation et les journaux privés.
+La recette `node --env-file=.env.local scripts/verify-order-transactions.mjs` utilise des produits inactifs et
+des événements de paiement **synthétiques**. Elle laisse un fichier SQL de nettoyage hors dépôt : son exécution
+par un administrateur est obligatoire après chaque run, car les journaux sont volontairement sans droit DELETE
+pour le backend. Ne pas lancer cette recette sans prendre en charge ce nettoyage. Le contrôle SQL
+`scripts/verify-create-order-rollback.sql` ne laisse aucune ligne et peut avancer la séquence de numérotation.
+Voir `../docs/BOREALE_TRANSACTION_DELIVERY.md` pour les preuves et limites.
+
 ```bash
 cp .env.example .env.local
 # renseigner au minimum : SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET, FRONTEND_URL
@@ -22,6 +49,56 @@ configuré ou manquant, et les endpoints dépendants renvoient `503 service non 
 (jamais de faux succès).
 
 ## Scripts
+### Préparation Supabase Auth (opt-in, non activée par défaut)
+
+`AUTH_PROVIDER=supabase` et `SUPABASE_PUBLISHABLE_KEY` activent les comptes clients Supabase
+avec un client public séparé par opération. Le mode `legacy` demeure le défaut ; les admins
+ne sont pas migrés. Aucun JWT client maison n’est accepté en mode Supabase.
+
+L’accès est vérifié par `getUser` côté serveur. Access token et refresh token restent dans
+des cookies httpOnly ; le refresh est borné à `/api/auth`. `POST /api/auth/refresh` effectue
+la rotation explicite : `frontend/lib/api.ts` l’appelle après un 401 sur `/api/me`, ses sous-routes
+et les détails `/api/orders/:id`, puis rejoue une seule fois. Les refresh concurrents et les
+401 tardifs sont dédupliqués. Les routes admin/auth, le suivi invité et le checkout ne sont
+pas rejoués. Aucun retry réseau/5xx ; un refresh refusé exige une reconnexion. Les tests
+mockés ne remplacent pas la validation navigateur et prestataire réels.
+
+Si la confirmation email est requise, une inscription sans session renvoie
+`email_confirmation_required` ; elle ne crée pas une connexion fictive.
+Le logout efface toujours les cookies et expose `remoteRevoked:false` si la révocation
+distante n’a pas pu être confirmée. Les access tokens déjà émis peuvent rester valides
+jusqu’à expiration : ne pas revendiquer une invalidation JWT instantanée.
+
+La table `profiles` du schéma historique référence `public.users`, pas `auth.users`.
+Le mode Supabase requiert le nouveau schéma compatible `profiles.user_id → auth.users.id`,
+un profil initialisé par le trigger Auth validé et des politiques SELECT/UPDATE propriétaire
+avec contrôle `USING` et `WITH CHECK`. Le rôle `authenticated` doit pouvoir lire les colonnes
+profil et modifier uniquement prénom, nom, téléphone et préférence marketing.
+
+`GET/PATCH /api/me` utilise un client Data API séparé par opération, avec la clé publishable
+et le JWT du client vérifié côté serveur ; aucune clé service-role n’intervient pour le profil.
+Chaque requête filtre `user_id` sur l’identité validée. Le payload ne peut changer ni
+propriétaire ni rôle. Les noms et préférences de `/api/me` viennent du profil en base,
+pas d’un fallback silencieux aux métadonnées. Les réponses d’inscription avec session,
+de connexion et de refresh relisent également ce profil avec le nouveau JWT : un changement
+de nom ou de préférence n’est pas annulé visuellement par d’anciennes métadonnées Auth.
+Un profil absent, un schéma incompatible,
+une erreur RLS ou un UPDATE ne renvoyant aucune ligne donne `profile_unavailable` (503),
+jamais un faux succès. Une session Auth créée ou renouvelée dont le profil est indisponible
+n’est pas annoncée comme connectée ; après échec du refresh, les cookies sont effacés et
+une reconnexion sera nécessaire. Aucun upsert ni utilisateur legacy artificiel n’est créé.
+
+Cette préparation locale n’applique aucune migration distante ; la recette DB/RLS réelle
+reste nécessaire après revue et application du schéma initial. Ne pas activer ces routes
+sur une base legacy sans migration étudiée ni présenter les tests mockés comme preuve RLS.
+
+Contrats consultés : [signUp](https://supabase.com/docs/reference/javascript/auth-signup),
+[getUser](https://supabase.com/docs/reference/javascript/auth-getuser),
+[refreshSession](https://supabase.com/docs/reference/javascript/auth-refreshsession),
+[signOut](https://supabase.com/docs/reference/javascript/auth-signout).
+Profils/RLS : [gestion des utilisateurs](https://supabase.com/docs/guides/auth/managing-user-data),
+[Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security).
+
 | Script | Rôle |
 |---|---|
 | `npm run dev` | serveur local (port 4000) |

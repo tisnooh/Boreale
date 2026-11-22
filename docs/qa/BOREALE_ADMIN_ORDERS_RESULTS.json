@@ -1,0 +1,315 @@
+{
+  "scope": "Real private QA admin login, database and loopback API. Populated browser orders explicitly simulated.",
+  "realPaymentTested": false,
+  "checks": [
+    {
+      "name": "anonymous_orders_denied",
+      "passed": true
+    },
+    {
+      "name": "wrong_password_denied",
+      "passed": true
+    },
+    {
+      "name": "real_temporary_admin_login_sets_httponly_cookie",
+      "passed": true
+    },
+    {
+      "name": "real_admin_identity",
+      "passed": true
+    },
+    {
+      "name": "real_empty_orders_no_fabrication",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_%",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses__",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_*",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_\\",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_x),email.neq.x",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_\"",
+      "passed": true
+    },
+    {
+      "name": "literal_search_parses_[]()^$.+?{}|",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_%",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search__",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_*",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_\\",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_\"",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_[]()^$.+?{}|",
+      "passed": true
+    },
+    {
+      "name": "real_postgrest_literal_search_control",
+      "passed": true
+    },
+    {
+      "name": "unknown_order_404",
+      "passed": true
+    },
+    {
+      "name": "real_zero_dashboard_and_operations",
+      "passed": true
+    },
+    {
+      "name": "unsafe_refund_unavailable",
+      "passed": true
+    },
+    {
+      "name": "anonymous_mutation_denied",
+      "passed": true
+    },
+    {
+      "name": "real_dashboard_320_fits",
+      "passed": true
+    },
+    {
+      "name": "real_empty_orders_320_fits",
+      "passed": true
+    },
+    {
+      "name": "real_search_controls_320_visible",
+      "passed": true
+    },
+    {
+      "name": "real_search_button_320_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_list_failure_320_honest",
+      "passed": true
+    },
+    {
+      "name": "real_list_retry_320_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_populated_list_320_fits",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_320_long_fields_fit",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_320_financial_statuses_absent",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_failure_320_preserves_text",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_320_history",
+      "passed": true
+    },
+    {
+      "name": "simulated_preparation_320_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_shipping_320_tracking",
+      "passed": true
+    },
+    {
+      "name": "simulated_tracking_enter_320_does_not_deliver",
+      "passed": true
+    },
+    {
+      "name": "simulated_delivery_320_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_blocked_320_cannot_advance",
+      "passed": true
+    },
+    {
+      "name": "public_preview_banner_320_fits",
+      "passed": true
+    },
+    {
+      "name": "real_dashboard_768_fits",
+      "passed": true
+    },
+    {
+      "name": "real_empty_orders_768_fits",
+      "passed": true
+    },
+    {
+      "name": "real_search_controls_768_visible",
+      "passed": true
+    },
+    {
+      "name": "real_search_button_768_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_list_failure_768_honest",
+      "passed": true
+    },
+    {
+      "name": "real_list_retry_768_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_populated_list_768_fits",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_768_long_fields_fit",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_768_financial_statuses_absent",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_failure_768_preserves_text",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_768_history",
+      "passed": true
+    },
+    {
+      "name": "simulated_preparation_768_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_shipping_768_tracking",
+      "passed": true
+    },
+    {
+      "name": "simulated_tracking_enter_768_does_not_deliver",
+      "passed": true
+    },
+    {
+      "name": "simulated_delivery_768_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_blocked_768_cannot_advance",
+      "passed": true
+    },
+    {
+      "name": "public_preview_banner_768_fits",
+      "passed": true
+    },
+    {
+      "name": "real_dashboard_1440_fits",
+      "passed": true
+    },
+    {
+      "name": "real_empty_orders_1440_fits",
+      "passed": true
+    },
+    {
+      "name": "real_search_controls_1440_visible",
+      "passed": true
+    },
+    {
+      "name": "real_search_button_1440_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_list_failure_1440_honest",
+      "passed": true
+    },
+    {
+      "name": "real_list_retry_1440_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_populated_list_1440_fits",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_1440_long_fields_fit",
+      "passed": true
+    },
+    {
+      "name": "simulated_detail_1440_financial_statuses_absent",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_failure_1440_preserves_text",
+      "passed": true
+    },
+    {
+      "name": "simulated_note_1440_history",
+      "passed": true
+    },
+    {
+      "name": "simulated_preparation_1440_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_shipping_1440_tracking",
+      "passed": true
+    },
+    {
+      "name": "simulated_tracking_enter_1440_does_not_deliver",
+      "passed": true
+    },
+    {
+      "name": "simulated_delivery_1440_works",
+      "passed": true
+    },
+    {
+      "name": "simulated_blocked_1440_cannot_advance",
+      "passed": true
+    },
+    {
+      "name": "public_preview_banner_1440_fits",
+      "passed": true
+    },
+    {
+      "name": "browser_no_runtime_exceptions",
+      "passed": true
+    },
+    {
+      "name": "deactivated_admin_session_revoked_immediately",
+      "passed": true
+    },
+    {
+      "name": "temporary_admin_removed",
+      "passed": true
+    }
+  ],
+  "pageErrors": []
+}

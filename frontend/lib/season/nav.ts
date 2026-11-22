@@ -26,7 +26,7 @@ export function getSeasonFooterLinks(season: ShopSeason): { href: string; label:
   }
   return [
     { href: '/collections', label: 'Toute la collection' },
-    { href: '/collections#packs', label: 'Packs & bundles' },
+    { href: '/#selection', label: 'La sélection hiver' },
     { href: '/track-order', label: 'Suivre ma commande' },
   ];
 }

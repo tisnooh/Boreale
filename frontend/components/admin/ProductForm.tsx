@@ -50,9 +50,9 @@ interface ProductFormState {
 
 const EMPTY: ProductFormState = {
   slug: '', name: '', subtitle: '', description: '', longDescription: '', type: 'product',
-  isActive: true, isFeatured: false, imageUrl: '', badge: '', tagsText: '', seoTitle: '',
+  isActive: false, isFeatured: false, imageUrl: '', badge: '', tagsText: '', seoTitle: '',
   seoDescription: '', position: '0', categories: [],
-  variants: [{ sku: '', title: 'Taille unique', optionsText: '', price: '', compareAt: '', weightG: '300', stock: '0', lowStockThreshold: '5', isActive: true }],
+  variants: [{ sku: '', title: '', optionsText: '', price: '', compareAt: '', weightG: '', stock: '', lowStockThreshold: '5', isActive: false }],
   bundleItems: [],
 };
 
@@ -79,6 +79,7 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [loading, setLoading] = useState(Boolean(productId));
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [sourceCandidateKey, setSourceCandidateKey] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -91,6 +92,10 @@ export function ProductForm({ productId }: { productId?: string }) {
           const res = await api.get<{ data: Record<string, never>[] }>('/api/admin/products');
           const p = res.data.find((x) => x.id === productId) as Record<string, unknown> | undefined;
           if (!p) throw new Error('not found');
+          if (typeof p.source_candidate_key === 'string' && p.source_candidate_key) {
+            setSourceCandidateKey(p.source_candidate_key);
+            return;
+          }
           const variants = (p.product_variants as Record<string, unknown>[]) ?? [];
           setForm({
             slug: String(p.slug ?? ''),
@@ -118,7 +123,7 @@ export function ProductForm({ productId }: { productId?: string }) {
                 price: String(((v.price_cents as number) / 100).toFixed(2)),
                 compareAt: v.compare_at_price_cents ? String(((v.compare_at_price_cents as number) / 100).toFixed(2)) : '',
                 weightG: v.weight_g != null ? String(v.weight_g) : '',
-                stock: inv ? String(inv.quantity ?? 0) : '0',
+                stock: inv?.quantity != null ? String(inv.quantity) : '',
                 lowStockThreshold: inv ? String(inv.low_stock_threshold ?? 5) : '5',
                 isActive: Boolean(v.is_active),
               };
@@ -150,6 +155,7 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (sourceCandidateKey) return;
     setErrors([]);
     setSaving(true);
     const payload = {
@@ -179,10 +185,10 @@ export function ProductForm({ productId }: { productId?: string }) {
           sku: v.sku.trim().toUpperCase(),
           title: v.title.trim(),
           options: parseOptions(v.optionsText),
-          priceCents: price ?? 0,
+          priceCents: price,
           compareAtPriceCents: eurosToCents(v.compareAt),
           weightG: v.weightG ? parseInt(v.weightG, 10) : null,
-          stock: parseInt(v.stock, 10) || 0,
+          ...(v.stock.trim() ? { stock: parseInt(v.stock, 10) } : {}),
           lowStockThreshold: parseInt(v.lowStockThreshold, 10) || 5,
           isActive: v.isActive,
           position: 0,
@@ -212,6 +218,14 @@ export function ProductForm({ productId }: { productId?: string }) {
   }
 
   if (loading) return <Spinner label="Chargement du produit…" />;
+
+  if (sourceCandidateKey) return (
+    <section className="card space-y-4 p-6">
+      <h1 className="font-display text-2xl font-semibold">Brouillon fournisseur — non vendable</h1>
+      <p>Les données fournisseur restent non vérifiées. Consultez et modifiez les métadonnées dans le dossier sourcing.</p>
+      <Link href={`/admin/sourcing/${encodeURIComponent(sourceCandidateKey)}`} className="btn-outline btn-sm">Ouvrir le dossier {sourceCandidateKey}</Link>
+    </section>
+  );
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-6">
@@ -298,7 +312,7 @@ export function ProductForm({ productId }: { productId?: string }) {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold">Variantes, prix & stocks *</h2>
           <button type="button" className="btn-outline btn-sm"
-            onClick={() => set('variants', [...form.variants, { sku: '', title: '', optionsText: '', price: '', compareAt: '', weightG: '300', stock: '0', lowStockThreshold: '5', isActive: true }])}>
+            onClick={() => set('variants', [...form.variants, { sku: '', title: '', optionsText: '', price: '', compareAt: '', weightG: '', stock: '', lowStockThreshold: '5', isActive: false }])}>
             + Ajouter une variante
           </button>
         </div>

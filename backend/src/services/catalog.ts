@@ -141,7 +141,7 @@ export const catalogService = {
   async listProducts(query: ProductListQuery): Promise<Paginated<ProductDTO>> {
     const all = await catalogRepo.listActiveProducts();
     const filtered = sortProducts(
-      all.filter((p) => matchesQuery(p, query)),
+      all.filter((p) => p.is_active && p.procurement_status === 'verified' && matchesQuery(p, query)),
       query.sort
     );
     const total = filtered.length;
@@ -152,14 +152,14 @@ export const catalogService = {
 
   async getProduct(slug: string): Promise<ProductDTO | null> {
     const p = await catalogRepo.getProductBySlug(slug);
-    if (!p || !p.is_active) return null;
+    if (!p || !p.is_active || p.procurement_status !== 'verified') return null;
     const detail = toProductDetailDTO(p);
     // Related: same first category, excluding self, in stock first, max 4
     const cats = extractCategories(p).map((c) => c.slug);
     if (cats.length > 0) {
       const all = await catalogRepo.listActiveProducts();
       detail.related = all
-        .filter((o) => o.id !== p.id && extractCategories(o).some((c) => cats.includes(c.slug)))
+        .filter((o) => o.is_active && o.procurement_status === 'verified' && o.id !== p.id && extractCategories(o).some((c) => cats.includes(c.slug)))
         .sort((a, b) => Number(toProductDTO(b).inStock) - Number(toProductDTO(a).inStock))
         .slice(0, 4)
         .map(toProductDTO);
@@ -173,13 +173,13 @@ export const catalogService = {
     const [allCategories, products] = await Promise.all([catalogRepo.listCategories(), catalogRepo.listActiveProducts()]);
     const categories = season ? allCategories.filter((c) => (c.season ?? 'winter') === season || (c.season ?? 'winter') === 'all-season') : allCategories;
     return categories.map((c) => {
-      const count = products.filter((p) => p.type === 'product' && extractCategories(p).some((cat) => cat.slug === c.slug)).length;
+      const count = products.filter((p) => p.is_active && p.procurement_status === 'verified' && p.type === 'product' && extractCategories(p).some((cat) => cat.slug === c.slug)).length;
       return toCategoryDTO(c, count);
     });
   },
 
   async listBundles(): Promise<ProductDTO[]> {
     const all = await catalogRepo.listActiveProducts();
-    return all.filter((p) => p.type === 'bundle').map(toProductDetailDTO);
+    return all.filter((p) => p.is_active && p.procurement_status === 'verified' && p.type === 'bundle').map(toProductDetailDTO);
   },
 };

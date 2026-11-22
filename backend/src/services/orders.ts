@@ -1,3 +1,4 @@
+import { safeTrackingUrl } from './admin-orders.js';
 import type { DbOrder, DbOrderItem, OrderDTO, OrderStatus } from '../types/index.js';
 
 export const PAID_STATUSES: OrderStatus[] = ['paid', 'processing', 'shipped', 'delivered', 'partially_refunded', 'refunded'];
@@ -38,6 +39,7 @@ export function toOrderDTO(row: DbOrder & { order_items?: DbOrderItem[] }): Orde
     number: row.number,
     email: row.email,
     status: row.status,
+    fulfillmentStatus: row.fulfillment_status ?? 'pending',
     currency: row.currency,
     subtotalCents: row.subtotal_cents,
     discountCents: row.discount_cents,
@@ -55,7 +57,7 @@ export function toOrderDTO(row: DbOrder & { order_items?: DbOrderItem[] }): Orde
       totalCents: it.total_cents,
       imageUrl: it.image_url,
     })),
-    tracking: { carrier: row.tracking_carrier, number: row.tracking_number, url: row.tracking_url },
+    tracking: { carrier: row.tracking_carrier, number: row.tracking_number, url: safeTrackingUrl(row.tracking_url) },
     placedAt: row.placed_at,
     paidAt: row.paid_at,
     shippedAt: row.shipped_at,

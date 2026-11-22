@@ -1,37 +1,28 @@
 import type { HomepageSettings } from './types';
 
-/**
- * Copie locale EXACTE des valeurs par défaut du backend (backend/src/services/settings.ts).
- * Utilisée seulement quand l'API est injoignable (dev/build sans backend) pour que la
- * homepage reste cohérente. Les slugs de produits pointent vers le catalogue seed ; si le
- * backend est hors ligne, les grilles produits sont simplement masquées (voir app/page.tsx).
- */
+/** Honest local editorial defaults; never a supplier, price or delivery promise. */
 export const HOMEPAGE_FALLBACK: HomepageSettings = {
   announcementBar: null,
   hero: {
-    eyebrow: 'Collection Hiver',
-    title: 'L’hiver, du bon côté.',
-    subtitle:
-      'Des essentiels chauds, beaux et durables pour affronter le froid — sélectionnés et testés, expédiés depuis la France.',
-    ctaLabel: 'Découvrir la collection',
-    ctaHref: '/collections',
-    secondaryCtaLabel: 'Voir les packs',
-    secondaryCtaHref: '/collections#packs',
+    eyebrow: 'Collection Hiver', title: 'L’hiver, du bon côté.',
+    subtitle: 'Une sélection courte pour les mains, les pieds et les moments chez soi. Cinq essentiels en préparation, dans des teintes sobres.',
+    ctaLabel: 'Découvrir la collection', ctaHref: '/collections',
+    secondaryCtaLabel: 'Notre sélection', secondaryCtaHref: '/#selection',
     image: '/images/hero-hiver.jpg',
   },
   benefits: [
-    { icon: 'truck', title: 'Expédition France', text: 'Préparé et expédié depuis la France sous 24-48 h ouvrées.' },
-    { icon: 'shield', title: 'Paiement sécurisé', text: 'Stripe — cartes bancaires, Apple Pay, Google Pay.' },
-    { icon: 'return', title: 'Retours 30 jours', text: 'Un produit ne convient pas ? Retour simple sous 30 jours.' },
-    { icon: 'sparkle', title: 'Sélection testée', text: 'Chaque produit est choisi et essayé avant d’entrer au catalogue.' },
+    { icon: 'sparkle', title: 'Une sélection courte', text: 'Contact, Refuge, Braise et Nuage, complétés par des semelles isolantes.' },
+    { icon: 'shield', title: 'Des références à vérifier', text: 'Les caractéristiques et les modèles sont confirmés avant toute mise en vente.' },
+    { icon: 'truck', title: 'Une livraison à préciser', text: 'Les destinations, frais et délais seront indiqués après validation des fournisseurs.' },
+    { icon: 'return', title: 'Des conditions transparentes', text: 'Les modalités de retour seront précisées avant l’ouverture des ventes.' },
   ],
-  featuredProductSlugs: ['chaussons-bouillotte-foyer', 'housse-pare-brise-sentinelle', 'plaid-sherpa-nid', 'chaussettes-polaires-nuage'],
-  bundleSlugs: ['pack-cocooning', 'pack-grand-froid', 'pack-auto-hiver', 'pack-ski'],
+  featuredProductSlugs: ['gants-tactiles-contact', 'chaussons-fourres-refuge', 'chauffe-mains-reutilisables-braise', 'chaussettes-polaires-nuage', 'semelles-thermiques-isolantes'],
+  bundleSlugs: [],
   faq: [
-    { q: 'Quels sont les délais de livraison ?', a: 'Les commandes sont préparées sous 24-48 h ouvrées depuis la France. Livraison standard : 48-72 h ouvrées (offerte dès 69 €). Express : 24-48 h ouvrées.' },
-    { q: 'Puis-je retourner un article ?', a: 'Oui, vous disposez de 30 jours après réception pour un retour, article non porté et dans son emballage. Remboursement sous 5 jours ouvrés après réception.' },
-    { q: 'Le paiement est-il sécurisé ?', a: 'Les paiements sont traités par Stripe (carte, Apple Pay, Google Pay). Nous ne stockons jamais vos données bancaires.' },
-    { q: 'Comment suivre ma commande ?', a: 'Un email de suivi vous est envoyé à l’expédition. Vous pouvez aussi suivre votre commande via la page Suivi avec votre numéro de commande et votre email.' },
-    { q: 'Les produits chauffants sont-ils électriques ?', a: 'Non : au lancement, nous ne proposons que des produits chauffants sans électricité (bouillottes sèches, chauffe-mains réutilisables, chaussons micro-ondes), plus simples et sûrs à utiliser.' },
+    { q: 'Peut-on déjà commander ?', a: 'La sélection est en préparation. Les produits dont le modèle et les conditions ne sont pas confirmés ne sont pas proposés à la vente.' },
+    { q: 'Quels seront les délais de livraison ?', a: 'Les frais, destinations et délais seront précisés après validation du fournisseur et du mode d’expédition de chaque référence.' },
+    { q: 'Quelles sont les conditions de retour ?', a: 'Les conditions détaillées seront disponibles avant toute ouverture des ventes.' },
+    { q: 'Comment les produits sont-ils choisis ?', a: 'La sélection se concentre sur cinq essentiels sobres. Modèles, matières, variantes, photographies et conditions commerciales restent à vérifier.' },
+    { q: 'La sélection comprend-elle des produits électriques ?', a: 'Les cinq priorités sont recherchées sans batterie ni branchement. Les caractéristiques et consignes de chaque modèle seront vérifiées avant sa mise en vente.' },
   ],
 };

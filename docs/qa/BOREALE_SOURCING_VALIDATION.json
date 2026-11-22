@@ -1,0 +1,54 @@
+{
+  "tests": {
+    "backend": {
+      "passed": 219,
+      "failed": 0
+    },
+    "frontend": {
+      "passed": 119,
+      "failed": 0
+    }
+  },
+  "lint": {
+    "backend": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "frontend": {
+      "errors": 0,
+      "warnings": 24
+    }
+  },
+  "validation": [
+    {
+      "name": "backend-tests",
+      "code": 0
+    },
+    {
+      "name": "frontend-tests",
+      "code": 0
+    },
+    {
+      "name": "backend-lint",
+      "code": 0
+    },
+    {
+      "name": "frontend-lint",
+      "code": 0
+    },
+    {
+      "name": "backend-typecheck",
+      "code": 0
+    },
+    {
+      "name": "frontend-build",
+      "code": 0
+    }
+  ],
+  "realOwnerLoginTested": false,
+  "realPaymentTested": false,
+  "browser": "Chromium emulated desktop1440x900/mobile390x844",
+  "apiChecks": 26,
+  "combinedApiUiChecks": 42,
+  "combinedIncludesApiChecks": true
+}

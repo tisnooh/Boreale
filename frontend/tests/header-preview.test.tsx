@@ -5,6 +5,12 @@ import { PreviewBanner } from '@/components/layout/PreviewBanner';
 import { CartProvider } from '@/hooks/use-cart';
 import { AuthProvider } from '@/hooks/use-auth';
 
+// Navigation tests do not exercise authentication or leave a request in flight.
+vi.mock('@/hooks/use-auth', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => children,
+  useAuth: () => ({ user: null }),
+}));
+
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -43,6 +49,21 @@ describe('Header — navigation mobile', () => {
       expect(href.startsWith('/')).toBe(true);
       expect(href).not.toBe('#');
     }
+  });
+
+  it('réserve le décalage du bandeau et recalcule la hauteur au redimensionnement', () => {
+    const { container, unmount } = renderHeader();
+    const header = container.querySelector('header')!;
+    let top = 56;
+    vi.spyOn(header, 'getBoundingClientRect').mockImplementation(() => ({ top }) as DOMRect);
+    fireEvent.click(screen.getByRole('button', { name: 'Ouvrir le menu' }));
+    expect(header.style.getPropertyValue('--header-offset')).toBe('56px');
+    top = 0;
+    fireEvent.resize(window);
+    expect(header.style.getPropertyValue('--header-offset')).toBe('0px');
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(header.style.getPropertyValue('--header-offset')).toBe('');
+    unmount();
   });
 });
 

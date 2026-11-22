@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
+import jwt from 'jsonwebtoken';
 
 vi.mock('../src/config.js', () => ({
   config: () => ({ JWT_SECRET: 'test-secret', NODE_ENV: 'test' }),
@@ -39,5 +40,14 @@ describe('jwt', () => {
   it('rejette une entrée vide ou du texte', () => {
     expect(verifyToken('')).toBeNull();
     expect(verifyToken('nimporte')).toBeNull();
+  });
+
+  it.each([
+    { sub: {}, email: 'admin@example.invalid', kind: 'admin', role: 'admin' },
+    { sub: 'admin', email: ['admin@example.invalid'], kind: 'admin', role: 'admin' },
+    { sub: 'admin', email: 'admin@example.invalid', kind: 'admin', role: 'owner' },
+    { sub: 'admin', email: 'admin@example.invalid', kind: 'admin' },
+  ])('rejette les identités/rôles malformés %#', (payload) => {
+    expect(verifyToken(jwt.sign(payload, 'test-secret'))).toBeNull();
   });
 });

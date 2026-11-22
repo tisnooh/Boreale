@@ -35,6 +35,10 @@ export function buildMetadata(opts: {
 }
 
 export function productJsonLd(product: ProductDTO, imageUrl: string | null) {
+  if (product.selection) return {
+    '@context': 'https://schema.org', '@type': 'Product', name: product.name,
+    description: product.description,
+  };
   const offers = (product.variants ?? []).map((v) => ({
     '@type': 'Offer' as const,
     sku: v.sku,

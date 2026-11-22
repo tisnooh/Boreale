@@ -19,14 +19,14 @@ export const SHIPPING = {
 export const NAV_COLLECTIONS = [
   { slug: 'confort-textile', name: 'Confort & Textile' },
   { slug: 'chaleur', name: 'Chaleur' },
-  { slug: 'auto-hiver', name: 'Auto Hiver' },
   { slug: 'maison-cocooning', name: 'Maison / Cocooning' },
+  { slug: 'auto-hiver', name: 'Auto Hiver' },
 ] as const;
 
 export const FOOTER_LINKS = {
   boutique: [
     { href: '/collections', label: 'Toute la collection' },
-    { href: '/collections#packs', label: 'Packs & bundles' },
+    { href: '/#selection', label: 'La sélection hiver' },
     { href: '/track-order', label: 'Suivre ma commande' },
   ],
   aide: [

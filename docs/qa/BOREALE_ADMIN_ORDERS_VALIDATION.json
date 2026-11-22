@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-16",
+  "branch": "master/operational-readiness",
+  "globalStages": [
+    {
+      "name": "backend-tests",
+      "code": 0
+    },
+    {
+      "name": "frontend-tests",
+      "code": 0
+    },
+    {
+      "name": "backend-lint",
+      "code": 0
+    },
+    {
+      "name": "frontend-lint",
+      "code": 0
+    },
+    {
+      "name": "backend-typecheck",
+      "code": 0
+    },
+    {
+      "name": "backend-build",
+      "code": 0
+    },
+    {
+      "name": "frontend-build",
+      "code": 0
+    }
+  ],
+  "finalStages": [
+    {
+      "name": "final-backend-lint",
+      "code": 0
+    },
+    {
+      "name": "final-admin-tests",
+      "code": 0
+    },
+    {
+      "name": "final-admin-lint",
+      "code": 0
+    },
+    {
+      "name": "final-frontend-build",
+      "code": 0
+    }
+  ],
+  "globalBackendTests": 242,
+  "globalFrontendTests": 127,
+  "latestBackendSearchTargetedTests": 9,
+  "latestFrontendAdminTargetedTests": 8,
+  "runtime": {
+    "browser": 52,
+    "httpDatabaseAccessCleanup": 25,
+    "populatedOrders": "explicit API simulation",
+    "total": 77,
+    "widths": [
+      320,
+      768,
+      1440
+    ],
+    "failures": 0,
+    "paymentProviderTested": false
+  },
+  "migration": {
+    "version": "20261115233647",
+    "sqlRollbackQA": "PASS",
+    "sha256": "0D75C6CD4D919E79BF46D92118C610614FDD565ED65FDE02B36233931ED5EBC1"
+  },
+  "finalDatabaseCounts": {
+    "orders": 0,
+    "variants": 0,
+    "administrators": 0,
+    "incidents": 0,
+    "notifications": 0,
+    "inventory": 0,
+    "items": 0,
+    "customers": 0,
+    "products": 3,
+    "payments": 0,
+    "events": 0,
+    "activeProducts": 0
+  },
+  "securityAdvisor": {
+    "infoRlsPrivateTables": 19,
+    "publicPoliciesAdded": 0
+  },
+  "frontendLint": {
+    "errors": 0,
+    "warnings": 27
+  },
+  "ownerLoginConfigured": false,
+  "productionDeployed": false
+}

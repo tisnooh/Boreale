@@ -3,13 +3,21 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
+  CHECKOUT_ENABLED: z.enum(['true', 'false']).default('false'),
+  LIVE_CHECKOUT_APPROVED: z.enum(['true', 'false']).default('false'),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
   SUPABASE_URL: z.string().url().optional().or(z.literal('')),
   SUPABASE_ANON_KEY: z.string().optional(),
+  SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
+  AUTH_PROVIDER: z.enum(['legacy', 'supabase']).default('legacy'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_ACCOUNT_ID: z.string().regex(/^acct_[A-Za-z0-9]+$/).optional().or(z.literal('')),
+  STRIPE_MODE: z.enum(['test', 'live']).default('test'),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   EMAIL_API_KEY: z.string().optional(),
+  ORDER_EMAIL_MODE: z.enum(['off', 'test', 'live']).default('off'),
+  ORDER_EMAIL_TEST_RECIPIENTS: z.string().default(''),
   EMAIL_FROM: z.string().default('BORÉALE <bonjour@localhost>'),
   NOTIFY_EMAIL: z.string().optional(),
   JWT_SECRET: z.string().default('dev-only-insecure-secret-change-me'),
@@ -28,6 +36,14 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     throw new Error(`Invalid environment configuration — ${issues}`);
   }
   const env = parsed.data;
+  if (env.NODE_ENV === 'production') {
+    for (const key of ['JWT_SECRET', 'CRON_SECRET'] as const) {
+      if (env[key].trim().length < 32 || env[key].startsWith('dev-')) {
+        throw new Error(`Invalid production configuration: ${key} must be a unique secret of at least 32 characters`);
+      }
+    }
+    if (env.JWT_SECRET === env.CRON_SECRET) throw new Error('JWT_SECRET and CRON_SECRET must be distinct');
+  }
   // Normalize FRONTEND_URL: drop trailing slash
   env.FRONTEND_URL = env.FRONTEND_URL.replace(/\/+$/, '');
   return env;

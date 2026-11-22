@@ -7,12 +7,15 @@ import { api } from '@/lib/api';
 import { formatCents } from '@/lib/format';
 import { Spinner } from '@/components/ui';
 import { CheckIcon } from '@/components/Icons';
+import { completeCheckoutAttempt } from '@/lib/checkout-attempt';
 
 interface SessionInfo {
   paymentStatus: string;
   amountTotal: number | null;
   customerEmail: string | null;
   orderNumber: string | null;
+  paidOrderRecorded?: boolean;
+  fulfillmentStatus?: string | null;
 }
 
 function SuccessContent() {
@@ -28,7 +31,10 @@ function SuccessContent() {
     }
     api
       .get<{ data: SessionInfo }>(`/api/stripe/session/${encodeURIComponent(sessionId)}`)
-      .then((res) => setSession(res.data))
+      .then((res) => {
+        completeCheckoutAttempt(res.data);
+        setSession(res.data);
+      })
       .catch(() => setFailed(true));
   }, [sessionId]);
 
@@ -37,8 +43,8 @@ function SuccessContent() {
       <div className="container-x py-20 text-center">
         <h1 className="font-display text-3xl font-semibold">Page de confirmation</h1>
         <p className="mx-auto mt-3 max-w-md text-sm text-muted">
-          Impossible de vérifier la session de paiement. Si vous avez été débité, votre commande est enregistrée :
-          vous recevrez un email de confirmation. Retrouvez-la aussi via le suivi de commande.
+          Impossible de vérifier le paiement et l’enregistrement de la commande. Si vous avez été débité,
+          ne relancez pas un paiement : contactez le support pour vérification.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href="/track-order" className="btn-primary btn-sm">Suivre une commande</Link>
@@ -57,23 +63,25 @@ function SuccessContent() {
   }
 
   const paid = session.paymentStatus === 'paid';
+  const recorded = paid && session.paidOrderRecorded === true;
 
   return (
     <div className="container-x py-16 text-center">
-      <span className={`mx-auto grid h-16 w-16 place-items-center rounded-full ${paid ? 'bg-success/15 text-success' : 'bg-cream text-ink-500'}`}>
+      <span className={`mx-auto grid h-16 w-16 place-items-center rounded-full ${recorded ? 'bg-success/15 text-success' : 'bg-cream text-ink-500'}`}>
         <CheckIcon width={30} height={30} />
       </span>
       <h1 className="font-display mt-6 text-3xl font-semibold sm:text-4xl">
-        {paid ? 'Merci, votre commande est confirmée !' : 'Paiement en cours de traitement'}
+        {recorded ? 'Merci, votre commande est enregistrée !' : paid ? 'Paiement reçu, confirmation de commande en cours' : 'Paiement en cours de traitement'}
       </h1>
       <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted">
-        {paid ? (
+        {recorded ? (
           <>
-            Un email de confirmation vient de partir{session.customerEmail ? ` vers ${session.customerEmail}` : ''}. Nous
-            préparons votre colis avec soin — vous recevrez un email avec le suivi dès l’expédition.
+            {session.fulfillmentStatus === 'blocked'
+              ? 'Votre commande nécessite une vérification avant préparation. Aucun délai d’expédition n’est confirmé.'
+              : 'Votre commande a bien été reçue. Consultez son suivi pour connaître son état de préparation.'}
           </>
         ) : (
-          <>La confirmation définitive arrive par email dès validation du paiement (quelques secondes en général).</>
+          <>La confirmation de la commande est en cours de vérification. Ne relancez pas un autre paiement ; contactez le support si la situation persiste.</>
         )}
       </p>
 

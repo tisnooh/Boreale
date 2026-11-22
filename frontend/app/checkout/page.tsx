@@ -8,8 +8,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useCart } from '@/hooks/use-cart';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { ApiError } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import { submitCheckout, validateDiscount } from '@/lib/services/actions';
+import { expiredCheckoutAttemptKey, restartExpiredCheckoutAttempt } from '@/lib/checkout-attempt';
 import { isPreview } from '@/lib/config';
 import { formatCents } from '@/lib/format';
 import { computeLocalTotals } from '@/lib/totals';
@@ -31,8 +32,8 @@ interface FormState {
 const EMPTY_FORM: FormState = { email: '', firstName: '', lastName: '', phone: '', line1: '', line2: '', postalCode: '', city: '' };
 
 export default function CheckoutPage() {
-  const { items, ready, subtotalCents, clear } = useCart();
-  const { user } = useAuth();
+  const { items, ready, subtotalCents } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -43,14 +44,20 @@ export default function CheckoutPage() {
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [fatalError, setFatalError] = useState<{ code: string; message: string } | null>(null);
+  const [fatalError, setFatalError] = useState<{ code: string; message: string; expiredAttemptKey?: string } | null>(null);
   const [previewMessage, setPreviewMessage] = useState<string | null>(null);
   const abandonedRegistered = useRef(false);
+  const submittingRef = useRef(false);
 
   // Pré-remplissage pour les clients connectés
   useEffect(() => {
     if (user) {
       setForm((f) => ({ ...f, email: user.email, firstName: user.firstName ?? f.firstName, lastName: user.lastName ?? f.lastName }));
+    }
+    if (!isPreview()) {
+      const expiredAttemptKey = expiredCheckoutAttemptKey();
+      if (expiredAttemptKey) setFatalError({ code: 'checkout_session_expired',
+        message: 'Votre session de paiement est expirée. Vous pouvez préparer une nouvelle tentative.', expiredAttemptKey });
     }
   }, [user]);
 
@@ -74,8 +81,7 @@ export default function CheckoutPage() {
       .catch(() => undefined);
   }
 
-  async function applyCode(e: React.FormEvent) {
-    e.preventDefault();
+  async function applyCode() {
     setDiscountError(null);
     if (!codeInput.trim()) return;
     try {
@@ -94,11 +100,20 @@ export default function CheckoutPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting || items.length === 0) return;
+    if (submittingRef.current || authLoading || items.length === 0) return;
+    submittingRef.current = true;
     setSubmitting(true);
     setFatalError(null);
     setPreviewMessage(null);
     try {
+      // Renouveler/vérifier une session expirée avant de créer une commande,
+      // sans jamais rejouer automatiquement le paiement ni basculer en invité.
+      if (user && !isPreview()) {
+        const current = await api.get<{ data: { id: string } }>('/api/me');
+        if (current.data.id !== user.id) {
+          throw new ApiError(401, 'session_changed', 'Votre session a changé. Reconnectez-vous avant de commander.');
+        }
+      }
       const result = await submitCheckout({
         items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
         discountCode: discount.code ?? undefined,
@@ -116,19 +131,25 @@ export default function CheckoutPage() {
             country: 'FR',
           },
         },
-      });
+      }, user?.id ?? null);
       if (result.status === 'preview') {
         // Aucune commande créée : message honnête, panier conservé, aucun faux succès.
         setPreviewMessage(result.message);
+        submittingRef.current = false;
         setSubmitting(false);
         return;
       }
-      clear(); // le paiement Stripe suit ; le webhook confirme la commande
+      // Une session Stripe n’est pas une preuve de paiement : conserver le panier
+      // pour les annulations, refus et interruptions de navigation.
       window.location.href = result.url;
     } catch (err) {
+      submittingRef.current = false;
       setSubmitting(false);
       if (err instanceof ApiError) {
-        setFatalError({ code: err.code, message: err.message });
+        const details = err.details as { expiredAttemptKey?: unknown } | undefined;
+        setFatalError({ code: err.code, message: err.message,
+          expiredAttemptKey: err.code === 'checkout_session_expired' && typeof details?.expiredAttemptKey === 'string'
+            ? details.expiredAttemptKey : undefined });
         if (err.code === 'insufficient_stock') toast('Un article n’est plus disponible en quantité suffisante.', 'error');
       } else {
         setFatalError({ code: 'unknown', message: 'Erreur inattendue. Réessayez.' });
@@ -221,7 +242,7 @@ export default function CheckoutPage() {
                       <input type="radio" name="shipping-method" value={m} checked={method === m} onChange={() => setMethod(m)} className="accent-[#3D7EA6]" />
                       <span>
                         <span className="font-semibold">{opt.label}</span>
-                        <span className="block text-xs text-muted">{opt.etaLabel}{opt.freeAboveCents !== null ? ` · offerte dès ${formatCents(opt.freeAboveCents)}` : ''}</span>
+                        <span className="block text-xs text-muted">Délai à confirmer</span>
                       </span>
                     </span>
                     <span className="text-xs font-semibold tabular-nums">
@@ -251,16 +272,22 @@ export default function CheckoutPage() {
               ))}
             </ul>
 
-            <form onSubmit={applyCode} className="mb-4">
+            <div className="mb-4">
               <label className="field-label" htmlFor="checkout-code">Code promo</label>
               <div className="flex gap-2">
                 <input id="checkout-code" className="field py-2 text-sm uppercase" value={codeInput}
-                  onChange={(e) => setCodeInput(e.target.value.toUpperCase())} placeholder="WELCOME10" autoComplete="off" />
-                <button type="submit" className="btn-outline btn-sm">OK</button>
+                  onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void applyCode();
+                    }
+                  }} autoComplete="off" />
+                <button type="button" onClick={() => void applyCode()} className="btn-outline btn-sm">OK</button>
               </div>
               {discount.code && <p className="mt-1.5 text-xs font-semibold text-success">✓ {discount.code} appliqué</p>}
               {discountError && <p role="alert" className="mt-1.5 text-xs font-semibold text-danger">{discountError}</p>}
-            </form>
+            </div>
 
             <dl className="space-y-2 border-t border-line pt-4 text-sm">
               <div className="flex justify-between"><dt className="text-muted">Sous-total</dt><dd className="tabular-nums">{formatCents(totals.subtotalCents)}</dd></div>
@@ -287,16 +314,26 @@ export default function CheckoutPage() {
             {fatalError && (
               <p role="alert" className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-xs font-medium text-danger">
                 {fatalError.message}
+                {fatalError.code === 'checkout_session_expired' && fatalError.expiredAttemptKey && (
+                  <button type="button" className="btn-outline btn-sm mt-2" onClick={() => {
+                    if (restartExpiredCheckoutAttempt(fatalError.expiredAttemptKey!)) {
+                      setFatalError(null);
+                      setPreviewMessage('Vérifiez vos informations puis cliquez sur Payer pour lancer une nouvelle tentative.');
+                    } else {
+                      setFatalError({ code: 'checkout_reconciliation_required', message: 'La tentative précédente doit être vérifiée avant de relancer un paiement.' });
+                    }
+                  }}>Nouvelle tentative</button>
+                )}
                 {fatalError.code === 'insufficient_stock' && (
                   <Link href="/cart" className="mt-1 block font-bold underline underline-offset-2">Ajuster mon panier</Link>
                 )}
                 {(fatalError.code === 'network_error' || fatalError.code === 'database_not_configured' || fatalError.code === 'stripe_not_configured') && (
-                  <span className="mt-1 block">Le paiement n’est pas encore disponible sur cet environnement (backend non connecté). Voir docs/DEPLOYMENT.md.</span>
+                  <span className="mt-1 block">La vérification du paiement est indisponible. Si vous avez déjà tenté de payer, contactez le support avant toute nouvelle tentative.</span>
                 )}
               </p>
             )}
 
-            <button type="submit" disabled={submitting || !acceptTerms} className="btn-primary mt-4 w-full">
+            <button type="submit" disabled={submitting || authLoading || !acceptTerms} className="btn-primary mt-4 w-full">
               {submitting ? 'Redirection vers Stripe…' : `Payer ${formatCents(totals.totalCents)}`}
             </button>
             <p className="mt-3 text-center text-[11px] leading-relaxed text-muted">

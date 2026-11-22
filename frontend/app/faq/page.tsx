@@ -13,14 +13,14 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
     return buildMetadata({
       title: 'FAQ été — ouverture, sélection, panier commun, retours',
       description:
-        'Les réponses de l’univers été BORÉALE : ouverture de la sélection, panier commun hiver/été, retours 30 jours, packs à venir.',
+        'Les réponses de l’univers été BORÉALE sur la sélection, le panier commun et les conditions de retour.',
       path: '/faq?saison=ete',
     });
   }
   return buildMetadata({
     title: 'FAQ — Livraison, retours, paiement, produits',
     description:
-      'Toutes les réponses : délais de livraison, retours 30 jours, paiement sécurisé Stripe, suivi de commande, produits chauffants, entretien du textile.',
+      'Les réponses de BORÉALE sur la livraison, les retours, le suivi de commande et l’entretien des articles.',
     path: '/faq',
   });
 }
@@ -33,11 +33,8 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
   const faq = settings.faq;
 
   const extra = [
-    { q: 'Expédiez-vous hors de France ?', a: 'Au lancement, nous livrons la France métropolitaine. L’extension Belgique/Suisse/Luxembourg arrive — inscrivez-vous à la newsletter pour être prévenu.' },
-    { q: 'Comment entretenir mes articles textiles ?', a: 'La plupart de nos textiles se lavent en machine à 30° (sauf indication contraire sur la fiche produit). Séchage à plat recommandé pour la polaire et la sherpa, pas d’adoucissant sur les leggings thermiques.' },
-    { q: 'Les bouillottes sèches sont-elles sûres ?', a: 'Oui, utilisées selon le mode d’emploi : durée de chauffe respectée, température testée avant application, jamais sur peau lésée, jamais de réchauffage prolongé. Ce sont des produits sans électricité ni liquide.' },
-    { q: 'Proposez-vous des emballages cadeaux ?', a: 'Pas encore au lancement. Vous pouvez préciser une demande dans le champ « notes » de votre commande : nous ferons notre possible.' },
-    { q: 'Comment fonctionne le code de bienvenue ?', a: 'Si vous avez accepté la newsletter à l’inscription, un code WELCOME10 (−10 % dès 20 €) vous est envoyé par email. Il est saisissable dans le panier ou au checkout.' },
+    { q: 'Où voir les conditions de livraison ?', a: 'Les zones desservies, les frais et le délai de livraison seront indiqués avant la validation d’une commande.' },
+    { q: 'Comment entretenir mes articles textiles ?', a: 'Suivez les consignes de la fiche produit et de l’étiquette de l’article.' },
   ];
 
   return (

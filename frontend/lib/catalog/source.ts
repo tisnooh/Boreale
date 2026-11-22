@@ -14,7 +14,6 @@ import { apiGetServer } from '@/lib/api-server';
 import { isPreview, SITE_MODE, type SiteMode } from '@/lib/config';
 import type { CategoryDTO, HomepageSettings, Paginated, ProductDTO } from '@/lib/types';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
-import { PREVIEW_CATEGORIES, PREVIEW_HOMEPAGE, PREVIEW_PRODUCTS } from './preview-data';
 import { SUMMER_CATEGORIES, SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
 import { matchesShopSeason, type ShopSeason } from '@/lib/season/types';
 
@@ -35,35 +34,37 @@ function withRelated(p: ProductDTO, all: ProductDTO[]): ProductDTO {
   return {
     ...p,
     related: all
-      .filter((o) => o.id !== p.id && o.categories.some((c) => cats.includes(c.slug)))
+      .filter((o) => o.selection?.status !== 'deferred' && o.id !== p.id && o.categories.some((c) => cats.includes(c.slug)))
       .slice(0, 4),
   };
 }
-
-const ALL_PREVIEW_CATEGORIES = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES];
 
 const previewSource: CatalogSource = {
   mode: 'preview',
   isPreview: true,
   async products(season) {
-    const all = PREVIEW_PRODUCTS.map((p) => ({ ...p }));
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
+    const all = PREVIEW_PRODUCTS.filter(p => p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async product(slug) {
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
     const all = PREVIEW_PRODUCTS;
     const found = all.find((p) => p.slug === slug);
     return found ? withRelated({ ...found }, all) : null;
   },
   async categories(season) {
-    const all = ALL_PREVIEW_CATEGORIES.map((c) => ({ ...c }));
+    const { PREVIEW_CATEGORIES } = await import('./preview-data');
+    const all = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES].map((c) => ({ ...c }));
     return season ? all.filter((c) => matchesShopSeason(c.season ?? 'winter', season)) : all;
   },
   async bundles(season) {
-    const all = PREVIEW_PRODUCTS.filter((p) => p.type === 'bundle').map((p) => ({ ...p }));
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
+    const all = PREVIEW_PRODUCTS.filter((p) => p.type === 'bundle' && p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async homepage(season) {
-    return season === 'summer' ? SUMMER_HOMEPAGE : PREVIEW_HOMEPAGE;
+    return season === 'summer' ? SUMMER_HOMEPAGE : (await import('./preview-data')).PREVIEW_HOMEPAGE;
   },
 };
 
@@ -99,7 +100,37 @@ const liveSource: CatalogSource = {
   },
 };
 
+const showcaseSource: CatalogSource = {
+  ...liveSource,
+  mode: 'showcase',
+  async products(season) {
+    if (season === 'summer') return [];
+    return (await import('./priority-products')).SHOWCASE_PRODUCTS;
+  },
+  async product(slug) {
+    const products = await showcaseSource.products('winter');
+    const product = products.find((entry) => entry.slug === slug);
+    return product ? withRelated(product, products) : null;
+  },
+  async categories(season) {
+    if (season === 'summer') return SUMMER_CATEGORIES;
+    const products = await showcaseSource.products('winter');
+    const winter = [...new Map(products.flatMap((product) => product.categories.map((category) => [
+      category.slug, {
+        ...category,
+        id: category.slug,
+        season: 'winter' as const,
+        tagline: null,
+        description: null,
+        imageUrl: null,
+      },
+    ] as const))).values()];
+    return season === 'winter' ? winter : [...winter, ...SUMMER_CATEGORIES];
+  },
+};
+
 export function getCatalogSource(): CatalogSource {
+  if (SITE_MODE === 'showcase') return showcaseSource;
   return isPreview() ? previewSource : liveSource;
 }
 
@@ -137,6 +168,6 @@ export function sortProducts(products: ProductDTO[], sort: CatalogSort): Product
       return copy.sort((a, b) => a.id.localeCompare(b.id));
     case 'featured':
     default:
-      return copy.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.name.localeCompare(b.name));
+      return copy.sort((a, b) => (a.selection?.priority ?? 999) - (b.selection?.priority ?? 999) || Number(b.isFeatured) - Number(a.isFeatured) || a.name.localeCompare(b.name));
   }
 }

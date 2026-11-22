@@ -1,3 +1,6 @@
+import { sourcingController } from '../controllers/sourcing.js';
+import { processOrderConfirmations } from '../controllers/order-notifications.js';
+import { sourcingCandidateSchema } from '../validators/sourcing.js';
 import { Router } from 'express';
 import { healthController, catalogController } from '../controllers/health.js';
 import { authController } from '../controllers/auth.js';
@@ -20,6 +23,8 @@ import {
   productUpsertSchema,
   discountUpsertSchema,
   orderStatusSchema,
+  orderTrackingSchema,
+  orderNoteSchema,
   refundSchema,
   campaignSchema,
   settingsSchema,
@@ -60,23 +65,30 @@ export function buildRouter(): Router {
   r.post('/api/auth/register', authLimiter, validateBody(registerSchema), authController.register);
   r.post('/api/auth/login', authLimiter, validateBody(loginSchema), authController.login);
   r.post('/api/auth/logout', authController.logout);
+  r.post('/api/auth/refresh', authLimiter, authController.refresh);
   r.get('/api/me', requireUser, authController.me);
   r.patch('/api/me', requireUser, validateBody(updateProfileSchema), authController.updateProfile);
   r.get('/api/me/orders', requireUser, ordersController.myOrders);
   r.get('/api/orders/:id', optionalUser, requireUserOrAdmin, ordersController.getById);
 
   /* ---------- checkout / stripe ---------- */
-  r.post('/api/stripe/checkout', validateBody(checkoutSchema), checkoutController.createCheckout);
+  r.post('/api/stripe/checkout', optionalUser, validateBody(checkoutSchema), checkoutController.createCheckout);
   r.get('/api/stripe/session/:id', checkoutController.getSession);
   r.post('/api/webhooks/stripe', checkoutController.stripeWebhook);
 
   /* ---------- cron ---------- */
   r.get('/api/cron/abandoned-carts', cronController.abandonedCarts);
+  r.post('/api/cron/order-notifications', processOrderConfirmations);
 
   /* ---------- admin ---------- */
   r.post('/api/admin/auth/login', adminAuthLimiter, validateBody(adminLoginSchema), authController.adminLogin);
   r.post('/api/admin/auth/logout', authController.adminLogout);
   r.get('/api/admin/auth/me', requireAdmin, authController.adminMe);
+
+  r.get('/api/admin/sourcing-candidates', requireAdmin, sourcingController.list);
+  r.get('/api/admin/sourcing-candidates/:key', requireAdmin, sourcingController.get);
+  r.post('/api/admin/sourcing-candidates', requireAdmin, validateBody(sourcingCandidateSchema), sourcingController.create);
+  r.put('/api/admin/sourcing-candidates/:key', requireAdmin, validateBody(sourcingCandidateSchema), sourcingController.update);
 
   r.get('/api/admin/products', requireAdmin, adminController.listProducts);
   r.post('/api/admin/products', requireAdmin, validateBody(productUpsertSchema), adminController.createProduct);
@@ -86,6 +98,8 @@ export function buildRouter(): Router {
   r.get('/api/admin/orders', requireAdmin, validateQuery(adminListQuerySchema), adminController.listOrders);
   r.get('/api/admin/orders/:id', requireAdmin, adminController.getOrder);
   r.post('/api/admin/orders/:id/status', requireAdmin, validateBody(orderStatusSchema), adminController.setOrderStatus);
+  r.post('/api/admin/orders/:id/tracking', requireAdmin, validateBody(orderTrackingSchema), adminController.setOrderTracking);
+  r.post('/api/admin/orders/:id/notes', requireAdmin, validateBody(orderNoteSchema), adminController.addOrderNote);
   r.post('/api/admin/orders/:id/refund', requireAdmin, validateBody(refundSchema), adminController.refundOrder);
 
   r.get('/api/admin/customers', requireAdmin, validateQuery(adminListQuerySchema), adminController.listCustomers);

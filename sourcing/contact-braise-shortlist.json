@@ -1,0 +1,124 @@
+{
+  "observedAt": "2026-11-22",
+  "mode": "research_only_no_import",
+  "commerciallyApproved": false,
+  "products": [
+    {
+      "name": "Contact",
+      "target": "Non-electric insulated touchscreen gloves, sober navy or black, warm lining, grip palm, no visible supplier logo",
+      "bestLeadToClarify": "1601296922818",
+      "approvedSupplier": null,
+      "candidates": [
+        {
+          "alibabaId": "1601296922818",
+          "url": "https://www.alibaba.com/product-detail/Winter-Warm-Touchscreen-Waterproof-Ski-Gloves_1601296922818.html",
+          "supplier": "Jinhua City Coexistence Import And Export Co., Ltd.",
+          "supplierUrl": "https://yiwugongcun.en.alibaba.com/",
+          "manufacturerModel": null,
+          "displayedPrice": { "min": 1.50, "max": 1.80, "currency": "USD", "basis": "category card, not selected-variant quote" },
+          "moq": { "quantity": 1, "unit": "pair", "basis": "category card" },
+          "claimedFeatures": ["Winter warm", "Touchscreen", "Waterproof", "Fleece"],
+          "verifiedFeatures": [],
+          "colors": null, "sizes": null, "materialComposition": null,
+          "noVisibleLogoConfirmed": false, "customPackagingConfirmed": false,
+          "sampleTerms": null, "photoRights": null,
+          "photos": "Product-detail inaccessible; no visual/no-logo approval",
+          "credibilitySignals": "Category displays 5 years, 4.7/5 from 754; platform display only, not quality proof",
+          "directToFranceConfirmed": false,
+          "doubts": ["Exact variant and kit unknown", "Palm grip and warm lining not verified", "MOQ1 may be a sample", "No dropshipping agreement, shipping quote, returns or current stock confirmed"]
+        },
+        {
+          "alibabaId": "1601418197568",
+          "url": "https://www.alibaba.com/product-detail/Outdoor-Winter-Gloves-Anti-Slip-Touch_1601418197568.html",
+          "supplier": "Hebei Tiyon Technology Co., Ltd.",
+          "supplierUrl": "https://tiyontech.en.alibaba.com/",
+          "manufacturerModel": null,
+          "displayedPrice": { "min": 2.10, "max": 2.70, "currency": "USD", "basis": "category card" },
+          "moq": { "quantity": 2, "unit": "pairs", "basis": "category card" },
+          "claimedFeatures": ["Winter", "Anti-slip", "Touchscreen"], "verifiedFeatures": [],
+          "colors": null, "sizes": null, "materialComposition": null,
+          "noVisibleLogoConfirmed": false, "customPackagingConfirmed": false,
+          "sampleTerms": null, "photoRights": null,
+          "photos": "Product-detail returns no readable content; no visual approval",
+          "credibilitySignals": "Category displays 4 years, 4.6/5 from 100; not independently verified",
+          "directToFranceConfirmed": false,
+          "doubts": ["MOQ2 pairs incompatible with single-customer order unless changed in writing", "Colors, lining and logo unknown", "No France freight/returns/stock evidence"]
+        },
+        {
+          "alibabaId": "1601829158978",
+          "url": "https://www.alibaba.com/product-detail/Fi7na-Winter-Running-Gloves-Fleece-Lined_1601829158978.html",
+          "supplier": "Kodatech Intelligent Limited",
+          "supplierUrl": "https://hkkodatech.en.alibaba.com/",
+          "manufacturerModel": null,
+          "displayedPrice": { "min": 2.68, "max": 4.31, "currency": "USD", "basis": "category card" },
+          "moq": { "quantity": 1, "unit": "piece", "basis": "category card, not confirmed as pair" },
+          "claimedFeatures": ["Fleece lined", "Touchscreen", "Winter running gloves", "Fi7na brand in title"], "verifiedFeatures": [],
+          "colors": null, "sizes": null, "materialComposition": null,
+          "noVisibleLogoConfirmed": false, "customPackagingConfirmed": false,
+          "sampleTerms": null, "photoRights": null,
+          "photos": "No visual approval; product-detail unreadable",
+          "credibilitySignals": "Category displays 1 year and one 5/5 rating; insufficient quality evidence",
+          "directToFranceConfirmed": false,
+          "decision": "Not retained for no-logo range without written unbranded standard version",
+          "doubts": ["Brand named in title", "Piece versus pair ambiguous", "No logistics, sample, no-logo or composition evidence"]
+        }
+      ]
+    },
+    {
+      "name": "Braise",
+      "target": "Pair of two reusable sodium-acetate click warmers, metal-disc activation, plain glacier blue or neutral, no battery and no visible logo",
+      "bestLeadToClarify": "60049091792",
+      "approvedSupplier": null,
+      "candidates": [
+        {
+          "alibabaId": "60049091792",
+          "url": "https://www.alibaba.com/product-detail/Sodium-Acetate-Instant-Heat-Pack-Reusable_60049091792.html",
+          "supplier": "Kunshan Topgel Industry Co., Ltd.",
+          "supplierUrl": "https://topgel.en.alibaba.com/",
+          "manufacturerModel": "TGH180",
+          "historicalObservationDate": "2026-11-21",
+          "historicalDisplayedPrice": { "min": 0.30, "max": 0.85, "currency": "USD-symbol", "basis": "21 November dossier; not refreshed quote" },
+          "historicalMoq": { "quantity": 1000, "unit": "pieces" },
+          "historicalClaimedColors": ["white", "blue", "green", "red"],
+          "historicalClaimedMaterial": "Sodium acetate; PVC envelope 0.40 mm",
+          "historicalSamplePrice": { "value": 2, "currency": "USD-symbol", "shippingIncluded": false },
+          "historicalManufacturingDays": 40,
+          "currentDetailReadable": false, "verifiedFeatures": [],
+          "noVisibleLogoConfirmed": false, "customPackagingConfirmed": false,
+          "pairOfTwoConfirmed": false, "photoRights": null,
+          "photos": "Historical gallery only; current detail unreadable, no faithful product image reference approved",
+          "credibilitySignals": "Identified company/profile and model; no independent review or test validation",
+          "directToFranceConfirmed": false,
+          "doubts": ["Wholesale MOQ incompatible with direct per-customer dropshipping", "FOB Shanghai historical term excludes France delivery", "No standard unbranded blue pair confirmed", "Safety, temperature, cycles and envelope integrity not tested"]
+        },
+        {
+          "alibabaId": "1601246035244",
+          "url": "https://www.alibaba.com/product-detail/Bingfan-Winter-Reusable-Snap-Heat-Packs_1601246035244.html",
+          "supplier": "Shanghai Bingfan Industrial Co., Ltd.",
+          "supplierUrl": "https://shanghaibingfan.en.alibaba.com/",
+          "manufacturerModel": "OEM (historically displayed; insufficient stable model identifier)",
+          "historicalObservationDate": "2026-11-21",
+          "historicalDisplayedPrice": { "value": 0.56, "currency": "USD-symbol", "tier": "1000-2999 pieces" },
+          "historicalMoq": { "quantity": 1000, "unit": "pieces" },
+          "historicalClaimedColors": ["orange", "blue"],
+          "historicalClaimedDimensions": "10 x 10 cm, 50 g",
+          "historicalClaimedMaterial": "PVC; exact filling formula unconfirmed",
+          "historicalSamplePrice": { "value": 5, "currency": "USD-symbol", "shippingIncluded": false },
+          "historicalManufacturingDays": 31,
+          "currentDetailReadable": false, "verifiedFeatures": [],
+          "noVisibleLogoConfirmed": false, "customPackagingConfirmed": false,
+          "pairOfTwoConfirmed": false, "photoRights": null,
+          "photos": "No current exact no-logo blue reference photo approved",
+          "credibilitySignals": "Company identified in prior readable fiche; manufacturer/trader declaration not audited",
+          "directToFranceConfirmed": false,
+          "doubts": ["Wholesale MOQ and production lead time incompatible with confirmed no-stock objective", "Generic OEM model, no pair-of-two confirmation", "Current page unreadable", "RoHS/Class I claims are not validated safety evidence"]
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "https://www.alibaba.com/category/Hiking-Running-Gloves_201890510.html",
+    "docs/sourcing/BOREALE_NON_ELECTRIC_20261121.md"
+  ],
+  "sideEffects": { "supplierMessages": 0, "purchases": 0, "databaseWrites": 0, "publishedProducts": 0 }
+}

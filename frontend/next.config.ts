@@ -2,6 +2,27 @@ import type { NextConfig } from "next";
 
 const isProd = process.env.NODE_ENV === "production";
 
+const publicProduction = process.env.VERCEL_ENV === "production";
+const requestedMode = process.env.NEXT_PUBLIC_SITE_MODE;
+// Production never serves the internal demonstration catalogue.
+const siteMode = publicProduction && requestedMode !== "live" && requestedMode !== "launch" ? "showcase" : requestedMode;
+
+const hosted = publicProduction || process.env.VERCEL_ENV === "preview";
+if (hosted && siteMode === "live") {
+  for (const [name, value] of [
+    ["NEXT_PUBLIC_API_URL", process.env.NEXT_PUBLIC_API_URL],
+    ["NEXT_PUBLIC_SITE_URL", process.env.NEXT_PUBLIC_SITE_URL],
+  ]) {
+    const origin = URL.parse(value ?? "");
+    const local = origin && (origin.hostname === "localhost" || origin.hostname.endsWith(".localhost") ||
+      origin.hostname.startsWith("127.") || ["[::1]", "0.0.0.0"].includes(origin.hostname));
+    if (!origin || origin.protocol !== "https:" || local || origin.username || origin.password ||
+        origin.pathname !== "/" || origin.search || origin.hash) {
+      throw new Error(`BORÉALE : ${name} doit être une origine HTTPS distante en mode connecté sur Vercel.`);
+    }
+  }
+}
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -14,6 +35,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(siteMode ? { env: { NEXT_PUBLIC_SITE_MODE: siteMode } } : {}),
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {

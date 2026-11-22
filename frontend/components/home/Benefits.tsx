@@ -26,10 +26,10 @@ export function Benefits({ benefits }: { benefits: HomepageSettings['benefits'] 
 
 export function ReassuranceBar() {
   const items = [
-    { n: '01', t: 'Sélection curatée', d: 'Chaque produit est choisi et testé avant d’entrer au catalogue — pas de fourre-tout.' },
-    { n: '02', t: 'Chaleur sans risque', d: 'Produits chauffants sans électricité : bouillottes sèches, chauffe-mains réutilisables.' },
+    { n: '01', t: 'Sélection saisonnière', d: 'Des essentiels pensés pour la maison et les journées dehors.' },
+    { n: '02', t: 'Confort par temps froid', d: 'Des pièces faciles à porter et à utiliser au quotidien.' },
     { n: '03', t: 'Prix justes', d: 'Pas de faux prix barrés, pas de fausses urgences. Les économies affichées sont réelles.' },
-    { n: '04', t: 'Service humain', d: 'Une équipe joignable par email, qui répond sous 24-48 h ouvrées.' },
+    { n: '04', t: 'Service client', d: 'Un formulaire de contact pour les questions sur les articles et les commandes.' },
   ];
   return (
     <section aria-label="Pourquoi Boréale" className="bg-cream py-16">

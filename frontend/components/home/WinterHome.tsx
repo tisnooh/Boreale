@@ -19,28 +19,32 @@ export async function WinterHome() {
   const source = getCatalogSource();
   const [settings, categories, allProducts, bundles] = await Promise.all([
     source.homepage(),
-    source.categories(),
-    source.products(),
-    source.bundles(),
+    source.categories('winter'),
+    source.products('winter'),
+    source.bundles('winter'),
   ]);
 
   const bySlug = (slug: string) => allProducts.find((p) => p.slug === slug);
-  const featured = settings.featuredProductSlugs.map(bySlug).filter((p): p is ProductDTO => Boolean(p));
+  const featured = source.mode === 'showcase' ? allProducts : settings.featuredProductSlugs.map(bySlug).filter((p): p is ProductDTO => Boolean(p));
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
 
-      <Cover hero={settings.hero} />
+      <Cover hero={settings.hero} pieces={source.mode === 'showcase' ? featured.slice(0, 4).map((p, i) => ({ src: p.imageUrl, caption: `Pièce N°0${i + 1} — ${p.name}` })) : undefined} />
       <Folio />
-      <UniversIndex categories={categories} />
+      <UniversIndex categories={categories.filter((category) => category.productCount !== 0)} />
       <SelectionRail products={featured} />
       <ParallaxQuote image="/images/hero-hiver.jpg" />
-      <Manifesto benefits={settings.benefits} />
+      <Manifesto benefits={source.mode === 'showcase'
+        ? settings.benefits.map((benefit, index) => index === 0
+          ? { ...benefit, text: 'Cinq articles d’hiver repérés pour la maison et les sorties.' }
+          : benefit)
+        : settings.benefits} />
       <Packs bundles={bundles} allProducts={allProducts} />
 
       {/* N°05 — FAQ */}
-      <section aria-label="Questions fréquentes" className="border-t border-line bg-snow">
+      <section id="faq" aria-label="Questions fréquentes" className="border-t border-line bg-snow">
         <div className="container-x py-20 lg:py-28">
           <Reveal className="mx-auto max-w-3xl">
             <Overline index="N°05" label="Questions fréquentes" />

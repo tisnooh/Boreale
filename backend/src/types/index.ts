@@ -27,6 +27,8 @@ export interface DbProduct {
   long_description: string | null;
   type: ProductType;
   season: Season;
+  procurement_status?: 'unverified' | 'verified';
+  source_candidate_key?: string | null;
   is_active: boolean;
   is_featured: boolean;
   image_url: string | null;
@@ -85,6 +87,7 @@ export interface DbOrder {
   user_id: UUID | null;
   email: string;
   status: OrderStatus;
+  fulfillment_status?: 'pending' | 'ready' | 'blocked';
   currency: string;
   subtotal_cents: number;
   discount_cents: number;
@@ -237,6 +240,7 @@ export interface OrderDTO {
   number: string;
   email: string;
   status: OrderStatus;
+  fulfillmentStatus: 'pending' | 'ready' | 'blocked';
   currency: string;
   subtotalCents: number;
   discountCents: number;

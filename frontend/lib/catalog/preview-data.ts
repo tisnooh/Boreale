@@ -6,9 +6,9 @@
  * Remplacer par GET /api/products sans toucher aux composants : voir lib/catalog/source.ts.
  */
 import type { CategoryDTO, HomepageSettings, ProductDTO } from '@/lib/types';
+import { PRIORITY_PRODUCTS } from './priority-products';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
-import { SUMMER_CATEGORIES, SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
-import { matchesShopSeason, type Season, type ShopSeason } from '@/lib/season/types';
+import type { Season } from '@/lib/season/types';
 
 const WINTER: Season = 'winter';
 
@@ -17,13 +17,17 @@ export const PREVIEW_CATEGORIES: CategoryDTO[] = [
   { id: 'c2', slug: 'chaleur', name: 'Chaleur', tagline: 'La chaleur, sans électricité', description: 'Bouillottes sèches, chauffe-mains réutilisables et chaussons bouillotte.', imageUrl: '/images/cat-chaleur.svg', season: WINTER, productCount: 3 },
   { id: 'c3', slug: 'auto-hiver', name: 'Auto Hiver', tagline: 'Rouler serein par tous les temps', description: 'Housse pare-brise antigivre et gant grattoir.', imageUrl: '/images/cat-auto.svg', season: WINTER, productCount: 2 },
   { id: 'c4', slug: 'maison-cocooning', name: 'Maison / Cocooning', tagline: 'Le refuge parfait', description: 'Plaids sherpa, plaids à manches et bouillottes.', imageUrl: '/images/cat-maison.svg', season: WINTER, productCount: 4 },
-];
+].map(category => ({ ...category,
+    tagline: category.slug === 'auto-hiver' ? 'Collection en attente' : category.tagline,
+    description: category.slug === 'auto-hiver' ? 'Cette collection historique est en attente et ne fait pas partie de la sélection prioritaire.' : category.slug === 'chaleur' ? 'Chauffe-mains réutilisables en cours de sélection.' : category.slug === 'maison-cocooning' ? 'Chaussons et chaussettes pour la maison, en cours de sélection.' : 'Gants, chaussons, chaussettes et semelles : notre sélection en préparation.',
+    productCount: PRIORITY_PRODUCTS.filter(p => p.categories.some(c => c.slug === category.slug)).length,
+  })).sort((a, b) => Number(b.productCount > 0) - Number(a.productCount > 0));
 
 const v = (id: string, sku: string, title: string, options: Record<string, string>, priceCents: number, quantity: number) => ({
   id, sku, title, options, priceCents, compareAtPriceCents: null, inStock: quantity > 0, quantity, lowStock: quantity > 0 && quantity <= 5,
 });
 
-export const PREVIEW_PRODUCTS: ProductDTO[] = [
+export const ARCHIVED_PREVIEW_PRODUCTS: ProductDTO[] = [
   {
     id: 'p-foyer', slug: 'chaussons-bouillotte-foyer', name: 'Chaussons bouillotte « Foyer »',
     subtitle: 'Des chaussons qui sortent du micro-ondes.',
@@ -99,7 +103,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'Gratter sans se geler la main.',
     description: 'Le grattoir à pare-brise dans un gant : lame ABS rigide d’un côté, fourrure polaire qui protège la main de l’autre.',
     longDescription: 'Le « Polaire » combine une lame ABS de 10 cm et une manchette en fausse fourrure polaire qui empêche la neige fondue de couler dans la manche.',
-    type: 'product', season: WINTER, isFeatured: false, imageUrl: '/images/products/gant-grattoir-polaire.jpg', images: ['/images/products/gant-grattoir-polaire.jpg'],
+    type: 'product', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: null, tags: ['grattoir', 'voiture'], bundleItems: [],
     seoTitle: null, seoDescription: null, priceCents: 1290, variantCount: 1, inStock: true,
     categories: [{ slug: 'auto-hiver', name: 'Auto Hiver' }],
@@ -143,7 +147,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'La soirée refuge, tout compris.',
     description: 'Plaid sherpa « Nid » + chaussettes polaires « Nuage » + bouillotte sèche « Brasero ». Moins cher que les articles achetés séparément.',
     longDescription: 'Le pack des soirées d’hiver : on enfile les « Nuage », on chauffe le « Brasero » deux minutes, et on disparaît dans le « Nid ».',
-    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/images/products/pack-cocooning.jpg', images: ['/images/products/pack-cocooning.jpg'],
+    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: '−14,80 €', tags: ['pack', 'cocooning'],
     bundleItems: [
       { sku: 'BOR-NID-EC', name: 'Plaid sherpa « Nid » — Écru', quantity: 1 },
@@ -159,7 +163,7 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
     subtitle: 'Kit complet pour températures négatives.',
     description: 'Bonnet torsadé + cache-cou « Bise » + gants tactiles + chaussons bouillotte « Foyer ». Économie réelle vs articles séparés.',
     longDescription: 'Tout l’équipement grand froid en un pack : la tête, le cou, les mains et les pieds.',
-    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/images/products/pack-grand-froid.jpg', images: ['/images/products/pack-grand-froid.jpg'],
+    type: 'bundle', season: WINTER, isFeatured: false, imageUrl: '/products/placeholder.svg', images: ['/products/placeholder.svg'],
     badge: '−19,70 €', tags: ['pack', 'grand-froid'],
     bundleItems: [
       { sku: 'BOR-BON-U-BN', name: 'Bonnet torsadé « Boréale » — Bleu nuit', quantity: 1 },
@@ -173,4 +177,20 @@ export const PREVIEW_PRODUCTS: ProductDTO[] = [
   },
 ];
 
-export const PREVIEW_HOMEPAGE: HomepageSettings = HOMEPAGE_FALLBACK;
+export const PREVIEW_PRODUCTS: ProductDTO[] = [
+  ...PRIORITY_PRODUCTS,
+  ...ARCHIVED_PREVIEW_PRODUCTS.filter(p => !PRIORITY_PRODUCTS.some(target => target.slug === p.slug)).map(p => ({
+    ...p, isFeatured: false, badge: null, priceCents: 0, inStock: false, variantCount: 0, variants: [],
+    imageUrl: null, images: [], description: 'Cette référence est en attente et ne fait pas partie de la sélection prioritaire.',
+    subtitle: 'Référence en attente', longDescription: 'Le modèle et ses caractéristiques commerciales ne sont pas confirmés.',
+    bundleItems: [], seoTitle: null, seoDescription: null,
+    selection: { status: 'deferred' as const, priority: null, priceVerified: false as const,
+      referenceSku: `ARCHIVE-${p.id}`, weightGrams: null, specifications: [], targetColors: [], targetSizes: [] },
+  })),
+];
+
+export const PREVIEW_HOMEPAGE: HomepageSettings = {
+  ...HOMEPAGE_FALLBACK,
+  featuredProductSlugs: PRIORITY_PRODUCTS.map(p => p.slug),
+  bundleSlugs: [],
+};

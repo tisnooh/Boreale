@@ -17,6 +17,11 @@ describe('config saisonnière', () => {
     expect(getSeasonFromPath(null)).toBe('winter');
   });
 
+  it('garde le thème été sur une collection estivale', () => {
+    expect(getSeasonFromPath('/collections/plage-piscine')).toBe('summer');
+    expect(getSeasonFromPath('/collections/chaleur')).toBe('winter');
+  });
+
   it('clés de settings mutualisées par saison', () => {
     expect(homepageSettingsKey('winter')).toBe('homepage');
     expect(homepageSettingsKey('summer')).toBe('homepage-summer');
@@ -45,7 +50,7 @@ describe('source catalogue saisonnière (preview)', () => {
     const products = await source.products('summer');
     expect(products).toHaveLength(0);
     const winter = await source.products('winter');
-    expect(winter.length).toBeGreaterThan(5);
+    expect(winter).toHaveLength(5);
   });
 
   it('homepage été distincte de la homepage hiver', async () => {

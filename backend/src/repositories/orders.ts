@@ -1,4 +1,5 @@
 import { db } from '../lib/supabase.js';
+import { AppError } from '../lib/errors.js';
 import type { AddressSnapshot, DbOrder, DbOrderItem, OrderStatus, ShippingMethod } from '../types/index.js';
 
 export interface NewOrderInput {
@@ -17,38 +18,73 @@ export interface NewOrderInput {
   stripeSessionId?: string | null;
 }
 
+export interface SettlePaymentInput {
+  eventId: string;
+  sessionId: string;
+  paymentIntentId: string;
+  amountCents: number;
+  currency: string;
+}
+
+export interface PaymentSettlement {
+  order_id: string;
+  duplicate: boolean;
+  fulfillment_status: 'ready' | 'blocked';
+  incident_code: string | null;
+}
+
+export interface RecordRefundInput {
+  eventId: string;
+  chargeId: string;
+  paymentIntentId: string;
+  amountCents: number;
+  refundedCents: number;
+  currency: string;
+}
+
+export interface RecordedRefund {
+  order_id: string;
+  payment_id: string;
+  observed_refunded_cents: number;
+  reconciliation_required: true;
+  duplicate: boolean;
+  changed: boolean;
+}
+
 export const ordersRepo = {
   async create(input: NewOrderInput): Promise<DbOrder> {
-    const c = db();
-    const { data: order, error } = await c
-      .from('orders')
-      .insert({
-        customer_id: input.customerId,
-        user_id: input.userId,
-        email: input.email,
-        status: 'pending' satisfies OrderStatus,
-        currency: input.currency,
-        subtotal_cents: input.subtotalCents,
-        discount_cents: input.discountCents,
-        shipping_cents: input.shippingCents,
-        total_cents: input.totalCents,
-        shipping_method: input.shippingMethod,
-        discount_code: input.discountCode,
-        shipping_address: input.shippingAddress,
-        stripe_session_id: input.stripeSessionId ?? null,
-      })
-      .select()
-      .single();
-    if (error) throw error;
-    const o = order as DbOrder;
+    // One database transaction owns the order, its item snapshots and its event.
+    // An unavailable RPC must fail closed, never fall back to separate inserts.
+    const { data: order, error } = await db().rpc('create_order_atomic', { p_input: input }).single();
+    if (error) throw AppError.serviceUnavailable('order_creation_failed', 'La création de la commande a échoué ; une nouvelle tentative est nécessaire.');
+    if (!order) throw AppError.serviceUnavailable('order_creation_unconfirmed', 'La création de la commande n’a pas été confirmée.');
+    return order as DbOrder;
+  },
 
-    const items = input.items.map((it) => ({ ...it, order_id: o.id }));
-    if (items.length > 0) {
-      const { error: itemsError } = await c.from('order_items').insert(items);
-      if (itemsError) throw itemsError;
+  async settlePayment(input: SettlePaymentInput): Promise<PaymentSettlement> {
+    const { data, error } = await db().rpc('settle_order_payment', {
+      p_event_id: input.eventId,
+      p_session_id: input.sessionId,
+      p_payment_intent_id: input.paymentIntentId,
+      p_amount_cents: input.amountCents,
+      p_currency: input.currency,
+    });
+    if (error) throw AppError.serviceUnavailable('payment_settlement_failed', 'Le traitement du paiement a échoué ; une nouvelle tentative est nécessaire.');
+    const result = data as PaymentSettlement | null;
+    if (!result || typeof result.order_id !== 'string' || typeof result.duplicate !== 'boolean'
+      || !['ready', 'blocked'].includes(result.fulfillment_status)
+      || (result.incident_code !== null && typeof result.incident_code !== 'string')) {
+      throw AppError.serviceUnavailable('payment_settlement_unconfirmed', 'Le traitement du paiement n’a pas été confirmé ; une nouvelle tentative est nécessaire.');
     }
-    await this.addEvent(o.id, 'order_created', { number: o.number, totalCents: o.total_cents });
-    return o;
+    return result;
+  },
+
+  async cancelPending(id: string, reason: string): Promise<boolean> {
+    const { data, error } = await db().rpc('cancel_pending_order', { p_order_id: id, p_reason: reason });
+    if (error || typeof data !== 'boolean') {
+      throw AppError.serviceUnavailable('order_cancellation_unconfirmed', 'L’annulation de la commande n’a pas été confirmée ; une nouvelle tentative est nécessaire.');
+    }
+    return data;
   },
 
   async addEvent(orderId: string, type: string, data: Record<string, unknown> = {}): Promise<void> {
@@ -107,14 +143,45 @@ export const ordersRepo = {
     return (data ?? []) as never;
   },
 
-  async adminList(opts: { page: number; limit: number; q?: string; status?: string }): Promise<{ rows: (DbOrder & { order_items: DbOrderItem[] })[]; total: number }> {
-    let query = db().from('orders').select('*, order_items(*)', { count: 'exact' }).order('placed_at', { ascending: false });
+  async adminList(opts: { page: number; limit: number; q?: string; status?: string; fulfillmentStatus?: string }): Promise<{ rows: (DbOrder & { order_items: DbOrderItem[] })[]; total: number }> {
+    let query = db().from('orders').select('*, order_items(*)', { count: 'exact' }).order('placed_at', { ascending: false }).order('id', { ascending: false });
     if (opts.status) query = query.eq('status', opts.status);
-    if (opts.q) query = query.or(`number.ilike.%${opts.q}%,email.ilike.%${opts.q}%`);
+    if (opts.fulfillmentStatus) query = query.eq('fulfillment_status', opts.fulfillmentStatus);
+    if (opts.q) {
+      // ILIKE aliases every '*' to '%'; escaped IMATCH keeps all input literal.
+      const pattern = opts.q.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
+      const literal = pattern.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      query = query.or('number.imatch."' + literal + '",email.imatch."' + literal + '"');
+    }
     const from = (opts.page - 1) * opts.limit;
     const { data, error, count } = await query.range(from, from + opts.limit - 1);
     if (error) throw error;
     return { rows: (data ?? []) as never, total: count ?? 0 };
+  },
+
+  async getOperations(id: string) {
+    const [incidents, notifications] = await Promise.all([
+      db().from('order_operational_incidents').select('*').eq('order_id', id).order('created_at'),
+      db().from('order_notification_outbox').select('id,type,status,attempts,last_error,created_at,sent_at,next_attempt_at').eq('order_id', id).order('created_at'),
+    ]);
+    if (incidents.error) throw incidents.error;
+    if (notifications.error) throw notifications.error;
+    return { incidents: incidents.data ?? [], notifications: notifications.data ?? [] };
+  },
+
+  async adminOperation(id: string, input: { action: 'advance' | 'tracking' | 'note'; expectedStatus?: OrderStatus; status?: OrderStatus; tracking?: Record<string, unknown>; expectedTracking?: Record<string, unknown>; note?: string; actor: string }): Promise<DbOrder & { order_items: DbOrderItem[] }> {
+    const { data, error } = await db().rpc('admin_update_order_operation', {
+      p_order_id: id, p_action: input.action, p_expected_status: input.expectedStatus ?? null,
+      p_status: input.status ?? null, p_tracking: input.tracking ?? {}, p_expected_tracking: input.expectedTracking ?? null,
+      p_note: input.note ?? null, p_actor: input.actor,
+    });
+    if (error) {
+      if (error.code === 'P0002') throw AppError.notFound('order_not_found', 'Commande introuvable.');
+      if (error.code === '23514') throw AppError.conflict('order_operation_conflict', 'La commande a changé ou cette action est indisponible ; rechargez-la avant de poursuivre.');
+      throw AppError.serviceUnavailable('order_operation_unconfirmed', 'L’opération n’a pas été confirmée ; rechargez la commande.');
+    }
+    if (!data || typeof data !== 'object' || !data.id) throw AppError.serviceUnavailable('order_operation_unconfirmed', 'L’opération n’a pas été confirmée.');
+    return data as DbOrder & { order_items: DbOrderItem[] };
   },
 
   async setStatus(
@@ -163,13 +230,24 @@ export const ordersRepo = {
     if (error) throw error;
   },
 
-  async markPaymentRefunded(orderId: string, refundedCents: number, totalRefundedCents: number, amountCents: number): Promise<void> {
-    const status = totalRefundedCents >= amountCents ? 'refunded' : 'partially_refunded';
-    const { error } = await db()
-      .from('payments')
-      .update({ status, refunded_cents: totalRefundedCents, updated_at: new Date().toISOString() })
-      .eq('order_id', orderId);
-    if (error) throw error;
+  async recordRefund(input: RecordRefundInput): Promise<RecordedRefund> {
+    const { data, error } = await db().rpc('record_order_refund', {
+      p_event_id: input.eventId, p_charge_id: input.chargeId, p_payment_intent_id: input.paymentIntentId,
+      p_amount_cents: input.amountCents, p_refunded_cents: input.refundedCents, p_currency: input.currency,
+    });
+    if (error) {
+      if (error.code === 'P0002') throw AppError.serviceUnavailable('refund_payment_unresolved', 'Le paiement doit être rapproché avant de traiter le remboursement.');
+      if (error.code === '23514' || error.code === '23505') throw AppError.conflict('refund_conflict', 'Le remboursement ne correspond pas au paiement enregistré.');
+      throw AppError.serviceUnavailable('refund_recording_unconfirmed', 'Le remboursement doit être repris ; son enregistrement n’est pas confirmé.');
+    }
+    const result = data as RecordedRefund | null;
+    if (!result || typeof result.order_id !== 'string' || typeof result.payment_id !== 'string'
+      || !Number.isSafeInteger(result.observed_refunded_cents) || result.observed_refunded_cents <= 0 || result.observed_refunded_cents > input.amountCents
+      || result.reconciliation_required !== true
+      || typeof result.duplicate !== 'boolean' || typeof result.changed !== 'boolean') {
+      throw AppError.serviceUnavailable('refund_recording_unconfirmed', 'L’enregistrement du remboursement n’est pas confirmé.');
+    }
+    return result;
   },
 
   /* ---------- customers ---------- */

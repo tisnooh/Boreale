@@ -7,7 +7,7 @@
 
 ---
 
-## 1. Checklist universelle (16 points, pondérée /100)
+## 1. Checklist universelle (16 critères, 110 points bruts normalisés sur 100)
 
 | # | Point | Poids | Méthode | Knockout si |
 |---|---|---|---|---|
@@ -28,11 +28,11 @@
 | 15 | Comparaison promesse fournisseur | 10 | Écart devis/échantillon : composition, grammage, dims, poids, fonction | écart matériel non déclaré |
 | 16 | Défauts constatés | 4 | Liste datée + photos | défaut de sécurité |
 
-**Score /100 = somme des points obtenus (0 → poids du point).**
+**Score /100 = somme des points obtenus / 110 × 100.** Les poids totalisent 110 ; appliquer les seuils au score normalisé, sans arrondir avant la décision (88 points bruts = 80/100). Tout knockout reste éliminatoire.
 
 ### Seuil PASS/FAIL
 - **PASS : score ≥ 80** et **zéro knockout** → alimente QUALITY_STATUS = OK (si preuves usine reçues par ailleurs).
-- **CONDITIONNEL : 65-79** ou 1 point non-knockout à 0 → QUALITY_STATUS = PARTIEL ; actions correctives écrites au fournisseur + **contre-échantillon obligatoire** avant GO.
+- **CONDITIONNEL : 65 ≤ score < 80** ou 1 point non-knockout à 0 → QUALITY_STATUS = PARTIEL ; actions correctives écrites au fournisseur + **contre-échantillon obligatoire** avant GO.
 - **FAIL : < 65 ou tout knockout** → QUALITY_STATUS = NON → décision NO GO (moteur SCORECARD §3).
 
 ---

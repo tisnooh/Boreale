@@ -1,12 +1,9 @@
 import { SnowflakeIcon } from '@/components/Icons';
 
 const ITEMS = [
-  'Expédié depuis la France',
-  'Retours 30 jours',
-  'Sélection testée, pas de catalogue fourre-tout',
-  'Chaleur sans électricité',
-  'Paiement sécurisé',
-  'Honnêteté radicale : ni faux avis, ni fausses promos',
+  'Maison BORÉALE',
+  'Collection hiver',
+  'Confort à la maison et dehors',
 ];
 
 /** Ticker de marque — boucle infinie sobre, désactivée si prefers-reduced-motion. */

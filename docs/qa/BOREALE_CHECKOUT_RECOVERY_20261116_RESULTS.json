@@ -1,0 +1,166 @@
+{
+  "observedAt": "2026-11-16",
+  "branch": "master/operational-readiness",
+  "scope": "durable checkout, verified session recording, early webhook recovery",
+  "backend": {
+    "total": 351,
+    "passed": 351,
+    "failed": 0,
+    "typecheckExitCode": 0,
+    "lint": {
+      "files": 92,
+      "errors": 0,
+      "warnings": 0
+    },
+    "buildExitCode": 0
+  },
+  "frontend": {
+    "total": 165,
+    "passed": 165,
+    "failed": 0,
+    "targetedRecoveryPassed": 51,
+    "typecheckExitCode": 0,
+    "targetedLint": {
+      "errors": 0,
+      "existingWarnings": 2
+    },
+    "finalBuildVerified": true,
+    "buildExitCode": 0,
+    "buildEngine": "webpack",
+    "buildMode": "preview",
+    "generatedPages": 34,
+    "standardBuild": {
+      "completed": false,
+      "interruptedAfterCompilationAndTypecheck": true,
+      "reason": "switched to existing low-memory webpack build script"
+    },
+    "globalLint": {
+      "files": 135,
+      "errors": 0,
+      "existingWarnings": 27
+    }
+  },
+  "database": {
+    "projectRef": "luojeyfznonjnacftxbm",
+    "migration": "20261116142245_boreale_checkout_intent",
+    "sha256": "EE9C2C93CDAB8FE8F97CE9C17B135C952F179880D8AE5F10AE827D67BCC8CB9B",
+    "applied": true,
+    "singleSessionQa": {
+      "executed": true,
+      "syntheticProviderDataOnly": true,
+      "remainingCustomers": 0,
+      "remainingOrders": 0,
+      "remainingProducts": 0,
+      "remainingVariants": 0,
+      "remainingIntents": 0,
+      "remainingPayments": 0,
+      "remainingAuthUsers": 0,
+      "remainingProfiles": 0
+    },
+    "twoConnections": {
+      "queries": [
+        {
+          "connection": 302826,
+          "started": "2026-11-16 14:36:53.066356+00",
+          "finished": "2026-11-16 14:36:57.120378+00",
+          "intent_id": "bb43a543-8e01-4585-b779-b124dcb596e9",
+          "order_id": "ae595f9c-bb90-4815-9799-3b5e13cdcbf2"
+        },
+        {
+          "connection": 302850,
+          "started": "2026-11-16 14:37:15.998238+00",
+          "finished": "2026-11-16 14:37:16.007883+00",
+          "intent_id": "bb43a543-8e01-4585-b779-b124dcb596e9",
+          "order_id": "ae595f9c-bb90-4815-9799-3b5e13cdcbf2"
+        }
+      ],
+      "distinctConnectionIds": true,
+      "overlappingIntervals": false,
+      "concurrencyVerdict": "INCONCLUSIVE",
+      "sequentialDeduplicationVerified": true,
+      "counts": {
+        "intents": 1,
+        "orders": 1,
+        "items": 1,
+        "active_products": 0
+      },
+      "cleanup": {
+        "remaining_products": 0,
+        "remaining_variants": 0,
+        "remaining_orders": 0,
+        "remaining_customers": 0,
+        "remaining_intents": 0
+      }
+    },
+    "privateProducts": 3,
+    "activeProducts": 0,
+    "securityAdvisors": {
+      "infoPrivateRlsNoPolicy": 20,
+      "warnings": 0,
+      "errors": 0
+    }
+  },
+  "stripe": {
+    "chosenContext": "acct_1Uc6bxGLTNMkV9aW",
+    "chosenName": "environnement de test Boreale",
+    "livemode": false,
+    "connectorAccessVerified": true,
+    "webhookEndpointsObserved": 0,
+    "runtimeKeyConfiguredAtCheckpoint": false,
+    "completeSandboxPurchaseVerified": false,
+    "realPaymentMade": false
+  },
+  "independentReview": {
+    "codeAndStaticSql": "APPROVED",
+    "fixedHighIssues": [
+      "removed test-only sequential checkout bypass",
+      "explicit new attempt after verified expiration survives reload"
+    ]
+  },
+  "limits": {
+    "changedPayloadBeforeExpirationProof": "support-only, no automatic key rotation",
+    "stripeDefaultSessionHours": 24,
+    "remoteCreationRetryHours": 23,
+    "attempts": 5,
+    "emailProviderDeliveryVerified": false,
+    "productionDeployed": false,
+    "commercialLaunchApproved": false
+  },
+  "checkpointDate": "2026-11-17",
+  "browser": {
+    "verified": false,
+    "previewMode": true,
+    "simulatedApi": true,
+    "realPaymentTested": false,
+    "attempts": [
+      {
+        "result": "FAILED",
+        "cause": "initial navigation DOMContentLoaded timeout 30s"
+      },
+      {
+        "result": "FAILED",
+        "cause": "paid but unrecorded heading not observed within 60s",
+        "form320PreviewChecksPassed": true
+      }
+    ],
+    "diagnostic": "HTTP document/assets observed; no API call; DOM/body/evaluation/screenshot unavailable; no proven application/CORS defect",
+    "verdict": "BLOCKED",
+    "instrumentedHarness": "syntax checked and independently reviewed; NOT_RUN after instrumentation",
+    "availableRamGB": 0.02,
+    "totalRamGB": 3.39,
+    "references": [
+      "BOREALE_CHECKOUT_BROWSER_DIAGNOSTIC_FIRST.json",
+      "BOREALE_CHECKOUT_BROWSER_DIAGNOSTIC_FINAL.json"
+    ]
+  },
+  "gitDelivery": {
+    "localCheckpointOnly": true,
+    "pushed": false,
+    "reason": "UI verification remains blocked; no production deployment"
+  },
+  "disabledHttpSmoke": {
+    "checks": 5,
+    "passed": 5,
+    "externalRequests": 0
+  }
+}

@@ -10,11 +10,5 @@
       "source": "/(.*)",
       "destination": "/api"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/abandoned-carts",
-      "schedule": "0 9 * * *"
-    }
   ]
 }

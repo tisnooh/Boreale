@@ -28,7 +28,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return buildMetadata({
     title: 'La collection hiver — tous les produits',
     description:
-      'Tous les essentiels BORÉALE : chaussettes polaires, gants tactiles, bonnets, bouillottes, chauffe-mains, housses pare-brise, plaids et packs hiver. Livraison offerte dès 69 €.',
+      'La sélection hiver BORÉALE pour le confort à la maison et les sorties par temps froid.',
     path: '/collections',
   });
 }
@@ -82,8 +82,8 @@ export default async function CollectionsPage({ searchParams }: Props) {
             {summer
               ? 'Les univers été sont ouverts : la sélection de produits arrive après la phase de sourcing dédiée. Même exigence, même transparence.'
               : products.length > 0
-                ? `${products.length} produit${products.length > 1 ? 's' : ''} sélectionné${products.length > 1 ? 's' : ''} et testé${products.length > 1 ? 's' : ''} pour vous garder au chaud.`
-                : 'Des essentiels chauds, beaux et durables — du textile aux packs prêts à offrir.'}
+                ? `${products.length} produit${products.length > 1 ? 's' : ''} sélectionné${products.length > 1 ? 's' : ''} pour la collection hiver, avec les modèles et conditions à confirmer.`
+                : 'Une sélection courte pour les mains, les pieds et le confort de la maison.'}
           </p>
           {summer && (
             <Link href="/ete" className="link-editorial mt-4">

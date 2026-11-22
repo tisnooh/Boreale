@@ -12,7 +12,7 @@ import { ArrowRightIcon } from '@/components/Icons';
  * Index des univers + aperçu flottant suivant le curseur (desktop uniquement).
  * Sur tactile / reduced-motion : l'aperçu est désactivé en CSS, l'index reste pleinement utilisable.
  */
-export function UniversIndex({ categories }: { categories: CategoryDTO[] }) {
+export function UniversIndex({ categories, summer = false }: { categories: CategoryDTO[]; summer?: boolean }) {
   const [active, setActive] = useState<CategoryDTO | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
@@ -35,12 +35,12 @@ export function UniversIndex({ categories }: { categories: CategoryDTO[] }) {
         <div className="max-w-xl">
           <Overline index="N°01" label="Les univers" />
           <h2 className="display-section mt-5">
-            Quatre territoires,
+            Des univers complémentaires,
             <br />
-            <em>un seul froid à vaincre.</em>
+            <em>{summer ? 'pour vivre l’été dehors.' : 'un seul froid à vaincre.'}</em>
           </h2>
         </div>
-        <Link href="/collections" className="link-editorial hidden shrink-0 sm:inline-flex">
+        <Link href={summer ? "/collections?saison=ete" : "/collections"} className="link-editorial hidden shrink-0 sm:inline-flex">
           Tout voir <ArrowRightIcon width={14} height={14} />
         </Link>
       </Reveal>
