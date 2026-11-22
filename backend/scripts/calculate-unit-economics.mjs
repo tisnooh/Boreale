@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import process from 'node:process';
 
 // Offline planning only. Every value, including zero, needs explicit provenance.
 const fields = {

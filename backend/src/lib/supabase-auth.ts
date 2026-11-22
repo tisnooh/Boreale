@@ -74,7 +74,10 @@ export async function authSessionResult(session: Session) {
 export const supabaseAuth = {
   async register(input: { email: string; password: string; firstName?: string; lastName?: string; marketingOptin?: boolean }) {
     const { data, error } = await publicAuthClient().auth.signUp({ email: input.email, password: input.password,
-      options: { data: { first_name: input.firstName, last_name: input.lastName, marketing_optin: input.marketingOptin ?? false } } });
+      options: {
+        emailRedirectTo: new URL('/account', config().PUBLIC_SITE_URL).href,
+        data: { first_name: input.firstName, last_name: input.lastName, marketing_optin: input.marketingOptin ?? false },
+      } });
     if (error) throw AppError.unprocessable('registration_failed', 'Inscription impossible. Vérifiez les informations et réessayez.');
     if (!data.session) throw AppError.unprocessable('email_confirmation_required', 'Vérifiez votre email pour confirmer votre compte avant de vous connecter.');
     return authSessionResult(data.session);

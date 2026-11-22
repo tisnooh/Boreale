@@ -13,7 +13,7 @@ const profileQuery = vi.hoisted(() => ({ from: vi.fn(), select: vi.fn(), eq: vi.
 const client = vi.hoisted(() => vi.fn((_url: string, _key: string, _options: unknown) => ({ auth, from: profileQuery.from })));
 vi.mock('@supabase/supabase-js', () => ({ createClient: client }));
 vi.mock('../src/config.js', () => ({
-  config: () => ({ AUTH_PROVIDER: state.provider, SUPABASE_URL: 'https://example.supabase.co',
+  config: () => ({ AUTH_PROVIDER: state.provider, FRONTEND_URL: 'https://preview.example.test,https://shop.example.test', PUBLIC_SITE_URL: 'https://shop.example.test', SUPABASE_URL: 'https://example.supabase.co',
     SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_test', JWT_SECRET: 'unit-test-only-secret',
     NODE_ENV: state.production ? 'production' : 'test' }),
   isProduction: () => state.production,
@@ -85,6 +85,7 @@ describe('Supabase Auth opt-in', () => {
     expect(result.token).toBe('access-1');
     expect(result.refreshToken).toBe('refresh-1');
     expect(auth.signUp).toHaveBeenCalledTimes(1);
+    expect(auth.signUp).toHaveBeenCalledWith(expect.objectContaining({ options: expect.objectContaining({ emailRedirectTo: 'https://shop.example.test/account' }) }));
   });
   it('ne connecte pas une inscription exigeant confirmation email', async () => {
     auth.signUp.mockResolvedValue({ data: { user, session: null }, error: null });

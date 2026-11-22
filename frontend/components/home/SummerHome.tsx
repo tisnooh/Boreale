@@ -44,7 +44,7 @@ export async function SummerHome() {
           <div className="lg:col-span-8">
             <p className="overline mb-8 max-w-md">
               <span className="text-ember-dark">{hero.eyebrow}</span>
-              <span>Maison d’été — France</span>
+              <span>Maison d’été</span>
             </p>
             <h1 className="display-cover">
               <span className="line-mask">
@@ -86,8 +86,8 @@ export async function SummerHome() {
               ))}
             </nav>
             <div className="flex items-center gap-6 text-[10px] tracking-[0.2em] text-ink-500 uppercase">
-              <span>48 h expédition</span>
-              <span>30 j retours</span>
+              <span>Collection été</span>
+              <span>Maison BORÉALE</span>
             </div>
           </div>
         </div>
@@ -135,9 +135,7 @@ export async function SummerHome() {
             <em>bientôt.</em>
           </h2>
           <p className="mt-6 text-sm leading-relaxed text-muted">
-            Le système de packs est le même qu’en hiver : des pièces qui vivent ensemble, moins
-            chères que séparément. Les compositions été seront publiées avec la sélection — avec
-            des économies réelles, jamais affichées avant d’exister.
+            Les compositions des packs été seront publiées avec la sélection, une fois les articles et leurs prix confirmés.
           </p>
         </Reveal>
         <ul className="grid gap-4 md:grid-cols-3">

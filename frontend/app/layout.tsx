@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     template: `%s — ${BRAND.name}`,
   },
   description:
-    'Essentiels d’hiver sélectionnés et testés : chaussettes polaires, gants tactiles, bouillottes, housses pare-brise, plaids et packs cadeaux. Expédié depuis la France, retours 30 jours.',
+    'BORÉALE propose une sélection saisonnière pour le confort à la maison et dehors.',
   keywords: ['hiver', 'chaussettes polaires', 'bouillotte', 'plaid', 'gants tactiles', 'pare-brise antigivre', 'cocooning'],
   openGraph: {
     type: 'website',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: BRAND.name,
     title: `${BRAND.name} — ${BRAND.slogan}`,
-    description: 'Des essentiels chauds, beaux et durables pour affronter l’hiver. Expédié depuis la France.',
+    description: 'Des essentiels de saison pour la maison et le plein air.',
     images: [{ url: '/og/og-default.jpg', width: 1200, height: 630, alt: BRAND.name }],
   },
   robots: { index: !isPreview(), follow: !isPreview() },

@@ -50,6 +50,7 @@ export async function submitCheckout(payload: CheckoutPayload, customerId: strin
     }
     // Only these known pre-provider rejections establish that a first attempt did not start a payment.
     if (error instanceof ApiError && ['validation_error', 'checkout_closed', 'checkout_dependencies_unavailable',
+      'checkout_live_not_approved', 'checkout_email_unavailable',
       'procurement_unverified', 'insufficient_stock', 'variant_not_found', 'discount_invalid',
       'discount_not_applicable', 'invalid_quantity', 'invalid_total', 'invalid_stripe_totals'].includes(error.code)) {
       rejectFirstCheckoutAttempt(attempt);
@@ -79,7 +80,7 @@ export async function submitContact(input: {
     return { status: 'preview', message: 'Mode preview : message non envoyé. Le formulaire sera connecté au service client à l’ouverture de la boutique.' };
   }
   await api.post('/api/contact', input);
-  return { status: 'ok', message: 'Message envoyé. Nous répondons sous 24-48 h ouvrées.' };
+  return { status: 'ok', message: 'Votre message a été enregistré.' };
 }
 
 export async function validateDiscount(code: string, subtotalCents: number): Promise<{ valid: boolean; discountCents: number; message: string }> {

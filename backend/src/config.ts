@@ -4,6 +4,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   CHECKOUT_ENABLED: z.enum(['true', 'false']).default('false'),
+  LIVE_CHECKOUT_APPROVED: z.enum(['true', 'false']).default('false'),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
   SUPABASE_URL: z.string().url().optional().or(z.literal('')),
   SUPABASE_ANON_KEY: z.string().optional(),

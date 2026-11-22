@@ -30,9 +30,9 @@ describe('checkout action recovery (API mocked)', () => {
     await expect(submitCheckout({ ...payload, shippingMethod: 'express' })).rejects.toMatchObject({ code: 'checkout_reconciliation_required' });
     expect(state.post).toHaveBeenCalledTimes(2);
   });
-  it('allows changed input after first definitive pre-provider validation rejection', async () => {
-    state.post.mockRejectedValueOnce(new ApiError(422, 'insufficient_stock', 'Unavailable')).mockResolvedValueOnce(response);
-    await expect(submitCheckout(payload)).rejects.toMatchObject({ code: 'insufficient_stock' });
+  it.each(['insufficient_stock', 'checkout_live_not_approved', 'checkout_email_unavailable'])('allows changed input after a first rejection for %s', async code => {
+    state.post.mockRejectedValueOnce(new ApiError(422, code, 'Unavailable')).mockResolvedValueOnce(response);
+    await expect(submitCheckout(payload)).rejects.toMatchObject({ code });
     await submitCheckout({ ...payload, items: [{ variantId: 'another', quantity: 1 }] });
     expect(state.post.mock.calls[0][1].idempotencyKey).not.toBe(state.post.mock.calls[1][1].idempotencyKey);
   });

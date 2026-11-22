@@ -25,6 +25,7 @@ export default function AccountPage() {
   const [optin, setOptin] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmationPending, setConfirmationPending] = useState(false);
 
   // Édition profil
   const [editing, setEditing] = useState(false);
@@ -34,6 +35,7 @@ export default function AccountPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setConfirmationPending(false);
     const guard = previewAuthError();
     if (guard) {
       setError(guard.message);
@@ -50,7 +52,13 @@ export default function AccountPage() {
       }
       router.refresh();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erreur inattendue.');
+      if (mode === 'register' && err instanceof ApiError && err.code === 'email_confirmation_required') {
+        setPassword('');
+        setMode('login');
+        setConfirmationPending(true);
+      } else {
+        setError(err instanceof ApiError ? err.message : 'Erreur inattendue.');
+      }
     } finally {
       setBusy(false);
     }
@@ -90,7 +98,7 @@ export default function AccountPage() {
               <button
                 key={m}
                 type="button"
-                onClick={() => { setMode(m); setError(null); }}
+                onClick={() => { setMode(m); setError(null); setConfirmationPending(false); }}
                 aria-pressed={mode === m}
                 className={`rounded-lg py-2 transition ${mode === m ? 'bg-white text-ink shadow-sm' : 'text-muted hover:text-ink'}`}
               >
@@ -131,6 +139,7 @@ export default function AccountPage() {
                 Je souhaite recevoir la newsletter (conseils chaleur + offres, 1 email/mois max, désinscription en un clic).
               </label>
             )}
+            {confirmationPending && <p role="status" className="rounded-xl bg-ice px-4 py-2.5 text-sm text-ink">Consultez votre boîte mail pour confirmer votre adresse, puis connectez-vous.</p>}
             {error && <p role="alert" className="rounded-xl bg-danger/10 px-4 py-2.5 text-xs font-medium text-danger">{error}</p>}
             <button type="submit" disabled={busy} className="btn-primary">
               {busy ? 'Un instant…' : mode === 'login' ? 'Se connecter' : 'Créer mon compte'}

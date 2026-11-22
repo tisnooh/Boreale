@@ -64,8 +64,7 @@ function ContactForm() {
       <div className="card p-8 text-center">
         <p className="font-display text-2xl font-semibold">Message envoyé ✓</p>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-          Merci ! Notre équipe répond sous 24-48 h ouvrées à l’adresse indiquée. Pour une commande urgente, précisez
-          toujours le numéro de commande.
+          Votre message a été enregistré. Si votre demande concerne une commande, indiquez son numéro dans vos échanges.
         </p>
         <button type="button" className="btn-outline btn-sm mt-6" onClick={() => { setState('idle'); setForm({ name: '', email: '', subject: '', message: '', orderNumber: '' }); }}>
           Envoyer un autre message
@@ -114,12 +113,7 @@ export default function ContactPage() {
     <div className="container-x max-w-3xl py-12">
       <h1 className="font-display text-4xl font-semibold">Contact</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted">
-        Une question, un souci de commande, un conseil produit ? Écrivez-nous — une vraie personne répond sous 24-48 h
-        ouvrées. Vous pouvez aussi nous joindre par email à{' '}
-        <a href="mailto:bonjour@votre-domaine.fr" className="font-semibold text-ember-dark underline underline-offset-2">
-          bonjour@votre-domaine.fr
-        </a>
-        .
+        Pour une question sur un produit ou une commande, utilisez le formulaire ci-dessous.
       </p>
       <div className="mt-8">
         <Suspense fallback={null}>

@@ -157,3 +157,13 @@ Avant ouverture : produits vérifiés, coûts complets, destinations/retours, do
 5. Autoriser ultérieurement les connexions de test et, séparément, toute prise de contact, achat ou production.
 
 Aucune de ces décisions n’est remplacée par une hypothèse financière ou une réussite de test simulé.
+
+
+## Préparation à la sortie du mode démo
+
+La cible de recette est un frontend connecté à une API de test, avec Stripe sandbox, ventes publiques fermées et offre de test contrôlée. En Production Vercel, activer les variables système pour exposer VERCEL_ENV et définir explicitement NEXT_PUBLIC_SITE_MODE=launch tant que la recette hébergée et l’autorisation d’ouverture sont en attente. Le mode live requiert une origine HTTPS distante et ne remplace pas la validation du checkout côté serveur.
+
+
+## Déploiement de la page d’attente — 22 novembre 2026
+
+La page d’attente est active en production sur https://boreale-eight.vercel.app, déploiement dpl_6zZjebXM3tp7UTMqkZ4EBjZ7ExpN. Paiement inaccessible sur le site public. Le mode launch est défini au build et au runtime de ce déploiement. Le rollback Vercel précédent est dpl_GHkFbN99RvM2TX1oU11rGygoYdBh et rétablirait l’ancien site de démonstration.

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { HomepageSettings } from '@/lib/types';
 import { ArrowRightIcon } from '@/components/Icons';
+import { MobilePieceRail } from './MobilePieceRail';
 
 const CHAPTERS = [
   ['#univers', '01', 'Les univers'],
@@ -95,11 +96,11 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
           </div>
 
           {/* Polaroids mobile : rangée scrollable */}
-          <div className="rail -mx-4 mt-12 flex min-w-0 gap-4 overflow-x-auto px-4 pb-2 lg:hidden">
+          <MobilePieceRail>
             {PIECES.map((p, i) => (
               <PieceCard key={p.caption} src={p.src} caption={p.caption} width={150} tilt={i % 2 ? '2.5deg' : '-2.5deg'} delay={`${i * 0.7}s`} className="shrink-0" />
             ))}
-          </div>
+          </MobilePieceRail>
         </div>
 
         {/* Polaroids desktop : dispersion flottante */}
@@ -116,7 +117,7 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
 
       {/* Sommaire + méta */}
       <div className="container-x relative pb-8">
-        <div className="grid min-w-0 gap-6 border-t border-white/15 pt-6 lg:flex lg:items-end lg:justify-between">
+        <div className="grid min-w-0 grid-cols-1 gap-6 border-t border-white/15 pt-6 xl:flex xl:items-end xl:justify-between">
           <nav aria-label="Sommaire de la page" className="grid min-w-0 flex-1 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-4 lg:gap-x-8">
             {CHAPTERS.map(([href, n, label]) => (
               <Link key={href} href={href} className="group flex min-w-0 items-baseline gap-2 lg:gap-3">

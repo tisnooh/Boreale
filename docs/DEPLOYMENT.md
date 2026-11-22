@@ -37,10 +37,11 @@ Préparation de deux applications séparées : `frontend/` et `backend/`. Ce doc
 6. **Aucun cron automatique n’est déclaré.** La relance commerciale des paniers nécessite une validation séparée du consentement et de l’autorisation d’envoi. Le traitement des confirmations reste désactivé jusqu’à la recette prestataire ; ne pas activer de campagne en configurant simplement la clé email.
 
 ## 3. Frontend → Projet Vercel n°1
-1. Vercel → **Add New Project** → même repo → **Root Directory : `frontend`**.
+1. Réutiliser le projet Vercel `boreale` existant, racine `frontend`. L’alias public reste sur le déploiement en mode `launch` pendant la recette.
 2. Framework : *Next.js* (détecté). Build par défaut.
 3. Variables :
    ```
+   NEXT_PUBLIC_SITE_MODE=live  # Préproduction connectée, avec URL et API de test
    NEXT_PUBLIC_API_URL=https://api.domain.com
    NEXT_PUBLIC_SITE_URL=https://domain.com
    ```
@@ -51,7 +52,7 @@ Préparation de deux applications séparées : `frontend/` et `backend/`. Ce doc
    `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_failed`, `charge.refunded`, `payment_intent.payment_failed`.
 2. Copier le **signing secret** (`whsec_…`) → variable `STRIPE_WEBHOOK_SECRET` du projet backend → redéployer.
 3. Tester en TEST : carte `4242 4242 4242 4242`, date/CVC libres. Vérifier : commande `paid`, stock décrémenté, emails (si Resend configuré), page succès.
-4. **Passage en LIVE (J-7 du lancement)** : basculer `STRIPE_SECRET_KEY` (sk_live), recréer le webhook live + nouveau `whsec`, tester un petit paiement réel puis le rembourser via l'admin.
+4. Après recette et autorisation explicite, préparer le compte et le webhook Stripe live. Garder `LIVE_CHECKOUT_APPROVED=false` et `CHECKOUT_ENABLED=false` jusqu’à l’ouverture commerciale approuvée.
 
 ## 5. Resend
 1. Domains → ajouter `domain.com` → ajouter les enregistrements DNS **SPF (Return-Path) + DKIM** fournis.
@@ -82,4 +83,5 @@ api.domain.com    CNAME  → cname.vercel-dns.com (projet backend)
 ## Rollback / environnement de préproduction
 - Vercel : chaque push génère une Preview ; promouvoir/rollback en un clic (Deployments → Promote/Inspect).
 - Preview backend : penser à un webhook Stripe dédié (ou `stripe trigger` en CLI) et à `FRONTEND_URL` incluant l'URL preview du frontend pendant les tests.
+- Pour les sessions client et admin, préférer des sous-domaines HTTPS du même domaine enregistré pour le frontend et l’API. Tester les cookies sur Safari avant l’ouverture.
 - Base : ne jamais appliquer de migration destructive sans dump Supabase (Database → Backups / `pg_dump`).

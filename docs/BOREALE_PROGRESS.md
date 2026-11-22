@@ -148,3 +148,13 @@ Obtenir la visibilité ou l’URL du projet existant Supabase, inspecter son sch
 ## 22 novembre — cinq priorités hiver en prévisualisation
 
 Contact, Refuge, Braise, Nuage et semelles isolantes apparaissent dans cet ordre. Douze annonces étudiées, cinq brouillons non commandables et quinze briefs photo préparés. Aucun fournisseur approuvé. Le contrôle HTTP des cinq fiches et de l’accueil passe. Comparaison visuelle bloquée par des expirations Chromium. Voir [le rapport et l’inventaire des fichiers](BOREALE_PRIORITY_DELIVERY_20261122.md).
+
+
+## Préparation à la sortie du mode démo
+
+Sortie du mode démonstration préparée sur la branche de travail. La configuration de build Vercel Production utilise la page d’attente par défaut et contrôle l’origine API du mode connecté. Métadonnées hiver nettoyées. Galerie produit navigable par miniature et balayage tactile. La version publique requiert une mise à jour du projet Vercel propriétaire.
+
+
+## Déploiement de la page d’attente — 22 novembre 2026
+
+Mise à jour frontend publique autorisée et promue sur le projet Vercel existant boreale. Déploiement dpl_6zZjebXM3tp7UTMqkZ4EBjZ7ExpN, commit local de livraison 095cbcf5d4ebbfcaa01b5fc1253afdb40804cba4. Mode launch explicite pour ce déploiement. Aucun déploiement backend, aucune activation Stripe et aucune publication de produit.

@@ -79,7 +79,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
       res = await request(); // Once only; a second 401 is returned without another refresh.
     }
   } catch {
-    throw new ApiError(0, 'network_error', 'API injoignable. Vérifiez que le backend est démarré (NEXT_PUBLIC_API_URL).');
+    throw new ApiError(0, 'network_error', 'Le service est momentanément indisponible. Réessayez dans un instant.');
   }
   const text = await res.text();
   const json = text ? safeJsonParse(text) : null;

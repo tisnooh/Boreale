@@ -14,8 +14,7 @@ import { apiGetServer } from '@/lib/api-server';
 import { isPreview, SITE_MODE, type SiteMode } from '@/lib/config';
 import type { CategoryDTO, HomepageSettings, Paginated, ProductDTO } from '@/lib/types';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
-import { PREVIEW_CATEGORIES, PREVIEW_HOMEPAGE, PREVIEW_PRODUCTS } from './preview-data';
-import { SUMMER_CATEGORIES, SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
+import { SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
 import { matchesShopSeason, type ShopSeason } from '@/lib/season/types';
 
 export interface CatalogSource {
@@ -40,30 +39,34 @@ function withRelated(p: ProductDTO, all: ProductDTO[]): ProductDTO {
   };
 }
 
-const ALL_PREVIEW_CATEGORIES = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES];
-
 const previewSource: CatalogSource = {
   mode: 'preview',
   isPreview: true,
   async products(season) {
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
     const all = PREVIEW_PRODUCTS.filter(p => p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async product(slug) {
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
     const all = PREVIEW_PRODUCTS;
     const found = all.find((p) => p.slug === slug);
     return found ? withRelated({ ...found }, all) : null;
   },
   async categories(season) {
-    const all = ALL_PREVIEW_CATEGORIES.map((c) => ({ ...c }));
+    const [{ PREVIEW_CATEGORIES }, { SUMMER_CATEGORIES }] = await Promise.all([
+      import('./preview-data'), import('@/lib/season/content-summer'),
+    ]);
+    const all = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES].map((c) => ({ ...c }));
     return season ? all.filter((c) => matchesShopSeason(c.season ?? 'winter', season)) : all;
   },
   async bundles(season) {
+    const { PREVIEW_PRODUCTS } = await import('./preview-data');
     const all = PREVIEW_PRODUCTS.filter((p) => p.type === 'bundle' && p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async homepage(season) {
-    return season === 'summer' ? SUMMER_HOMEPAGE : PREVIEW_HOMEPAGE;
+    return season === 'summer' ? SUMMER_HOMEPAGE : (await import('./preview-data')).PREVIEW_HOMEPAGE;
   },
 };
 

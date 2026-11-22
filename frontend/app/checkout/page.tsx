@@ -242,7 +242,7 @@ export default function CheckoutPage() {
                       <input type="radio" name="shipping-method" value={m} checked={method === m} onChange={() => setMethod(m)} className="accent-[#3D7EA6]" />
                       <span>
                         <span className="font-semibold">{opt.label}</span>
-                        <span className="block text-xs text-muted">{opt.etaLabel}{opt.freeAboveCents !== null ? ` · offerte dès ${formatCents(opt.freeAboveCents)}` : ''}</span>
+                        <span className="block text-xs text-muted">Délai à confirmer</span>
                       </span>
                     </span>
                     <span className="text-xs font-semibold tabular-nums">
@@ -282,7 +282,7 @@ export default function CheckoutPage() {
                       e.preventDefault();
                       void applyCode();
                     }
-                  }} placeholder="WELCOME10" autoComplete="off" />
+                  }} autoComplete="off" />
                 <button type="button" onClick={() => void applyCode()} className="btn-outline btn-sm">OK</button>
               </div>
               {discount.code && <p className="mt-1.5 text-xs font-semibold text-success">✓ {discount.code} appliqué</p>}

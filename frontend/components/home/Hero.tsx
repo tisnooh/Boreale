@@ -44,9 +44,9 @@ export function Hero({ hero }: { hero: HomepageSettings['hero'] }) {
           <Reveal delay={600}>
           <dl className="mt-14 grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
             {[
-              ['48 h', 'expédition depuis la France'],
-              ['30 j', 'pour changer d’avis'],
-              ['14', 'produits, pas un de plus'],
+              ['Hiver', 'la collection de saison'],
+              ['Maison', 'le confort au quotidien'],
+              ['Dehors', 'les essentiels par temps froid'],
             ].map(([n, l]) => (
               <div key={l}>
                 <dt className="font-display text-2xl font-semibold text-white sm:text-3xl">{n}</dt>

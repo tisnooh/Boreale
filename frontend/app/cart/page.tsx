@@ -218,7 +218,7 @@ function CartPageInner() {
                         />
                         <span>
                           <span className="font-semibold">{opt.label}</span>
-                          <span className="block text-xs text-muted">{opt.etaLabel}</span>
+                          <span className="block text-xs text-muted">Délai à confirmer</span>
                         </span>
                       </span>
                       <span className="text-xs font-semibold tabular-nums">

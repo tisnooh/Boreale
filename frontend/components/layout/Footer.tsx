@@ -16,7 +16,7 @@ const SEASON_DESC = {
   winter:
     'BORÉALE prépare une sélection courte pour l’hiver : les mains, les pieds et le confort de la maison, dans un univers sobre.',
   summer:
-    'BORÉALE sélectionne des essentiels d’été lumineux, malins et durables : plage, voyage, fraîcheur, outdoor, auto et terrasse. Expédié depuis la France.',
+    'BORÉALE sélectionne des essentiels d’été lumineux, malins et durables : plage, voyage, fraîcheur, plein air et terrasse.',
 } as const;
 
 /** Footer commun aux deux saisons : liens, baseline et description suivent l'URL courante. */
@@ -38,9 +38,7 @@ export function Footer() {
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ice/70">{SEASON_DESC[season]}</p>
           <p className="mt-4 text-xs text-ice/50">
             Service client :{' '}
-            <a href={`mailto:${BRAND.supportEmail}`} className="underline underline-offset-2 hover:text-white">
-              {BRAND.supportEmail}
-            </a>
+            <Link href="/contact" className="underline underline-offset-2 hover:text-white">Nous contacter</Link>
           </p>
         </div>
         <FooterCol title="Boutique" links={getSeasonFooterLinks(season)} />
@@ -50,9 +48,9 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-ice/60 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {BRAND.name} — {BRAND.legalName}. Tous droits réservés.
+            © {new Date().getFullYear()} {BRAND.name}. Tous droits réservés.
           </p>
-          <p>Paiement sécurisé par Stripe · Prix TTC en euros</p>
+          <Link href="/legal/terms" className="underline underline-offset-2 hover:text-white">Conditions générales de vente</Link>
         </div>
       </div>
     </footer>

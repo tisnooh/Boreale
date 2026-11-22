@@ -12,6 +12,10 @@ const bodySchema = z.object({
   to: address, subject: z.string().min(1).max(200).regex(/^[^\r\n]+$/), html: z.string().min(1).max(100000),
 }).strict();
 export type ConfirmationBody = z.infer<typeof bodySchema>;
+
+export function isOrderEmailSenderValid(from: string): boolean {
+  return bodySchema.shape.from.safeParse(from).success;
+}
 type Failure = 'provider_unavailable' | 'provider_unconfirmed' | 'order_unverified' | 'recipient_not_allowed' | 'payload_invalid';
 export interface ConfirmationJob { id: string; order_id: string; delivery_token: string }
 export interface ConfirmationSettings { mode: 'off' | 'test' | 'live'; from: string; configured: boolean; testRecipients: string[] }
@@ -81,7 +85,7 @@ function settings(): ConfirmationSettings {
 
 export async function runOrderConfirmations(deps: ConfirmationDeps = defaultDeps, options: ConfirmationSettings = settings()) {
   if (options.mode === 'off' || !options.configured) throw AppError.serviceUnavailable('order_emails_disabled', 'Les confirmations de commande sont désactivées.');
-  if (!bodySchema.shape.from.safeParse(options.from).success) throw AppError.serviceUnavailable('email_sender_required', 'Une adresse expéditrice valide est requise avant de traiter la file.');
+  if (!isOrderEmailSenderValid(options.from)) throw AppError.serviceUnavailable('email_sender_required', 'Une adresse expéditrice valide est requise avant de traiter la file.');
   if (options.mode === 'test' && (!options.testRecipients.length || options.testRecipients.length > 20 || options.testRecipients.some(s => !address.safeParse(s).success))) {
     throw AppError.serviceUnavailable('email_test_recipients_required', 'Destinataires de test exacts requis.');
   }

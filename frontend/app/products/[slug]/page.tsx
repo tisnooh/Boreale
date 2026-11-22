@@ -1,5 +1,4 @@
 
-import { SafeImage } from '@/components/ui/SafeImage';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCatalogSource } from '@/lib/catalog/source';
@@ -10,6 +9,7 @@ import type { ProductDTO } from '@/lib/types';
 import { Overline } from '@/components/ui/Overline';
 import { relatedTitle } from '@/lib/season/nav';
 import { Reveal } from '@/components/ui/Reveal';
+import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductPurchase } from '@/components/product/ProductPurchase';
 import { BundleContents } from '@/components/product/BundleContents';
 import { ProductCard } from '@/components/product/ProductCard';
@@ -90,35 +90,14 @@ export default async function ProductPage({ params }: Props) {
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          {/* Galerie */}
-          <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-ice">
-              {product.selection && !product.imageUrl ? (
-                <div className="flex h-full flex-col items-center justify-center gap-4 px-8 text-center">
-                  <span className="text-xs tracking-[0.22em] text-muted uppercase">BORÉALE</span>
-                  <span className="font-display text-3xl text-ink">{product.name}</span>
-                  <span className="text-sm text-muted">Photographies du modèle en préparation</span>
-                </div>
-              ) : <SafeImage
-                src={product.imageUrl ?? '/products/placeholder.svg'}
-                alt={product.name}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />}
-              {product.badge && <span className="badge absolute top-4 left-4 bg-ember text-white shadow">{product.badge}</span>}
-            </div>
-            {product.images.length > 0 && (
-              <div className="grid grid-cols-4 gap-3">
-                {product.images.slice(0, 4).map((src, i) => (
-                  <div key={i} className="relative aspect-square overflow-hidden rounded-xl border border-line bg-ice">
-                    <SafeImage src={src} alt={`${product.name} — visuel ${i + 1}`} fill sizes="120px" className="object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery
+            key={product.slug}
+            name={product.name}
+            imageUrl={product.imageUrl}
+            images={product.images}
+            badge={product.badge}
+            awaitingPhotos={Boolean(product.selection)}
+          />
 
           {/* Achat */}
           <Reveal delay={120}>
@@ -137,8 +116,8 @@ export default async function ProductPage({ params }: Props) {
             {/* Engagements */}
             <div className="mt-7 grid grid-cols-3 gap-3 text-center">
               {[
-                { Icon: TruckIcon, label: product.selection ? 'Livraison à confirmer' : 'Expédié de France' },
-                { Icon: ReturnIcon, label: product.selection ? 'Conditions à confirmer' : 'Retours 30 jours' },
+                { Icon: TruckIcon, label: 'Livraison et suivi' },
+                { Icon: ReturnIcon, label: 'Conditions de retour' },
                 { Icon: ShieldIcon, label: product.selection ? 'Vente non ouverte' : 'Paiement sécurisé' },
               ].map(({ Icon, label }) => (
                 <div key={label} className="card flex flex-col items-center gap-1.5 p-3">

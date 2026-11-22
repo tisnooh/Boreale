@@ -9,7 +9,7 @@ import { isLaunch } from '@/lib/config';
 export const metadata: Metadata = buildMetadata({
   title: isLaunch() ? 'BORÉALE — Ouverture prochaine' : `${BRAND.name} — ${BRAND.slogan}`,
   description:
-    isLaunch() ? 'BORÉALE se prépare. Une maison, deux saisons : découvrez bientôt notre sélection d’essentiels pour l’hiver et l’été.' : 'Essentiels d’hiver sélectionnés et testés : textile chaud, chaleur sans électricité, auto hiver et cocooning. Packs cadeaux, livraison France offerte dès 69 €.',
+    isLaunch() ? 'BORÉALE se prépare. Une maison, deux saisons : découvrez bientôt notre sélection d’essentiels pour l’hiver et l’été.' : 'Découvrez la sélection hivernale BORÉALE, pensée pour le confort par temps froid, à la maison et dehors.',
   path: '/',
 });
 

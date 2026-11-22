@@ -26,7 +26,7 @@ export async function verifyEmailReadiness(env, fetcher = globalThis.fetch) {
   const get = async path => {
     const response = await fetcher(`https://api.resend.com${path}`, {
       method: 'GET', redirect: 'error', headers: { Authorization: `Bearer ${env.EMAIL_API_KEY}` },
-      signal: AbortSignal.timeout(10000),
+      signal: globalThis.AbortSignal.timeout(10000),
     });
     if (!response.ok) throw new Error('unavailable');
     return response.json();

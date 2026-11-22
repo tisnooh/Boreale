@@ -120,3 +120,13 @@ Ces défauts sont des travaux à poursuivre, pas des demandes d’action propri�
 ## Limitation de vérification locale
 
 Machine très saturée : timeouts5s lors des suites globales. Conserver les échecs initiaux et relances ciblées30s dans le journal QA ; ne pas les transformer en paiement réel réussi. Le chef doit lire les sorties de checks finaux avant de déclarer validation globale.
+
+
+## Préparation à la sortie du mode démo
+
+Le connecteur Vercel retourne 404 pour boreale-eight.vercel.app, dans le contexte par défaut et pour l’unique équipe accessible. Il faut un accès au projet propriétaire pour configurer et vérifier une recette hébergée. Le préflight Stripe test retourne runtime_key_missing. Les variantes AliExpress, coûts livrés, retours et preuves produit restent à confirmer.
+
+
+## Déploiement de la page d’attente — 22 novembre 2026
+
+Accès Vercel rétabli via la CLI authentifiée. Le projet propriétaire iapetse09-2414s-projects/boreale et son adresse publique ont été vérifiés, puis mis à jour. Les dépendances Stripe sandbox et la qualification des offres AliExpress restent nécessaires à la recette commerciale.

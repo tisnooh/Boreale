@@ -120,19 +120,12 @@ export function ProductPurchase({ product }: Props) {
         </button>
       </div>
 
-      {/* Réassurance */}
       <ul className="grid gap-1.5 border-t border-line pt-4 text-xs text-muted sm:grid-cols-2">
         <li className="flex items-center gap-1.5">
-          <CheckIcon width={14} height={14} className="text-success" /> Livraison offerte dès 69 €
+          <CheckIcon width={14} height={14} className="text-success" /> Livraison et suivi
         </li>
         <li className="flex items-center gap-1.5">
-          <CheckIcon width={14} height={14} className="text-success" /> Retours sous 30 jours
-        </li>
-        <li className="flex items-center gap-1.5">
-          <CheckIcon width={14} height={14} className="text-success" /> Paiement sécurisé Stripe
-        </li>
-        <li className="flex items-center gap-1.5">
-          <CheckIcon width={14} height={14} className="text-success" /> Expédié depuis la France
+          <CheckIcon width={14} height={14} className="text-success" /> Conditions de retour
         </li>
       </ul>
     </div>

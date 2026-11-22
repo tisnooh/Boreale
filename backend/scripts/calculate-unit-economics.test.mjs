@@ -9,7 +9,7 @@ function fixture(changes = {}) {
     acquisitionNetCents: 1000, monthlyFixedNetCents: 120000, monthlyOrders: 100,
     settlementDelayDays: 7, supplierPaymentDelayDays: 2, ...changes };
   const cells = Object.fromEntries(requiredFields.map(k => [k, { value: values[k] ?? 0, status: 'assumption', source: 'Synthetic unit test only' }]));
-  return { currency: 'EUR', scenarios: Object.fromEntries(['pessimistic','realistic','optimistic'].map(k => [k, structuredClone(cells)])) };
+  return { currency: 'EUR', scenarios: Object.fromEntries(['pessimistic','realistic','optimistic'].map(k => [k, globalThis.structuredClone(cells)])) };
 }
 test('VAT is removed from sales, fees apply to collected gross, fixed costs stay separate', () => {
   const result = evaluateEconomics(fixture());

@@ -47,21 +47,17 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display mb-2 text-xl font-semibold text-ink">4. Livraison</h2>
           <p>
-            Les commandes sont préparées sous 24 à 48 h ouvrées et expédiées depuis la France. Délais indicatifs :
-            standard 48-72 h ouvrées, express 24-48 h ouvrées (France métropolitaine). Les délais sont communiqués à
-            titre indicatif ; un retard ne saurait ouvrir droit à l’annulation automatique, conformément à la
-            réglementation, sauf dépassement de plus de 30 jours permettant la résolution du contrat (art. L216-2 du
-            Code de la consommation).
+            Les destinations desservies, les frais et la date ou le délai de livraison sont indiqués avant la validation
+            de la commande. En cas de retard ou de défaut de livraison, le Client peut exercer les recours prévus
+            par le Code de la consommation.
           </p>
         </section>
         <section>
           <h2 className="font-display mb-2 text-xl font-semibold text-ink">5. Droit de rétractation et retours</h2>
           <p>
-            Le Client dispose du délai légal de rétractation de 14 jours à compter de la réception du bien (art.
-            L221-18 du Code de la consommation), porté commercialement à 30 jours par le Vendeur. Les produits doivent
-            être retournés non utilisés, dans leur emballage d’origine. Les frais de retour sont à la charge du Client,
-            sauf produit non conforme ou défectueux. Le remboursement intervient sous 14 jours à compter de la
-            réception du retour (art. L221-24), via le moyen de paiement d’origine.
+            Sauf exception légale, le Client dispose de 14 jours à compter de la réception du bien pour notifier sa
+            rétractation (art. L221-18 du Code de la consommation). Les modalités de renvoi, les frais applicables et
+            le remboursement sont décrits sur la page Retours et remboursements.
           </p>
         </section>
         <section>
@@ -90,8 +86,7 @@ export default function TermsPage() {
           <h2 className="font-display mb-2 text-xl font-semibold text-ink">9. Médiation et litiges</h2>
           <p>
             En cas de litige, le Client peut recourir gratuitement au médiateur de la consommation [NOM DU MÉDIATEUR
-            À DÉSIGNER — obligatoire avant lancement]. À défaut de résolution amiable, les tribunaux français sont
-            compétents. Plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr.
+            À DÉSIGNER — coordonnées et site à renseigner avant lancement].
           </p>
         </section>
         <section>

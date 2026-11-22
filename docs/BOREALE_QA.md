@@ -158,3 +158,13 @@ Suite backend globale : 101/102, un timeout5s sur rate-limit auth. Ce cas est en
 Suite frontend complète : 70/70, 13 fichiers, commande `npm.cmd run test --prefix frontend -- --maxWorkers=1 --minWorkers=1 --testTimeout=30000`. Typecheck, lint et build preview finaux passent (exit0). Lint : 0 erreur, 24 avertissements existants. Build backend passe (exit0) ; typecheck backend passé dans la vérification AG06. `git diff --check` passe. Aucun build n’est une preuve de vente réelle.
 
 Logs livrés : `backend-master-checks.log`, `boreale-backend-build.log`, `boreale-frontend-checks.log`, `boreale-check-results.json` dans le dossier de livraison. Le mode preview du build final est destiné aux tests de conception, pas à la production.
+
+
+## Préparation à la sortie du mode démo
+
+Vérification ciblée du build configuré : Production + preview résout vers launch, Production + live avec origine HTTPS distante résout vers live, et Production + live avec localhost est refusé. Galerie : 3 tests réussis, dont accès au troisième visuel et balayage vertical ignoré. Backend : 36 tests ciblés Auth et checkout réussis.
+
+
+## Déploiement de la page d’attente — 22 novembre 2026
+
+Après promotion, Vercel inspect confirme dpl_6zZjebXM3tp7UTMqkZ4EBjZ7ExpN READY en production. L’origine https://boreale-eight.vercel.app répond 200 avec la page Ouverture prochaine et sans bandeau Mode preview. /account, /cart, /checkout et /collections redirigent en 307 vers /. Les mêmes contrôles ont passé sur le déploiement protégé avant promotion.

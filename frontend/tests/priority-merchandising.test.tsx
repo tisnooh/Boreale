@@ -3,6 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { Cover } from '@/components/home/Cover';
 import { Folio } from '@/components/home/Folio';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
+import { SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
+import TermsPage from '@/app/legal/terms/page';
+import ReturnsPage from '@/app/legal/returns/page';
 
 describe('priority merchandising remains truthful while models are unverified', () => {
   it('keeps the five priorities ordered and avoids unqualified packs or delivery promises', () => {
@@ -24,5 +27,21 @@ describe('priority merchandising remains truthful while models are unverified', 
     render(<Folio />);
     expect(screen.getByText('5 essentiels · sélection en préparation')).toBeInTheDocument();
     expect(screen.queryByText(/14 pièces|Expédition France/)).toBeNull();
+  });
+});
+
+describe('commercial content before supplier validation', () => {
+  it('does not promise shipping origin, lead times or commercial returns in the summer fallback', () => {
+    expect(JSON.stringify(SUMMER_HOMEPAGE)).not.toMatch(/depuis la France|24-48|48-72|30 jours|Apple Pay|Google Pay/i);
+  });
+
+  it('states the statutory withdrawal period and avoids unconfirmed contractual promises', () => {
+    const terms = render(<TermsPage />);
+    expect(terms.container.textContent).toContain('14 jours à compter de la réception');
+    expect(terms.container.textContent).not.toMatch(/depuis la France|24-48|48-72|porté commercialement|consumers\/odr/i);
+
+    const returns = render(<ReturnsPage />);
+    expect(returns.container.textContent).toContain('preuve d’expédition');
+    expect(returns.container.textContent).not.toMatch(/30 jours|24-48|sous 5 jours/i);
   });
 });

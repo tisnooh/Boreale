@@ -13,15 +13,25 @@ import type { AuthedRequest } from '../middleware/auth.js';
 import { buildDefaultWebhookDeps, handleWebhookEvent } from '../services/webhooks.js';
 import { verifyCheckoutSession } from '../services/checkout-verification.js';
 import { ensureStripeEnvironment } from '../lib/stripe-environment.js';
+import { isOrderEmailSenderValid } from '../services/order-notifications.js';
 
 export const checkoutController = {
   /** POST /api/stripe/checkout — creates a pending order + Stripe Checkout Session. */
   createCheckout: asyncHandler(async (req: AuthedRequest, res: Response) => {
-    if (config().CHECKOUT_ENABLED !== 'true') {
+    const settings = config();
+    if (settings.CHECKOUT_ENABLED !== 'true') {
       throw AppError.serviceUnavailable('checkout_closed', 'Les commandes ne sont pas encore ouvertes.');
     }
     if (!features.database() || !features.stripe() || !features.stripeWebhook()) {
       throw AppError.serviceUnavailable('checkout_dependencies_unavailable', 'Le paiement et sa confirmation sécurisée ne sont pas encore configurés.');
+    }
+    if (settings.STRIPE_MODE === 'live') {
+      if (settings.LIVE_CHECKOUT_APPROVED !== 'true') {
+        throw AppError.serviceUnavailable('checkout_live_not_approved', 'Les paiements réels ne sont pas encore ouverts.');
+      }
+      if (settings.ORDER_EMAIL_MODE !== 'live' || !features.email() || !isOrderEmailSenderValid(settings.EMAIL_FROM)) {
+        throw AppError.serviceUnavailable('checkout_email_unavailable', 'Les confirmations de commande ne sont pas encore disponibles.');
+      }
     }
     if (!req.body.idempotencyKey || !['guest', 'customer'].includes(req.body.customerMode)) {
       throw AppError.badRequest('checkout_attempt_required', 'Rechargez le panier avant de reprendre votre paiement.');

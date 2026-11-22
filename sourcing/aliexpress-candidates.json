@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "channel": "AliExpress",
+  "destination": "FR",
+  "fulfillment": "direct_to_customer",
+  "products": [
+    {
+      "slug": "gants-tactiles-contact",
+      "status": "indexed_candidate",
+      "itemId": "1005012825307349",
+      "listingUrl": "https://www.aliexpress.com/item/1005012825307349.html",
+      "evidenceUrl": "https://cs.pricearchive.org/aliexpress.com/item/1005012825307349",
+      "observations": "Doublure polaire, doigts tactiles et paume antidérapante annoncés. Logo et tailles à vérifier.",
+      "supplier": null,
+      "variants": [],
+      "landedCostCents": null,
+      "readyForImport": false,
+      "archivedPrice": {
+        "amountMinor": 793,
+        "currency": "USD",
+        "observedOn": "2026-10-27",
+        "source": "PriceArchive",
+        "variantConfirmed": false,
+        "franceShippingIncluded": null
+      }
+    },
+    {
+      "slug": "chaussons-fourres-refuge",
+      "status": "indexed_candidate",
+      "itemId": "1005013169627378",
+      "listingUrl": "https://www.aliexpress.com/item/1005013169627378.html",
+      "evidenceUrl": "https://da.pricearchive.org/aliexpress.com/item/1005013169627378",
+      "observations": "Talon fermé, doublure peluche et semelle antidérapante annoncés. Coloris neutres et pointures à vérifier.",
+      "supplier": null,
+      "variants": [],
+      "landedCostCents": null,
+      "readyForImport": false
+    },
+    {
+      "slug": "chauffe-mains-reutilisables-braise",
+      "status": "no_candidate",
+      "itemId": null,
+      "listingUrl": null,
+      "evidenceUrl": null,
+      "observations": "Aucune référence AliExpress à pastille métallique en duo suffisamment documentée.",
+      "supplier": null,
+      "variants": [],
+      "landedCostCents": null,
+      "readyForImport": false
+    },
+    {
+      "slug": "chaussettes-polaires-nuage",
+      "status": "indexed_candidate",
+      "itemId": "1005013488293717",
+      "listingUrl": "https://www.aliexpress.com/item/1005013488293717.html",
+      "evidenceUrl": "https://da.pricearchive.org/aliexpress.com/item/1005013488293717",
+      "observations": "Doublure polaire et adhérence annoncées. Composition et quantité exacte du lot à vérifier.",
+      "supplier": null,
+      "variants": [],
+      "landedCostCents": null,
+      "readyForImport": false,
+      "archivedPrice": {
+        "amountMinor": 747,
+        "currency": "USD",
+        "observedOn": "2026-11-22",
+        "source": "PriceArchive",
+        "variantConfirmed": false,
+        "franceShippingIncluded": null
+      }
+    },
+    {
+      "slug": "semelles-thermiques-isolantes",
+      "status": "indexed_candidate",
+      "itemId": "1005010192603194",
+      "listingUrl": "https://www.aliexpress.com/item/1005010192603194.html",
+      "evidenceUrl": "https://sv.pricearchive.org/aliexpress.com/item/1005010192603194",
+      "observations": "Une paire de semelles thermiques annoncée. Composition, épaisseur et caractère non électrique à vérifier.",
+      "supplier": null,
+      "variants": [],
+      "landedCostCents": null,
+      "readyForImport": false
+    }
+  ]
+}
