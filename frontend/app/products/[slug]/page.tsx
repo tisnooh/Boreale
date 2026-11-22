@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<ReturnType<ty
     title: product.seoTitle ?? product.name,
     description: product.seoDescription ?? product.description.slice(0, 155),
     path: `/products/${product.slug}`,
+    noIndex: Boolean(product.selection),
     image: product.imageUrl?.startsWith('http') ? product.imageUrl : product.imageUrl ? `${SITE_URL}${product.imageUrl}` : undefined,
   });
 }
@@ -54,7 +55,7 @@ export default async function ProductPage({ params }: Props) {
     <div data-season={shopSeason}>
     <>
       {/* Structured data uniquement en mode live : pas de schema Produit sur des données de démonstration */}
-      {!isPreview() && (
+      {!isPreview() && !product.selection && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product, absoluteImage)) }} />
       )}
       <script
@@ -92,14 +93,20 @@ export default async function ProductPage({ params }: Props) {
           {/* Galerie */}
           <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
             <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-ice">
-              <SafeImage
+              {product.selection && !product.imageUrl ? (
+                <div className="flex h-full flex-col items-center justify-center gap-4 px-8 text-center">
+                  <span className="text-xs tracking-[0.22em] text-muted uppercase">BORÉALE</span>
+                  <span className="font-display text-3xl text-ink">{product.name}</span>
+                  <span className="text-sm text-muted">Photographies du modèle en préparation</span>
+                </div>
+              ) : <SafeImage
                 src={product.imageUrl ?? '/products/placeholder.svg'}
                 alt={product.name}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
-              />
+              />}
               {product.badge && <span className="badge absolute top-4 left-4 bg-ember text-white shadow">{product.badge}</span>}
             </div>
             {product.images.length > 0 && (
@@ -130,9 +137,9 @@ export default async function ProductPage({ params }: Props) {
             {/* Engagements */}
             <div className="mt-7 grid grid-cols-3 gap-3 text-center">
               {[
-                { Icon: TruckIcon, label: 'Expédié de France' },
-                { Icon: ReturnIcon, label: 'Retours 30 jours' },
-                { Icon: ShieldIcon, label: 'Paiement sécurisé' },
+                { Icon: TruckIcon, label: product.selection ? 'Livraison à confirmer' : 'Expédié de France' },
+                { Icon: ReturnIcon, label: product.selection ? 'Conditions à confirmer' : 'Retours 30 jours' },
+                { Icon: ShieldIcon, label: product.selection ? 'Vente non ouverte' : 'Paiement sécurisé' },
               ].map(({ Icon, label }) => (
                 <div key={label} className="card flex flex-col items-center gap-1.5 p-3">
                   <Icon width={18} height={18} className="text-glacier" />
@@ -155,6 +162,15 @@ export default async function ProductPage({ params }: Props) {
         )}
 
         {/* Points clés tags */}
+        {product.selection && (
+          <section aria-label="Éléments à confirmer" className="mx-auto mt-8 max-w-3xl text-sm leading-relaxed text-ink-500">
+            <h2 className="font-display mb-4 text-2xl font-semibold">Direction de sélection</h2>
+            <ul className="list-disc space-y-2 pl-5">{product.selection.specifications.map((spec) => <li key={spec}>{spec}</li>)}</ul>
+            {product.selection.targetColors.length > 0 && <p className="mt-4">Teintes recherchées, non encore disponibles : {product.selection.targetColors.join(', ')}.</p>}
+            <p className="mt-2">Tailles, poids et matière exacte : à confirmer sur le modèle retenu.</p>
+          </section>
+        )}
+
         {product.tags.length > 0 && (
           <div className="mt-8 flex flex-wrap justify-center gap-2">
             {product.tags.map((t) => (
@@ -180,8 +196,9 @@ export default async function ProductPage({ params }: Props) {
         {/* Transparence */}
         <p className="mx-auto mt-14 flex max-w-2xl items-start gap-2 text-center text-[11px] leading-relaxed text-muted">
           <CheckIcon width={14} height={14} className="mt-0.5 shrink-0 text-success" />
-          Photos : visuels de présentation provisoires — les photos définitives des produits réels sont ajoutées avant
-          lancement. Prix TTC. Économies des packs calculées sur les prix actuels des articles séparés.
+          {product.selection
+            ? 'Fiche de préparation : modèle, caractéristiques, photographies, variantes et conditions commerciales à valider avant toute mise en vente.'
+            : 'Photos : visuels de présentation provisoires — les photos définitives des produits réels sont ajoutées avant lancement. Prix TTC. Économies des packs calculées sur les prix actuels des articles séparés.'}
         </p>
       </div>
     </>

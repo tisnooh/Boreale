@@ -35,7 +35,7 @@ function withRelated(p: ProductDTO, all: ProductDTO[]): ProductDTO {
   return {
     ...p,
     related: all
-      .filter((o) => o.id !== p.id && o.categories.some((c) => cats.includes(c.slug)))
+      .filter((o) => o.selection?.status !== 'deferred' && o.id !== p.id && o.categories.some((c) => cats.includes(c.slug)))
       .slice(0, 4),
   };
 }
@@ -46,7 +46,7 @@ const previewSource: CatalogSource = {
   mode: 'preview',
   isPreview: true,
   async products(season) {
-    const all = PREVIEW_PRODUCTS.map((p) => ({ ...p }));
+    const all = PREVIEW_PRODUCTS.filter(p => p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async product(slug) {
@@ -59,7 +59,7 @@ const previewSource: CatalogSource = {
     return season ? all.filter((c) => matchesShopSeason(c.season ?? 'winter', season)) : all;
   },
   async bundles(season) {
-    const all = PREVIEW_PRODUCTS.filter((p) => p.type === 'bundle').map((p) => ({ ...p }));
+    const all = PREVIEW_PRODUCTS.filter((p) => p.type === 'bundle' && p.selection?.status !== 'deferred').map((p) => ({ ...p }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async homepage(season) {
@@ -137,6 +137,6 @@ export function sortProducts(products: ProductDTO[], sort: CatalogSort): Product
       return copy.sort((a, b) => a.id.localeCompare(b.id));
     case 'featured':
     default:
-      return copy.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.name.localeCompare(b.name));
+      return copy.sort((a, b) => (a.selection?.priority ?? 999) - (b.selection?.priority ?? 999) || Number(b.isFeatured) - Number(a.isFeatured) || a.name.localeCompare(b.name));
   }
 }

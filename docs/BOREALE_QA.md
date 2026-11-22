@@ -1,5 +1,9 @@
 # Qualité et preuves
 
+## 22 novembre — contrôle des preuves d'offres dropshipping
+
+Le chef a ouvert la fiche Alibaba UK 1600785919554 : vendeur Yiwu Muse, modèle Muse1889, affichage 13–14,50 USD, minimum une pièce et section dropshipping directement visibles. Cela valide l'identification de l'offre, pas la livraison client en France ni la sécurité ou la rentabilité. Les pages de catégorie changent selon le rendu ; leurs anciens extraits ne sont pas une preuve de stock actuel. [Dossier](sourcing/BOREALE_DROPSHIP_WEARABLE_20261122.md). Aucun achat ou intégration fournisseur testé.
+
 ## 21 novembre — preuves de sourcing et tri de lancement
 
 Quatre dossiers de recherche distinguent cartes de catalogue, index et fiches lisibles ; aucune de ces preuves n'est assimilée à un devis rendu ou un certificat. Le tri du chef porte sur onze annonces : cinq écartées, six en réserve et zéro approbation commerciale. Les deux gels sont une seule famille ; les deux modèles de chaque catégorie ne sont pas présentés comme des innovations distinctes. Contrôle du diff réussi ; aucune nouvelle recette commerce, sécurité produit ou paiement revendiquée. [Document soumis au contrôle indépendant](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md).

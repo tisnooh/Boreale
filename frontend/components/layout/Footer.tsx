@@ -14,7 +14,7 @@ const SEASON_BASELINE = {
 
 const SEASON_DESC = {
   winter:
-    'BORÉALE sélectionne des essentiels d’hiver chauds, beaux et durables : textile, chaleur sans électricité, auto et cocooning. Expédié depuis la France.',
+    'BORÉALE prépare une sélection courte pour l’hiver : les mains, les pieds et le confort de la maison, dans un univers sobre.',
   summer:
     'BORÉALE sélectionne des essentiels d’été lumineux, malins et durables : plage, voyage, fraîcheur, outdoor, auto et terrasse. Expédié depuis la France.',
 } as const;

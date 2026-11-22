@@ -32,6 +32,17 @@ export interface VariantDTO {
 }
 
 export interface ProductDTO {
+  /** Local editorial preparation only; never represents verified commerce data. */
+  selection?: {
+    status: 'draft' | 'deferred';
+    priority: number | null;
+    priceVerified: false;
+    referenceSku: string;
+    weightGrams: null;
+    specifications: string[];
+    targetColors: string[];
+    targetSizes: string[];
+  };
   id: string;
   slug: string;
   name: string;

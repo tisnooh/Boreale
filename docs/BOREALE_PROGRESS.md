@@ -1,5 +1,9 @@
 # Progression
 
+## 22 novembre — recherche fournisseurs à la commande
+
+Correction du cadrage : dropshipping sans stock et sans achat de petite série. Deux fiches précises de couvertures portées retrouvées et lisibles ; Muse1889 possède un minimum d'une pièce et une section dropshipping visibles directement. Duoyiduo présente des minimums et informations contradictoires à clarifier. [Dossier et questions préparées sans envoi](sourcing/BOREALE_DROPSHIP_WEARABLE_20261122.md). Aucun coût livré France, retour ou emballage neutre confirmé ; aucune offre déclarée vendable. Recherches publiques poursuivies sans dépendre du contrôle Opera ni demander des offres au propriétaire.
+
 ## 21 novembre — nouvelle sélection hiver et tri du chef
 
 Le disque D est de nouveau accessible ; HEAD local 139e169 retrouvé, nouveaux travaux non écrasés. Propriétaire : rejet des cinq propositions génériques, recherche Alibaba d'articles hiver utiles et différenciants, sans priorité imposée à l'électrique. Onze annonces documentées ; tri de lancement : cinq écartées, six électriques en réserve, aucune retenue pour vente. Les petites séries non électriques restent à rechercher. [Tri détaillé](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md). Aucun achat, message supplémentaire, produit publié ou lancement. Les outils finance/emails non suivis restent des travaux distincts à auditer et intégrer.
@@ -140,3 +144,7 @@ Traiter les défauts locaux encore listés dans BOREALE_QA avant toute ouverture
 ## Prochaines actions
 
 Obtenir la visibilité ou l’URL du projet existant Supabase, inspecter son schéma/RLS/Auth avant toute mutation, préparer le mapping des identités puis la recette isolée. Continuer les défauts locaux non corrigés recensés dans QA. Les dix audits initiaux sont terminés ; ne pas les recommencer.
+
+## 22 novembre — cinq priorités hiver en prévisualisation
+
+Contact, Refuge, Braise, Nuage et semelles isolantes apparaissent dans cet ordre. Douze annonces étudiées, cinq brouillons non commandables et quinze briefs photo préparés. Aucun fournisseur approuvé. Le contrôle HTTP des cinq fiches et de l’accueil passe. Comparaison visuelle bloquée par des expirations Chromium. Voir [le rapport et l’inventaire des fichiers](BOREALE_PRIORITY_DELIVERY_20261122.md).

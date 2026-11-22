@@ -33,14 +33,14 @@ export async function WinterHome() {
 
       <Cover hero={settings.hero} />
       <Folio />
-      <UniversIndex categories={categories} />
+      <UniversIndex categories={categories.filter((category) => category.productCount !== 0)} />
       <SelectionRail products={featured} />
       <ParallaxQuote image="/images/hero-hiver.jpg" />
       <Manifesto benefits={settings.benefits} />
       <Packs bundles={bundles} allProducts={allProducts} />
 
       {/* N°05 — FAQ */}
-      <section aria-label="Questions fréquentes" className="border-t border-line bg-snow">
+      <section id="faq" aria-label="Questions fréquentes" className="border-t border-line bg-snow">
         <div className="container-x py-20 lg:py-28">
           <Reveal className="mx-auto max-w-3xl">
             <Overline index="N°05" label="Questions fréquentes" />

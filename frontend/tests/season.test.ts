@@ -45,7 +45,7 @@ describe('source catalogue saisonnière (preview)', () => {
     const products = await source.products('summer');
     expect(products).toHaveLength(0);
     const winter = await source.products('winter');
-    expect(winter.length).toBeGreaterThan(5);
+    expect(winter).toHaveLength(5);
   });
 
   it('homepage été distincte de la homepage hiver', async () => {

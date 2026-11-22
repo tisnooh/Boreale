@@ -1,5 +1,9 @@
 # Décision de lancement
 
+## 22 novembre — modèle dropshipping confirmé, lancement BLOCKED
+
+Des offres unitaires explicitement orientées dropshipping sont identifiées, mais aucune exécution fournisseur→client France n'est encore validée. Pas de stock à acheter ni d'offre à faire rechercher au propriétaire. Les coûts rendus, délais, retours, droits et conformité doivent être établis avant publication ; les exigences de paiement et de recette complète restent ouvertes. Aucune mise en vente, commande fournisseur ou production.
+
 ## 21 novembre — lancement toujours BLOCKED, tri des offres effectué
 
 Aucune des onze annonces Alibaba examinées n'est retenue pour vente. Le tri élimine les offres inadaptées au lancement rapide et réserve les modèles électriques non qualifiés ; il ne vaut pas validation fournisseur. Les idées à poursuivre sont distinctes des offres trouvées. Aucun achat, activation catalogue ou production. [Tri et motifs](sourcing/BOREALE_SOURCING_TRIAGE_20261121.md).

@@ -32,6 +32,16 @@ export function ProductPurchase({ product }: Props) {
   const selected: VariantDTO | undefined =
     variants.find((v) => optionKeys.every((k) => (selection[k] ? v.options[k] === selection[k] : true))) ?? variants[0];
 
+  if (product.selection) {
+    return (
+      <div className="flex flex-col gap-4 text-sm text-muted">
+        <p className="font-semibold text-ink">{product.selection.status === 'deferred' ? 'Référence en attente' : 'Sélection en préparation'}</p>
+        <p>Le modèle, les variantes et le prix restent à confirmer. Ce produit n’est pas proposé à la vente.</p>
+        <p>Référence de préparation : {product.selection.referenceSku}</p>
+      </div>
+    );
+  }
+
   if (variants.length === 0) {
     return <p className="text-sm text-muted">Ce produit n’est pas encore disponible à la vente.</p>;
   }
@@ -39,7 +49,7 @@ export function ProductPurchase({ product }: Props) {
   const outOfStock = !selected?.inStock;
 
   function onAdd() {
-    if (!selected) return;
+    if (!selected || product.selection) return;
     addItem(
       { slug: product.slug, name: product.name, imageUrl: product.imageUrl },
       selected,

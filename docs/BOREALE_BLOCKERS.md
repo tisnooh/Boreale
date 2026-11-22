@@ -1,5 +1,9 @@
 # Blocages et décisions
 
+## 22 novembre — qualification dropshipping, pas achat de lot
+
+Les minimums et délais de lots du tri du 21 ne définissent pas le modèle souhaité : rechercher une exécution par commande client. Une nouvelle fiche Muse1889 affiche un MOQ cohérent d'une pièce et un accès dropshipping ; prix livré, délai France, emballage, retours, droits d'images et documents restent à établir. Le filtre graphique Alibaba n'a pas été appliqué : arrêt de Computer Use faute de vérification de l'URL Opera ; la recherche publique web fonctionne. Ne pas transférer cette recherche au propriétaire. Aucun lien commercial ou fournisseur actif déclaré.
+
 ## 21 novembre — sourcing, décisions et dépendances actuelles
 
 Les annonces non électriques gel actuelles exigent 1 000 pièces et 31–40 jours de fabrication ; la bouillotte-ceinture identifiée annonce 60 jours avec kit/MOQ contradictoires. Ces offres sont écartées pour lancement rapide. Six offres électriques restent en réserve, faute de qualification et suivant la préférence propriétaire. Coûts rendus, stock immédiat, documents du modèle et traitement logistique manquent : zéro produit qualifié par cette recherche. La lecture Gmail confirme une réponse Wordans du 19 novembre ; l'absence de réponse constatée le 17 est historique. [Réponse et refus des anciens produits](BOREALE_SOURCING_OWNER_UPDATE_20261121.md). Le disque reconnecté n'est plus un blocage à cette étape.

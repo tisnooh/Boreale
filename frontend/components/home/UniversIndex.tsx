@@ -35,7 +35,7 @@ export function UniversIndex({ categories }: { categories: CategoryDTO[] }) {
         <div className="max-w-xl">
           <Overline index="N°01" label="Les univers" />
           <h2 className="display-section mt-5">
-            Quatre territoires,
+            Des univers complémentaires,
             <br />
             <em>un seul froid à vaincre.</em>
           </h2>

@@ -1,5 +1,9 @@
 # BORÉALE — mandat d’exploitation
 
+## 22 novembre — dropshipping sans stock confirmé
+
+Le propriétaire confirme un modèle sans achat de lot : fournisseur expédiant chaque commande directement au client. La recherche des offres relève des agents ; aucun lien ou capture n'est demandé au propriétaire. Le filtre « petite série » est remplacé par la [qualification dropshipping](sourcing/BOREALE_DROPSHIPPING_CRITERIA_20261122.md). Un MOQ d'une pièce seul ne suffit pas. Aucun achat, abonnement ou dépôt de stock autorisé par cette précision.
+
 ## 21 novembre — précision du mandat produits
 
 Le propriétaire demande une sélection Alibaba hiver réellement différenciante, maison et extérieur. Gants, couvertures et gels sont des exemples et non une liste fermée. Rééquilibrer vers les produits non électriques ; ne pas assimiler cette absence d'électricité à une preuve de sécurité. Les anciennes propositions génériques sont rejetées. Tri des onze annonces réalisé, qualification commerciale toujours bloquée ; continuer la recherche de petits lots disponibles sans achat ou nouveau message externe non autorisé.

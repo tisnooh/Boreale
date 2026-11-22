@@ -8,14 +8,22 @@ import type { ProductDTO } from '@/lib/types';
  * nom en serif, catégorie en surtitre, prix avec mention « dès » si variantes multiples.
  */
 export function ProductCard({ product, priority = false }: { product: ProductDTO; priority?: boolean }) {
+  const pending = product.selection?.priceVerified === false;
+  const statusLabel = product.selection?.status === 'deferred' ? 'En attente' : 'Sélection en préparation';
   return (
     <Link
       href={`/products/${product.slug}`}
       className="group flex flex-col"
-      aria-label={`${product.name} — ${formatCents(product.priceCents)}`}
+      aria-label={`${product.name} — ${pending ? statusLabel : formatCents(product.priceCents)}`}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-card border border-line bg-ice">
-        <SafeImage
+        {pending && !product.imageUrl ? (
+          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+            <span className="text-[10px] tracking-[0.22em] text-muted uppercase">BORÉALE</span>
+            <span className="font-display text-xl text-ink">{product.name}</span>
+            <span className="text-xs text-muted">Visuel en préparation</span>
+          </div>
+        ) : <SafeImage
           src={product.imageUrl ?? '/products/placeholder.svg'}
           alt={product.name}
           width={480}
@@ -23,15 +31,15 @@ export function ProductCard({ product, priority = false }: { product: ProductDTO
           priority={priority}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-        />
+        />}
         {product.badge && (
           <span className="absolute top-3 left-3 rounded-full border border-white/40 bg-ink/70 px-3 py-1 text-[10px] font-semibold tracking-[0.18em] text-white uppercase backdrop-blur">
             {product.badge}
           </span>
         )}
-        {!product.inStock && (
+        {(pending || !product.inStock) && (
           <span className="absolute inset-x-0 bottom-0 bg-ink/85 py-2 text-center text-[11px] font-semibold tracking-wide text-white uppercase">
-            Rupture de stock
+            {pending ? statusLabel : 'Rupture de stock'}
           </span>
         )}
         <span
@@ -49,8 +57,8 @@ export function ProductCard({ product, priority = false }: { product: ProductDTO
           {product.name}
         </h3>
         <p className="mt-auto pt-2 text-sm tabular-nums">
-          {product.variantCount > 1 && <span className="mr-1 text-xs text-muted">dès</span>}
-          <span className="font-semibold">{formatCents(product.priceCents)}</span>
+          {!pending && product.variantCount > 1 && <span className="mr-1 text-xs text-muted">dès</span>}
+          <span className="font-semibold">{pending ? 'Prix à confirmer' : formatCents(product.priceCents)}</span>
         </p>
       </div>
     </Link>
