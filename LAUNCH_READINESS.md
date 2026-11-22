@@ -15,7 +15,7 @@
 | Livraison | NO GO | Tarifs de recette historiques et affichage de délai à confirmer | Frais livrés, destination, date ou délai, suivi et traitement des retours |
 | Juridique | NO GO | Projets de CGV et politique de retours corrigés | Identité et contacts vendeur, médiateur, adresse et formulaire de retour, parcours de rétractation en ligne, fiscalité et conformité produit. [Service Public Entreprendre](https://entreprendre.service-public.gouv.fr/vosdroits/F33527) |
 | Sécurité | NO GO commercial | RLS et droits vérifiés, tests locaux d’autorisation et de refus du checkout | Vérifier les cookies Safari, CORS de l’API hébergée, secrets du runtime et procédure de sauvegarde/restauration |
-| Mobile | NO GO commercial | Tests de galerie et de navigation en cours de recette | Achat complet sur iPhone à vérifier avec API et Stripe test |
+| Mobile | NO GO commercial | Tests de galerie, du menu et du panier en DOM simulé | Achat complet sur iPhone à vérifier avec API et Stripe test |
 
 ## Corrections et priorités
 
@@ -28,6 +28,28 @@
 | P0 | Sourcing et propriétaire | Qualifier une variante, sa livraison, ses retours, ses visuels et ses justificatifs avant activation. |
 | P1 | Frontend et QA | Miniatures et balayage, rail mobile, messages client et retrait des promesses commerciales non confirmées. |
 
-## Recette à consigner
+## Recette
 
-Les scénarios fournisseur, Stripe sandbox, Resend, expédition et iPhone réel exigent une preuve distincte. Les tests automatisés locaux couvrent notamment la galerie, la séparation du catalogue, les protections d’accès, les stocks insuffisants, les codes de réduction et les transitions de paiement simulées.
+[Pull request brouillon](https://github.com/tisnooh/Boreale/pull/1) · [Préproduction Vercel protégée](https://boreale-d1g9t20sl-iapetse09-2414s-projects.vercel.app)
+
+| Scénario | Résultat et preuve |
+|---|---|
+| Visiteur → produit → panier | PASS composants et panier sur données de test. NON TESTÉ avec une offre vendable et un navigateur mobile de bout en bout. |
+| Paiement accepté, refusé, abandonné | PASS webhooks et reprises avec services simulés. NON TESTÉ avec Stripe sandbox, clé runtime absente et aucun webhook sandbox configuré. |
+| Commande → admin | PASS gestion de commande et droits dans les tests locaux. NON TESTÉ sur l’API hébergée. |
+| Commande → email | PASS traitement local avec fournisseur simulé. NON TESTÉ en réception via Resend. |
+| Rupture de stock et mauvais code promo | PASS tests locaux de checkout et de calcul des montants. |
+| Client non autorisé sur route admin | PASS tests locaux de contrôle d’accès. |
+| Remboursement | PASS traitement local des événements et rapprochement. NON TESTÉ avec Stripe sandbox. |
+| Catalogue indisponible | PASS test de source live avec API indisponible et contrôle des origines. |
+| Navigation mobile | PASS tests DOM du menu, de la galerie et du panier. NON TESTÉ en navigateur sur le poste, Edge absent et Chromium headless non exécutable. |
+| Hiver et été | PASS contrôle HTTP sur la préproduction, avec catalogue de démonstration identifié. |
+| Absence de catalogue preview en production | PASS contrôle HTTP public après le déploiement. Checkout public en 307 vers la page d’attente. |
+
+La préproduction Vercel est une recette de vitrine avec le mode de démonstration explicite. La recette connectée reste bloquée par l’API hébergée, Stripe sandbox et Resend. Aucune promotion en production depuis cette branche.
+
+## Vérifications techniques
+
+- Backend — lint, typecheck et build réussis. 403 tests Vitest et 7 tests du calcul de marge passent.
+- Frontend — lint sans erreur, 23 avertissements. Typecheck réussi. Première exécution : 176 réussites et 6 échecs (5 délais dépassés, 1 assertion de test erronée). Après correction de l’URL attendue et réduction du parallélisme, les 13 tests des trois fichiers concernés réussissent. Aucun échec résiduel sur ces fichiers.
+- Vercel — build Preview réussi. Six contrôles HTTP réussis sur le déploiement protégé. Cinq cas de configuration testés localement. La cible commerciale reste sur le déploiement d’attente.

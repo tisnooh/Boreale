@@ -24,7 +24,7 @@ it('utilise uniquement les réponses API en mode connecté, même en cas de pann
       '/api/products?limit=50&season=winter',
       '/api/products/chaussons-bouillotte-foyer',
       '/api/categories?season=summer',
-      '/api/bundles',
+      '/api/bundles?season=winter',
     ]);
   } finally {
     vi.doUnmock('@/lib/catalog/preview-data');

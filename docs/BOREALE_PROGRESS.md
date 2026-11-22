@@ -158,3 +158,8 @@ Sortie du mode démonstration préparée sur la branche de travail. La configura
 ## Déploiement de la page d’attente — 22 novembre 2026
 
 Mise à jour frontend publique autorisée et promue sur le projet Vercel existant boreale. Déploiement dpl_6zZjebXM3tp7UTMqkZ4EBjZ7ExpN, commit local de livraison 095cbcf5d4ebbfcaa01b5fc1253afdb40804cba4. Mode launch explicite pour ce déploiement. Aucun déploiement backend, aucune activation Stripe et aucune publication de produit.
+
+
+## Livraison de recette commerciale
+
+La branche release/boreale-launch-readiness est en revue. Le [rapport de lancement](../LAUNCH_READINESS.md) contient les corrections, preuves et blocages. Le checkout public reste en mode attente.
