@@ -26,7 +26,8 @@ const briefs: Brief[] = [
     specifications: ['Objectif : isolation sans batterie ni branchement.', 'Matières étudiées : feutre, laine ou couche aluminium, non encore sélectionnées.', 'Épaisseur, compatibilité et isolation non confirmées.'] },
 ];
 
-export const PRIORITY_PRODUCTS: ProductDTO[] = briefs.map((brief, index) => ({
+function toDraftProduct(brief: Brief, index: number): ProductDTO {
+  return {
   id: brief.id, slug: brief.slug, name: brief.name, subtitle: brief.subtitle, description: brief.description,
   longDescription: brief.details,
   type: 'product', season: 'winter', isFeatured: index < 4, imageUrl: null, images: [], badge: null,
@@ -35,4 +36,35 @@ export const PRIORITY_PRODUCTS: ProductDTO[] = briefs.map((brief, index) => ({
   priceCents: 0, variantCount: 0, inStock: false, variants: [], categories: brief.categories,
   selection: { status: 'draft', priority: index + 1, priceVerified: false, referenceSku: brief.sku,
     weightGrams: null, specifications: brief.specifications, targetColors: brief.colors, targetSizes: [] },
-}));
+  };
+}
+
+export const PRIORITY_PRODUCTS = briefs.map(toDraftProduct);
+
+export const SHOWCASE_PRODUCTS = [
+  { id: 'p-cape', slug: 'sweat-couverture-sherpa', name: 'Sweat-couverture sherpa', sku: 'BOR-SCS',
+    subtitle: 'Un vêtement ample pour les soirées à la maison.',
+    description: 'Un sweat-couverture d’intérieur à manches longues, avec capuche et poche devant.',
+    details: 'La fiche fournisseur présente un modèle adulte à doublure sherpa. Les dimensions et la composition du modèle livré restent à confirmer.',
+    categories: [maison], colors: [], specifications: ['Coupe ample, grande capuche et poche avant annoncées.'] },
+  { id: 'p-assise', slug: 'coussin-assise-exterieur', name: 'Coussin d’assise extérieur', sku: 'BOR-CAE',
+    subtitle: 'À emporter pour les pauses dehors et les gradins.',
+    description: 'Un coussin à poser sur un banc ou un siège pendant les sorties.',
+    details: 'La fiche Newray présente le modèle C0010 et annonce une housse amovible et lavable. Le poids et l’encombrement à transporter restent à vérifier.',
+    categories: [textile], colors: [], specifications: ['Modèle fournisseur annoncé : Newray C0010.'] },
+  { id: 'p-ceinture', slug: 'bouillotte-ceinture', name: 'Bouillotte à ceinture', sku: 'BOR-BCE',
+    subtitle: 'Une bouillotte à eau avec housse et ceinture.',
+    description: 'Une bouillotte à eau chaude dans une housse munie d’une ceinture.',
+    details: 'L’annonce présente plusieurs contenances. La contenance retenue, la composition et les consignes de sécurité en français seront confirmées avant la vente.',
+    categories: [{ slug: 'chaleur', name: 'Chaleur' }], colors: [], specifications: ['Housse et ceinture annoncées.'] },
+  { id: 'p-oreilles', slug: 'cache-oreilles-pliant', name: 'Cache-oreilles pliant', sku: 'BOR-COP',
+    subtitle: 'Un accessoire à emporter lors des sorties par temps froid.',
+    description: 'Un cache-oreilles en peluche que l’annonce présente comme pliant.',
+    details: 'Le modèle proposé possède un arceau reliant deux protections. La taille, le mécanisme de pliage et les coloris seront vérifiés sur la référence retenue.',
+    categories: [textile], colors: [], specifications: ['Fausse fourrure et pliage annoncés par le fournisseur.'] },
+  { id: 'p-housse', slug: 'housse-gourde-bandouliere', name: 'Housse de gourde à bandoulière', sku: 'BOR-HGB',
+    subtitle: 'Pour porter une petite gourde en gardant les mains libres.',
+    description: 'Une housse de transport pour gourde, avec bandoulière réglable.',
+    details: 'Le fournisseur annonce du néoprène et un format prévu pour une bouteille de 500 ml. Les dimensions intérieures et la compatibilité exacte restent à vérifier.',
+    categories: [textile], colors: [], specifications: ['Housse en néoprène et sangle réglable annoncées.'] },
+].map(toDraftProduct);

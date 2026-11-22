@@ -81,7 +81,12 @@ it('affiche la vitrine publique sans activer le catalogue ni les transactions', 
   expect(products).toHaveLength(5);
   expect(products.every((product) => product.selection?.status === 'draft' &&
     product.selection.priceVerified === false && !product.inStock && product.variants?.length === 0)).toBe(true);
-  expect(await source.product('chaussettes-polaires-nuage')).toMatchObject({ inStock: false });
+  expect(products.map((product) => product.slug)).toEqual([
+    'sweat-couverture-sherpa', 'coussin-assise-exterieur', 'bouillotte-ceinture',
+    'cache-oreilles-pliant', 'housse-gourde-bandouliere',
+  ]);
+  expect(await source.product('sweat-couverture-sherpa')).toMatchObject({ inStock: false });
+  expect(await source.product('chaussettes-polaires-nuage')).toBeNull();
   expect(await source.product('chaussons-bouillotte-foyer')).toBeNull();
   expect(await source.products('summer')).toEqual([]);
   expect(fetchMock).not.toHaveBeenCalled();

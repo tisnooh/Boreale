@@ -28,7 +28,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return buildMetadata({
     title: 'La collection hiver — tous les produits',
     description:
-      'La sélection hiver BORÉALE en préparation : Contact, Refuge, Braise, Nuage et des semelles isolantes.',
+      'La sélection hiver BORÉALE pour le confort à la maison et les sorties par temps froid.',
     path: '/collections',
   });
 }

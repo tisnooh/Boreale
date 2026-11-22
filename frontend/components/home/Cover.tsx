@@ -56,7 +56,7 @@ const PIECES = [
  * polaroids « Pièce N°XX » dispersés et flottants (desktop) / rangée scrollable (mobile),
  * sommaire cliquable en pied.
  */
-export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
+export function Cover({ hero, pieces = PIECES }: { hero: HomepageSettings['hero']; pieces?: readonly { src: string | null; caption: string }[] }) {
   return (
     <section className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ink text-white">
       {/* Fond image plein écran */}
@@ -97,7 +97,7 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
 
           {/* Polaroids mobile : rangée scrollable */}
           <MobilePieceRail>
-            {PIECES.map((p, i) => (
+            {pieces.map((p, i) => (
               <PieceCard key={p.caption} src={p.src} caption={p.caption} width={150} tilt={i % 2 ? '2.5deg' : '-2.5deg'} delay={`${i * 0.7}s`} className="shrink-0" />
             ))}
           </MobilePieceRail>
@@ -105,10 +105,10 @@ export function Cover({ hero }: { hero: HomepageSettings['hero'] }) {
 
         {/* Polaroids desktop : dispersion flottante */}
         <div className="relative hidden h-[26rem] lg:col-span-5 lg:block" aria-hidden={false}>
-          <PieceCard src={PIECES[0].src} caption={PIECES[0].caption} className="absolute left-0 top-6" tilt="-4deg" delay="0s" width={190} />
-          <PieceCard src={PIECES[1].src} caption={PIECES[1].caption} className="absolute right-2 top-0" tilt="3deg" delay="1.2s" width={168} />
-          <PieceCard src={PIECES[2].src} caption={PIECES[2].caption} className="absolute left-24 bottom-0" tilt="2deg" delay="2.1s" width={176} />
-          <PieceCard src={PIECES[3].src} caption={PIECES[3].caption} className="absolute right-8 bottom-10" tilt="-2.5deg" delay="3s" width={150} />
+          <PieceCard src={pieces[0].src} caption={pieces[0].caption} className="absolute left-0 top-6" tilt="-4deg" delay="0s" width={190} />
+          <PieceCard src={pieces[1].src} caption={pieces[1].caption} className="absolute right-2 top-0" tilt="3deg" delay="1.2s" width={168} />
+          <PieceCard src={pieces[2].src} caption={pieces[2].caption} className="absolute left-24 bottom-0" tilt="2deg" delay="2.1s" width={176} />
+          <PieceCard src={pieces[3].src} caption={pieces[3].caption} className="absolute right-8 bottom-10" tilt="-2.5deg" delay="3s" width={150} />
           <span className="absolute -right-2 top-1/2 rotate-90 text-[10px] tracking-[0.45em] text-ice/50 uppercase" aria-hidden>
             Collection hiver — N°01
           </span>

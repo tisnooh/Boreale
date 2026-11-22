@@ -105,7 +105,7 @@ const showcaseSource: CatalogSource = {
   mode: 'showcase',
   async products(season) {
     if (season === 'summer') return [];
-    return (await import('./priority-products')).PRIORITY_PRODUCTS;
+    return (await import('./priority-products')).SHOWCASE_PRODUCTS;
   },
   async product(slug) {
     const products = await showcaseSource.products('winter');
