@@ -4,8 +4,8 @@ const isProd = process.env.NODE_ENV === "production";
 
 const publicProduction = process.env.VERCEL_ENV === "production";
 const requestedMode = process.env.NEXT_PUBLIC_SITE_MODE;
-// A public build without a deliberate live configuration uses the existing opening page.
-const siteMode = publicProduction && requestedMode !== "live" ? "launch" : requestedMode;
+// Production never serves the internal demonstration catalogue.
+const siteMode = publicProduction && requestedMode !== "live" && requestedMode !== "launch" ? "showcase" : requestedMode;
 
 const hosted = publicProduction || process.env.VERCEL_ENV === "preview";
 if (hosted && siteMode === "live") {

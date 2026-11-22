@@ -55,3 +55,25 @@ describe('publication avant ouverture', () => {
     expect(robots().rules).toEqual([{ userAgent: '*', disallow: '/' }]);
   });
 });
+
+it('affiche la vitrine publique sans activer le catalogue ni les transactions', async () => {
+  vi.stubEnv('NEXT_PUBLIC_SITE_MODE', 'showcase');
+  vi.resetModules();
+  const fetchMock = vi.fn();
+  vi.stubGlobal('fetch', fetchMock);
+  const { middleware } = await import('@/middleware');
+  const base = 'https://boreale.example';
+  for (const path of ['/', '/collections', '/ete']) {
+    expect(middleware(new NextRequest(base + path)).status).toBe(200);
+  }
+  for (const path of ['/checkout/', '/checkout/success', '/admin']) {
+    const response = middleware(new NextRequest(base + path));
+    expect(response.status).toBe(307);
+    expect(response.headers.get('location')).toBe(base + '/collections');
+  }
+  const { api } = await import('@/lib/api');
+  const { apiGetServer } = await import('@/lib/api-server');
+  await expect(api.post('/api/stripe/checkout', {})).rejects.toMatchObject({ status: 503 });
+  expect(await apiGetServer('/api/products')).toBeNull();
+  expect(fetchMock).not.toHaveBeenCalled();
+});

@@ -8,7 +8,7 @@ import { isLaunch } from './config';
  * affiche son état vide/fallback. Aucun faux contenu n'est injecté.
  */
 export async function apiGetServer<T>(path: string): Promise<T | null> {
-  if (isLaunch()) return null;
+  if (isLaunch() || process.env.NEXT_PUBLIC_SITE_MODE === 'showcase') return null;
   try {
     const res = await fetch(`${API_URL}${path}`, {
       cache: 'no-store',
