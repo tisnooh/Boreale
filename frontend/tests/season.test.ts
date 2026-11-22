@@ -17,6 +17,11 @@ describe('config saisonnière', () => {
     expect(getSeasonFromPath(null)).toBe('winter');
   });
 
+  it('garde le thème été sur une collection estivale', () => {
+    expect(getSeasonFromPath('/collections/plage-piscine')).toBe('summer');
+    expect(getSeasonFromPath('/collections/chaleur')).toBe('winter');
+  });
+
   it('clés de settings mutualisées par saison', () => {
     expect(homepageSettingsKey('winter')).toBe('homepage');
     expect(homepageSettingsKey('summer')).toBe('homepage-summer');

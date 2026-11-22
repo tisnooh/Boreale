@@ -1,3 +1,4 @@
+import { SUMMER_CATEGORIES } from './content-summer';
 import type { ShopSeason } from './types';
 
 /**
@@ -18,6 +19,7 @@ export const DEFAULT_SEASON: ShopSeason =
 export function getSeasonFromPath(pathname: string | null | undefined): ShopSeason {
   if (!pathname) return 'winter';
   if (pathname === '/ete' || pathname.startsWith('/ete/')) return 'summer';
+  if (SUMMER_CATEGORIES.some(({ slug }) => pathname === `/collections/${slug}`)) return 'summer';
   return 'winter';
 }
 

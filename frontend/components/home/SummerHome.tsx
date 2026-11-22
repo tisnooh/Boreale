@@ -40,8 +40,8 @@ export async function SummerHome() {
           <div className="absolute inset-0 bg-gradient-to-t from-snow via-transparent to-snow/30" />
         </div>
 
-        <div className="container-x relative grid flex-1 items-center gap-12 pt-16 lg:grid-cols-12 lg:pt-24">
-          <div className="lg:col-span-8">
+        <div className="container-x relative grid min-w-0 flex-1 grid-cols-1 items-center gap-12 pt-16 lg:grid-cols-12 lg:pt-24">
+          <div className="min-w-0 lg:col-span-8">
             <p className="overline mb-8 max-w-md">
               <span className="text-ember-dark">{hero.eyebrow}</span>
               <span>Maison d’été</span>
@@ -69,17 +69,17 @@ export async function SummerHome() {
         </div>
 
         <div className="container-x relative pb-8">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-t border-ink/10 pt-6">
-            <nav aria-label="Sommaire de la page été" className="grid flex-1 grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
+          <div className="grid min-w-0 gap-6 border-t border-ink/10 pt-6 xl:flex xl:items-end xl:justify-between">
+            <nav aria-label="Sommaire de la page été" className="grid min-w-0 flex-1 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-4">
               {[
                 ['#univers', '01', 'Les univers'],
                 ['#selection', '02', 'Sélection'],
                 ['#manifeste', '03', 'Manifeste'],
                 ['#packs', '04', 'Packs'],
               ].map(([href, n, label]) => (
-                <Link key={href} href={href} className="group flex items-baseline gap-3">
+                <Link key={href} href={href} className="group flex min-w-0 items-baseline gap-2">
                   <span className="font-display text-xs text-ember-dark tabular-nums">{n}</span>
-                  <span className="text-[11px] font-semibold tracking-[0.2em] text-ink-500 uppercase transition-colors group-hover:text-ink">
+                  <span className="min-w-0 wrap-break-word text-[11px] font-semibold tracking-[0.2em] text-ink-500 uppercase transition-colors group-hover:text-ink">
                     {label}
                   </span>
                 </Link>
@@ -94,7 +94,7 @@ export async function SummerHome() {
       </section>
 
       <Folio season="summer" />
-      <UniversIndex categories={categories} />
+      <UniversIndex categories={categories} summer />
 
       {/* N°02 — Sélection : rail si produits, sinon état éditorial honnête */}
       {products.length > 0 ? (

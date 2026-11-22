@@ -14,7 +14,7 @@ import { apiGetServer } from '@/lib/api-server';
 import { isPreview, SITE_MODE, type SiteMode } from '@/lib/config';
 import type { CategoryDTO, HomepageSettings, Paginated, ProductDTO } from '@/lib/types';
 import { HOMEPAGE_FALLBACK } from '@/lib/homepage-fallback';
-import { SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
+import { SUMMER_CATEGORIES, SUMMER_HOMEPAGE } from '@/lib/season/content-summer';
 import { matchesShopSeason, type ShopSeason } from '@/lib/season/types';
 
 export interface CatalogSource {
@@ -54,9 +54,7 @@ const previewSource: CatalogSource = {
     return found ? withRelated({ ...found }, all) : null;
   },
   async categories(season) {
-    const [{ PREVIEW_CATEGORIES }, { SUMMER_CATEGORIES }] = await Promise.all([
-      import('./preview-data'), import('@/lib/season/content-summer'),
-    ]);
+    const { PREVIEW_CATEGORIES } = await import('./preview-data');
     const all = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES].map((c) => ({ ...c }));
     return season ? all.filter((c) => matchesShopSeason(c.season ?? 'winter', season)) : all;
   },
@@ -84,6 +82,7 @@ const liveSource: CatalogSource = {
     return res?.data ?? null;
   },
   async categories(season) {
+    if (SITE_MODE === 'showcase') return season === 'winter' ? [] : SUMMER_CATEGORIES;
     const res = await apiGetServer<{ data: CategoryDTO[] }>(`/api/categories${season ? `?season=${season}` : ''}`);
     return res?.data ?? [];
   },

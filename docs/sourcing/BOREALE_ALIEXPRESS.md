@@ -18,3 +18,10 @@ Statut actuel du lot — quatre pistes indexées, aucune variante vérifiée, au
 - **En réserve** — Refuge et les semelles, tant que la grille de pointures et la composition ne sont pas confirmées. Braise reste en recherche.
 - **Vente fermée** — Sur le site public, l'accueil et la page compte répondent, avec le bandeau de démonstration. Le backend exige un produit actif et un approvisionnement vérifié pour le catalogue et le checkout. L'administration de sourcing actuelle valide uniquement les offres Alibaba, donc le registre AliExpress reste privé et aucune piste ne peut être enregistrée comme une offre Alibaba.
 - **Ouverture** — Exiger une variante qualifiée, un prix de vente approuvé, une date de livraison défendable, un traitement fournisseur et un achat complet validé en test avant de demander le feu vert production. Pour une annonce de réduction, vérifier la référence des 30 jours selon la [DGCCRF](https://www.economie.gouv.fr/dgccrf/les-fiches-pratiques/annonces-de-reduction-de-prix-ce-que-vous-devez-savoir).
+
+## Autres pistes Nuage
+
+- [1005012887203666](https://www.aliexpress.com/item/1005012887203666.html) — chaussettes d’intérieur épaisses avec adhérence annoncée. [Index](https://sv.pricearchive.org/aliexpress.com/item/1005012887203666)
+- [1005007987956122](https://www.aliexpress.com/item/1005007987956122.html) — chaussettes d’intérieur antidérapantes annoncées. [Index](https://liapink.com/fr/item/1005007987956122/super-warm-winter-non-slip-floor-socks-women-men-snow-socks-sleep-carp/)
+
+Les deux pages directes répondent mais ne livrent pas les données de vendeur et de variante nécessaires au contrôle. Prix livré, délai France, droits image et retours restent à confirmer. Aucune offre activable.

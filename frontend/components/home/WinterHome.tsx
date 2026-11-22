@@ -19,9 +19,9 @@ export async function WinterHome() {
   const source = getCatalogSource();
   const [settings, categories, allProducts, bundles] = await Promise.all([
     source.homepage(),
-    source.categories(),
-    source.products(),
-    source.bundles(),
+    source.categories('winter'),
+    source.products('winter'),
+    source.bundles('winter'),
   ]);
 
   const bySlug = (slug: string) => allProducts.find((p) => p.slug === slug);

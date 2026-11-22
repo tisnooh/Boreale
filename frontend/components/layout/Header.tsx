@@ -76,7 +76,7 @@ export function Header({ announcement }: { announcement: string | null }) {
 
           <div className="hidden md:block"><SeasonSwitch /></div>
           <nav aria-label="Navigation principale" className="hidden items-center gap-7 xl:flex">
-            <Link href="/collections" className="text-sm font-semibold text-ink transition hover:text-ember-dark">
+            <Link href={season === 'summer' ? '/collections?saison=ete' : '/collections'} className="text-sm font-semibold text-ink transition hover:text-ember-dark">
               Boutique
             </Link>
             {navLinks.map((c) => (
@@ -134,7 +134,7 @@ export function Header({ announcement }: { announcement: string | null }) {
             <div className="px-3 pb-2">
               <SeasonSwitch />
             </div>
-            <MobileLink href="/collections">Toute la boutique</MobileLink>
+            <MobileLink href={season === 'summer' ? '/collections?saison=ete' : '/collections'}>Toute la boutique</MobileLink>
             {navLinks.map((c) => (
               <MobileLink key={c.slug} href={`/collections/${c.slug}`}>
                 {c.name}

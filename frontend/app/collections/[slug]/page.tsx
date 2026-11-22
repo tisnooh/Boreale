@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<ReturnType<ty
     title: `${seasonLabel}${cat.name} — ${cat.tagline ?? BRAND.name}`,
     description:
       cat.description ??
-      `Découvrez la collection ${cat.name} ${BRAND.name} : produits chauds et durables sélectionnés pour l'hiver. Livraison offerte dès 69 €.`,
+      `Découvrez la collection ${cat.name} ${BRAND.name} : les articles disponibles et les informations de la collection.`,
     path: `/collections/${slug}`,
     image: cat.imageUrl ?? undefined,
   });
@@ -53,6 +53,8 @@ export default async function CollectionPage({ params, searchParams }: Props) {
 
   const shopSeason = matchesShopSeason(cat.season ?? 'winter', 'summer') && cat.season !== 'all-season' ? 'summer' : 'winter';
 
+  const collectionsUrl = shopSeason === 'summer' ? '/collections?saison=ete' : '/collections';
+
   return (
     <div data-season={shopSeason}>
     <>
@@ -62,7 +64,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           __html: JSON.stringify(
             breadcrumbJsonLd([
               { name: 'Accueil', path: '/' },
-              { name: 'Collections', path: '/collections' },
+              { name: 'Collections', path: collectionsUrl },
               { name: cat.name, path: `/collections/${cat.slug}` },
             ])
           ),
@@ -73,7 +75,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         <div className="container-x">
           <nav aria-label="Fil d'Ariane" className="mb-3 text-xs text-ice/60">
             <Link href="/" className="hover:text-white">Accueil</Link> <span aria-hidden>/</span>{' '}
-            <Link href="/collections" className="hover:text-white">Collections</Link> <span aria-hidden>/</span>{' '}
+            <Link href={collectionsUrl} className="hover:text-white">Collections</Link> <span aria-hidden>/</span>{' '}
             <span className="text-white">{cat.name}</span>
           </nav>
           <h1 className="font-display text-4xl font-semibold sm:text-5xl">{cat.name}</h1>
@@ -99,7 +101,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             <EmptyState
               title={q ? `Aucun résultat pour « ${q} »` : 'Aucun produit dans cette collection pour le moment'}
               text="Le catalogue est mis à jour régulièrement — revenez bientôt ou explorez les autres univers."
-              action={<Link href="/collections" className="btn-outline btn-sm">Voir toute la collection</Link>}
+              action={<Link href={collectionsUrl} className="btn-outline btn-sm">Voir toute la collection</Link>}
             />
           )}
         </div>
