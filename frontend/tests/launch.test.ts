@@ -82,10 +82,10 @@ it('affiche la vitrine publique sans activer le catalogue ni les transactions', 
   expect(products.every((product) => product.selection?.status === 'draft' &&
     product.selection.priceVerified === false && !product.inStock && product.variants?.length === 0)).toBe(true);
   expect(products.map((product) => product.slug)).toEqual([
-    'sweat-couverture-sherpa', 'coussin-assise-exterieur', 'bouillotte-ceinture',
-    'cache-oreilles-pliant', 'housse-gourde-bandouliere',
+    'cape-couverture-cocooning', 'bouillotte-housse-peluche', 'cache-oreilles-pliants-fausse-fourrure',
+    'coussin-assise-exterieur-pliant', 'sac-gourde-bandouliere',
   ]);
-  expect(await source.product('sweat-couverture-sherpa')).toMatchObject({ inStock: false });
+  expect(await source.product('cape-couverture-cocooning')).toMatchObject({ inStock: false, imageUrl: expect.stringContaining('s.alicdn.com') });
   expect(await source.product('chaussettes-polaires-nuage')).toBeNull();
   expect(await source.product('chaussons-bouillotte-foyer')).toBeNull();
   expect(await source.products('summer')).toEqual([]);

@@ -29,7 +29,7 @@ describe('aperçu local des cinq références Alibaba', () => {
     expect(await source.product('gants-tactiles-contact')).not.toBeNull();
   });
 
-  it.each([{ nodeEnv: 'production', siteMode: 'preview' }, { nodeEnv: 'development', siteMode: 'showcase' }])(
+  it.each([{ nodeEnv: 'production', siteMode: 'preview' }, { nodeEnv: 'development', siteMode: 'launch' }])(
     'garde les brouillons hors du catalogue $siteMode en $nodeEnv',
     async ({ nodeEnv, siteMode }) => {
       vi.stubEnv('NODE_ENV', nodeEnv);
