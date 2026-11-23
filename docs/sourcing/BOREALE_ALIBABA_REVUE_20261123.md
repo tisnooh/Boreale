@@ -50,4 +50,15 @@ npm.cmd --prefix frontend run dev -- --hostname 127.0.0.1 --port 3197
 
 ## Qualité
 
-Typecheck, lint ciblé et 21 tests automatisés réussis. La suite de lancement a été relancée seule après un délai dépassé sous forte pression mémoire. Les tests vérifient notamment les cinq brouillons sans variantes, prix vérifié, stock ou images, et leur absence en production ainsi qu’en vitrine. Le serveur local a démarré, mais la route de revue n’a pas rendu dans le délai. Chromium a dépassé son délai de démarrage lors de deux tentatives. La recette visuelle du site sur mobile et ordinateur reste à faire. Un aperçu HTML autonome avec les cinq fiches et leurs emplacements d’images est disponible dans les livrables locaux.
+Typecheck, lint ciblé et 21 tests automatisés réussis. La suite de lancement a été relancée seule après un délai dépassé sous forte pression mémoire. Les tests vérifient notamment les cinq brouillons sans variantes, prix vérifié ni stock, et leur absence en production ainsi qu’en vitrine. Le serveur local a démarré, mais la route de revue n’a pas rendu dans le délai. Chromium a dépassé son délai de démarrage lors de deux tentatives. La recette visuelle du site sur mobile et ordinateur reste à faire. Un aperçu HTML autonome avec les cinq fiches et leurs emplacements d’images est disponible dans les livrables locaux.
+
+
+## Photos de comparaison retrouvées
+
+Les cinq URL renvoient HTTP 200 avec un fichier image. L’aperçu HTML local les affiche depuis le CDN Alibaba, pour identifier le modèle. La collection de revue locale les affiche aussi, signalées comme photos fournisseur. Le coloris et le SKU livrables restent à confirmer.
+
+- Cape-couverture de détente (1601620665961) · [Photo de référence Alibaba](https://s.alicdn.com/@sc04/kf/Hf66fd21894da439f823cc2bdaeac0f34z.png).
+- Bouillotte à eau avec housse douce (1601832603763) · [Photo de référence Alibaba](https://s.alicdn.com/@sc04/kf/H8c07393c282b474cb661c83385832de7J.png).
+- Cache-oreilles pliant en fausse fourrure (1601581856423) · [Photo de référence Alibaba](https://s.alicdn.com/@sc04/kf/H841c1e38fb354747be30e1eff99c0d4fF.jpg).
+- Assise pliante en mousse pour l’extérieur (1601715242898) · [Photo de référence Alibaba](https://s.alicdn.com/@sc04/kf/H6add91a07e3d45eaa067255ed2732c645.jpg).
+- Sac porte-gourde à bandoulière (10000023330948) · [Photo de référence Alibaba](https://s.alicdn.com/@sc04/kf/H1bdde0b291f040eda41f293837e826b0R.jpg).

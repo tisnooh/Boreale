@@ -35,6 +35,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(process.env.NODE_ENV === "development" && process.env.BOREALE_ALIBABA_REVIEW === "true"
+    ? { images: { remotePatterns: [{ protocol: "https", hostname: "s.alicdn.com", port: "", pathname: "/@sc04/kf/*", search: "" }] } }
+    : {}),
   ...(siteMode ? { env: { NEXT_PUBLIC_SITE_MODE: siteMode } } : {}),
   poweredByHeader: false,
   reactStrictMode: true,

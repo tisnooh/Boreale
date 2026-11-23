@@ -18,9 +18,11 @@ describe('aperçu local des cinq références Alibaba', () => {
     expect(await source.categories('winter')).toEqual(expect.arrayContaining([
       expect.objectContaining({ slug: 'alibaba-hiver-revue', productCount: 5 }),
     ]));
+    expect(new Set(drafts.map(({ imageUrl }) => imageUrl)).size).toBe(5);
     for (const draft of drafts) {
+      expect(draft.imageUrl).toMatch(/^https:\/\/s\.alicdn\.com\/@sc04\/kf\//);
       expect(await source.product(draft.slug)).toMatchObject({
-        inStock: false, variants: [], images: [], imageUrl: null,
+        inStock: false, variants: [], images: [draft.imageUrl], imageUrl: draft.imageUrl, badge: 'Photo fournisseur',
         selection: { status: 'draft', priceVerified: false, targetColors: [] },
       });
     }
