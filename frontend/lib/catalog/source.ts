@@ -39,23 +39,33 @@ function withRelated(p: ProductDTO, all: ProductDTO[]): ProductDTO {
   };
 }
 
+async function loadAlibabaReview() {
+  if (process.env.NODE_ENV !== 'development' || process.env.BOREALE_ALIBABA_REVIEW !== 'true') return null;
+  return import('./alibaba-review-products');
+}
+
 const previewSource: CatalogSource = {
   mode: 'preview',
   isPreview: true,
   async products(season) {
     const { PREVIEW_PRODUCTS } = await import('./preview-data');
-    const all = PREVIEW_PRODUCTS.filter(p => p.selection?.status !== 'deferred').map((p) => ({ ...p }));
+    const review = await loadAlibabaReview();
+    const all = [...PREVIEW_PRODUCTS, ...(review?.ALIBABA_REVIEW_PRODUCTS ?? [])]
+      .filter((product) => product.selection?.status !== 'deferred').map((product) => ({ ...product }));
     return season ? all.filter((p) => matchesShopSeason(p.season ?? 'winter', season)) : all;
   },
   async product(slug) {
     const { PREVIEW_PRODUCTS } = await import('./preview-data');
-    const all = PREVIEW_PRODUCTS;
+    const review = await loadAlibabaReview();
+    const all = [...PREVIEW_PRODUCTS, ...(review?.ALIBABA_REVIEW_PRODUCTS ?? [])];
     const found = all.find((p) => p.slug === slug);
     return found ? withRelated({ ...found }, all) : null;
   },
   async categories(season) {
     const { PREVIEW_CATEGORIES } = await import('./preview-data');
-    const all = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES].map((c) => ({ ...c }));
+    const review = await loadAlibabaReview();
+    const all = [...PREVIEW_CATEGORIES, ...SUMMER_CATEGORIES];
+    if (review) all.push(review.ALIBABA_REVIEW_CATEGORY);
     return season ? all.filter((c) => matchesShopSeason(c.season ?? 'winter', season)) : all;
   },
   async bundles(season) {

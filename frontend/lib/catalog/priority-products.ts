@@ -26,7 +26,7 @@ const briefs: Brief[] = [
     specifications: ['Objectif : isolation sans batterie ni branchement.', 'Matières étudiées : feutre, laine ou couche aluminium, non encore sélectionnées.', 'Épaisseur, compatibilité et isolation non confirmées.'] },
 ];
 
-function toDraftProduct(brief: Brief, index: number): ProductDTO {
+export function toDraftProduct(brief: Brief, index: number): ProductDTO {
   return {
   id: brief.id, slug: brief.slug, name: brief.name, subtitle: brief.subtitle, description: brief.description,
   longDescription: brief.details,
